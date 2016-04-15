@@ -1,0 +1,9 @@
+name = OS2web theme helper
+description = Including theme helper function. Used in theme template.php
+
+version = "7.x-1.0"
+core = "7.x"
+project = "os2web_theme_helper"
+dependencies[] = ctools
+dependencies[] = views
+dependencies[] = block

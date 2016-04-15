@@ -1,0 +1,130 @@
+<?php
+
+/*
+ * Implements hook_admin_paths_alter().
+ */
+function user_information_admin_paths_alter(&$paths) {
+  $paths['user/*/edit'] = FALSE;
+}
+
+/*
+ * Get raw user information.
+ */
+function _user_get_raw_information($uid) {
+  if ( ! $entity = user_load($uid)) {
+    return FALSE;
+  }
+  $data = array();
+
+  // Firstname.
+  if ($field = field_get_items('user', $entity, 'field_firstname')) {
+    $data['firstname'] = $field[0]['value'];
+  }
+
+  // Lastname.
+  if ($field = field_get_items('user', $entity, 'field_lastname')) {
+    $data['lastname'] = $field[0]['value'];
+  }
+
+  // Full name.
+  if (module_exists('realname')) {
+
+    if (!empty($entity->realname)) {
+      $data['full_name'] = $entity->realname;
+    }
+    else {
+      $data['full_name'] = $entity->name;
+    }
+  }
+  elseif(isset($data['firstname']) || isset($data['lastname'])) {
+
+    if (isset($data['firstname']) && ! isset($data['lastname'])) {
+      $data['full_name'] = $data['firstname'];
+    }
+    elseif ( ! isset($data['firstname']) && isset($data['lastname'])) {
+      $data['full_name'] = $data['lastname'];
+    }
+    else {
+      $data['full_name'] = $data['firstname'] . ' ' . $data['lastname'];
+    }
+  }
+  else {
+    $data['full_name'] = $entity->name;
+  }
+
+  // Address.
+  if ($field = field_get_items('user', $entity, 'field_address')) {
+    $data['address'] = $field[0]['value'];
+  }
+
+  // Zipcode.
+  if ($field = field_get_items('user', $entity, 'field_zipcode')) {
+    $data['zipcode'] = $field[0]['value'];
+  }
+
+  // City.
+  if ($field = field_get_items('user', $entity, 'field_city')) {
+    $data['city'] = $field[0]['value'];
+  }
+
+  // Country.
+  if ($field = field_get_items('user', $entity, 'field_country')) {
+    $data['country'] = $field[0]['value'];
+  }
+
+  // Member since.
+  $data['member_since_short'] = format_date($entity->created, 'short');
+  $data['member_since_medium'] = format_date($entity->created, 'medium');
+  $data['member_since_long'] = format_date($entity->created, 'long');
+  $data['member_since_ago'] = t('@time ago', array('@time' => format_interval((REQUEST_TIME - $entity->created))));
+
+  return $data;
+}
+
+/*
+ * Get renderable user information.
+ */
+function _user_get_renderable_information($uid) {
+  if (!$entity = user_load($uid)) {
+    return FALSE;
+  }
+  $data = array();
+
+  // Firstname.
+  if ($field = field_get_items('user', $entity, 'field_firstname')) {
+    $data['firstname'] = field_view_value('user', $entity, 'field_firstname', $field[0]);
+  }
+
+  // Lastname.
+  if ($field = field_get_items('user', $entity, 'field_lastname')) {
+    $data['lastname'] =  field_view_value('user', $entity, 'field_lastname', $field[0]);
+  }
+
+  // Address.
+  if ($field = field_get_items('user', $entity, 'field_address')) {
+    $data['address'] = field_view_value('user', $entity, 'field_address', $field[0]);
+  }
+
+  // Zipcode.
+  if ($field = field_get_items('user', $entity, 'field_zipcode')) {
+    $data['zipcode'] = field_view_value('user', $entity, 'field_zipcode', $field[0]);
+  }
+
+  // City.
+  if ($field = field_get_items('user', $entity, 'field_city')) {
+    $data['city'] = field_view_value('user', $entity, 'field_city', $field[0]);
+  }
+
+  // Country.
+  if ($field = field_get_items('user', $entity, 'field_country')) {
+    $data['country'] = field_view_value('user', $entity, 'field_country', $field[0]);
+  }
+
+  // Member since.
+  $data['member_since_short'] = format_date($entity->created, 'short');
+  $data['member_since_medium'] = format_date($entity->created, 'medium');
+  $data['member_since_long'] = format_date($entity->created, 'long');
+  $data['member_since_ago'] = t('@time ago', array('@time' => format_interval((REQUEST_TIME - $entity->created))));
+
+  return $data;
+}

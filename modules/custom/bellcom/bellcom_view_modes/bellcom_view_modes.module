@@ -1,0 +1,37 @@
+<?php
+
+/*
+* Implements hook_entity_info_alter().
+*/
+function bellcom_view_modes_entity_info_alter(&$entity_info) {
+
+  // Node view modes
+  $entity_info['node']['view modes']['list'] = array(
+    'label'           => t('List'),
+    'custom settings' => FALSE,
+  );
+  $entity_info['node']['view modes']['includeable'] = array(
+    'label'           => t('Includeable'),
+    'custom settings' => FALSE,
+  );
+
+  // User view modes
+  $entity_info['user']['view modes']['teaser'] = array(
+    'label'           => t('Teaser'),
+    'custom settings' => FALSE,
+  );
+  $entity_info['user']['view modes']['includeable'] = array(
+    'label'           => t('Includeable'),
+    'custom settings' => FALSE,
+  );
+
+  // Taxonomy term view modes
+  $entity_info['taxonomy_term']['view modes']['teaser'] = array(
+    'label'           => t('Teaser'),
+    'custom settings' => FALSE,
+  );
+  $entity_info['taxonomy_term']['view modes']['list'] = array(
+    'label'           => t('List'),
+    'custom settings' => FALSE,
+  );
+}
