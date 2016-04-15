@@ -1,4 +1,0 @@
-name        = 'User information'
-description = 'Contains user information.'
-core        = 7.x
-package     = 'Insulinplan.dk'
