@@ -67,6 +67,8 @@ function os2web_install() {
   $full_html_format = (object) $full_html_format;
   filter_format_save($full_html_format);
 
+  $default_theme = variable_get('theme_default', 'bartik');
+  $admin_theme = 'seven';
 
   // Allow visitor account creation, but with administrative approval.
   variable_set('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL);
@@ -75,9 +77,8 @@ function os2web_install() {
   user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content'));
   user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content'));
 
-  theme_enable(array('seven', 'omega', 'os2web_core_theme'));
-  theme_disable(array('bartik', 'rubik'));
-  variable_set('theme_default', 'os2web_core_theme');
+  theme_enable(array('seven', 'os2web_bootstrap_theme'));
+  variable_set('theme_default', $default_theme);
 
   // Set admin theme to Rubik.
   variable_set('admin_theme', 'seven');
