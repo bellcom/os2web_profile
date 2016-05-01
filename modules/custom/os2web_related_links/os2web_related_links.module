@@ -58,7 +58,7 @@ function os2web_related_links_block_view($delta = '') {
  * OS2WEB block view content callback.
  */
 function _os2web_related_links_block_content($entity_type = 'node') {
-
+  $related_links = array();
   $entity = FALSE;
   $eid = arg(1);
   $output = '';
@@ -69,6 +69,9 @@ function _os2web_related_links_block_content($entity_type = 'node') {
     else {
       $entity = taxonomy_term_load($eid);
     }
+  }
+  else {
+    return $related_links;
   }
   $related_links = os2web_related_links_get_links($entity, $entity_type);
 
