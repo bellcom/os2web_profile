@@ -66,7 +66,7 @@
       popup.prependTo("body");
       var height = popup.height();
       popup.show()
-        .attr({"class": "sliding-popup-top"})
+        .attr({"class": "sliding-popup-top clearfix"})
         .css({"top": -1 * height})
         .animate({top: 0}, Drupal.settings.eu_cookie_compliance.popup_delay);
     } else {
@@ -84,7 +84,12 @@
 	var clicking_confirms = Drupal.settings.eu_cookie_compliance.popup_clicking_confirmation;
     var agreed_enabled = Drupal.settings.eu_cookie_compliance.popup_agreed_enabled;
     $('.find-more-button').click(function(){
-      window.open(Drupal.settings.eu_cookie_compliance.popup_link);
+      if (Drupal.settings.eu_cookie_compliance.popup_link_new_window) {
+        window.open(Drupal.settings.eu_cookie_compliance.popup_link);
+      }
+      else{
+        window.location.href = Drupal.settings.eu_cookie_compliance.popup_link;
+      }
     });
     $('.agree-button').click(function(){
       var next_status = 1;
@@ -103,18 +108,8 @@
   }
 
   Drupal.eu_cookie_compliance.getCurrentStatus = function() {
-    var search = 'cookie-agreed-'+Drupal.settings.eu_cookie_compliance.popup_language+'=';
-    var offset = document.cookie.indexOf(search);
-    if (offset < 0) {
-      return 0;
-    }
-    offset += search.length;
-    var end = document.cookie.indexOf(';', offset);
-    if (end == -1) {
-      end = document.cookie.length;
-    }
-    var value = document.cookie.substring(offset, end);
-    return parseInt(value);
+    // return Drupal.eu_cookie_compliance.getCookie('cookie-agreed');
+    return false;
   }
 
   Drupal.eu_cookie_compliance.changeStatus = function(value) {
@@ -146,8 +141,12 @@
 
   Drupal.eu_cookie_compliance.setStatus = function(status) {
     var date = new Date();
-    date.setDate(date.getDate() + 100);
-    document.cookie = "cookie-agreed-"+Drupal.settings.eu_cookie_compliance.popup_language + "="+status+";expires=" + date.toUTCString() + ";path=" + Drupal.settings.basePath;
+    date.setDate(date.getDate() + parseInt(Drupal.settings.eu_cookie_compliance.cookie_lifetime));
+    var cookie = "cookie-agreed=" + status + ";expires=" + date.toUTCString() + ";path=" + Drupal.settings.basePath;
+    if(Drupal.settings.eu_cookie_compliance.domain) {
+      cookie += ";domain="+Drupal.settings.eu_cookie_compliance.domain;
+    }
+    document.cookie = cookie;
   }
 
   Drupal.eu_cookie_compliance.hasAgreed = function() {
@@ -157,6 +156,29 @@
     }
     return false;
   }
+
+
+  /**
+   * Verbatim copy of Drupal.comment.getCookie().
+   */
+  Drupal.eu_cookie_compliance.getCookie = function(name) {
+    var search = name + '=';
+    var returnValue = '';
+
+    if (document.cookie.length > 0) {
+      offset = document.cookie.indexOf(search);
+      if (offset != -1) {
+        offset += search.length;
+        var end = document.cookie.indexOf(';', offset);
+        if (end == -1) {
+          end = document.cookie.length;
+        }
+        returnValue = decodeURIComponent(document.cookie.substring(offset, end).replace(/\+/g, '%20'));
+      }
+    }
+
+    return returnValue;
+  };
   
   Drupal.eu_cookie_compliance.cookiesEnabled = function() {
     var cookieEnabled = (navigator.cookieEnabled) ? true : false;
