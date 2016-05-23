@@ -10,14 +10,13 @@
 function os2web_taxonomies_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_os2web_taxonomies_agenda'
+  // Exported field_base: 'field_os2web_taxonomies_agenda'.
   $field_bases['field_os2web_taxonomies_agenda'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_agenda',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -26,21 +25,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_city'
+  // Exported field_base: 'field_os2web_taxonomies_city'.
   $field_bases['field_os2web_taxonomies_city'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_city',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -55,21 +46,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_comittee'
+  // Exported field_base: 'field_os2web_taxonomies_comittee'.
   $field_bases['field_os2web_taxonomies_comittee'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_comittee',
-    'foreign keys' => array(
-      'tid' => array(
-        'columns' => array(
-          'tid' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
@@ -90,21 +73,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'taxonomy_term_reference',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_cue_word'
+  // Exported field_base: 'field_os2web_taxonomies_cue_word'.
   $field_bases['field_os2web_taxonomies_cue_word'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_cue_word',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -119,14 +94,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_dep_id'
+  // Exported field_base: 'field_os2web_taxonomies_dep_id'.
   $field_bases['field_os2web_taxonomies_dep_id'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_dep_id',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -135,21 +109,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_dep_name'
+  // Exported field_base: 'field_os2web_taxonomies_dep_name'.
   $field_bases['field_os2web_taxonomies_dep_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_dep_name',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -164,14 +130,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_dis_con'
+  // Exported field_base: 'field_os2web_taxonomies_dis_con'.
   $field_bases['field_os2web_taxonomies_dis_con'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_dis_con',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -180,14 +145,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_dis_cont'
+  // Exported field_base: 'field_os2web_taxonomies_dis_cont'.
   $field_bases['field_os2web_taxonomies_dis_cont'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_dis_cont',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -196,14 +160,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_legi_ref'
+  // Exported field_base: 'field_os2web_taxonomies_legi_ref'.
   $field_bases['field_os2web_taxonomies_legi_ref'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_legi_ref',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'link',
@@ -226,21 +189,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'link_field',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_name'
+  // Exported field_base: 'field_os2web_taxonomies_name'.
   $field_bases['field_os2web_taxonomies_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_name',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -255,14 +210,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_priority'
+  // Exported field_base: 'field_os2web_taxonomies_priority'.
   $field_bases['field_os2web_taxonomies_priority'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_priority',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -271,21 +225,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_search'
+  // Exported field_base: 'field_os2web_taxonomies_search'.
   $field_bases['field_os2web_taxonomies_search'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_search',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -300,14 +246,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_sys_id'
+  // Exported field_base: 'field_os2web_taxonomies_sys_id'.
   $field_bases['field_os2web_taxonomies_sys_id'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_sys_id',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -316,21 +261,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_os2web_taxonomies_type'
+  // Exported field_base: 'field_os2web_taxonomies_type'.
   $field_bases['field_os2web_taxonomies_type'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_taxonomies_type',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -345,21 +282,13 @@ function os2web_taxonomies_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_termtekst'
+  // Exported field_base: 'field_termtekst'.
   $field_bases['field_termtekst'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_termtekst',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',

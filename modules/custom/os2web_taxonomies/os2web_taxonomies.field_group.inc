@@ -8,7 +8,7 @@
  * Implements hook_field_group_info().
  */
 function os2web_taxonomies_field_group_info() {
-  $export = array();
+  $field_groups = array();
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -40,7 +40,7 @@ function os2web_taxonomies_field_group_info() {
       'formatter' => 'closed',
     ),
   );
-  $export['group_billeder|taxonomy_term|os2web_base_tax_site_structure|form'] = $field_group;
+  $field_groups['group_billeder|taxonomy_term|os2web_base_tax_site_structure|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -69,7 +69,7 @@ function os2web_taxonomies_field_group_info() {
       ),
     ),
   );
-  $export['group_billeder|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
+  $field_groups['group_billeder|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -101,7 +101,7 @@ function os2web_taxonomies_field_group_info() {
       'formatter' => 'closed',
     ),
   );
-  $export['group_indhold|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
+  $field_groups['group_indhold|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -132,7 +132,7 @@ function os2web_taxonomies_field_group_info() {
       ),
     ),
   );
-  $export['group_indstillinger|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
+  $field_groups['group_indstillinger|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -160,7 +160,7 @@ function os2web_taxonomies_field_group_info() {
       ),
     ),
   );
-  $export['group_term|taxonomy_term|os2web_base_tax_site_structure|form'] = $field_group;
+  $field_groups['group_term|taxonomy_term|os2web_base_tax_site_structure|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -187,7 +187,15 @@ function os2web_taxonomies_field_group_info() {
       ),
     ),
   );
-  $export['group_term|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
+  $field_groups['group_term|taxonomy_term|os2web_taxonomies_tax_portal_cat|form'] = $field_group;
 
-  return $export;
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Billeder');
+  t('Billeder og filer');
+  t('Indhold');
+  t('Indstillinger');
+  t('Term');
+
+  return $field_groups;
 }
