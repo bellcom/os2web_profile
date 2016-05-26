@@ -36,8 +36,8 @@ function os2web_habitat_strongarm() {
   $strongarm->name = 'habitat_disable_prod';
   $strongarm->value = array(
     0 => 'habitat_ui',
-    2 => 'stage_file_proxy',
-    4 => 'dblog',
+    1 => 'stage_file_proxy',
+    2 => 'dblog',
   );
   $export['habitat_disable_prod'] = $strongarm;
 
@@ -56,7 +56,7 @@ function os2web_habitat_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'habitat_enable_dev';
   $strongarm->value = array(
-    0 => '',
+    0 => 'stage_file_proxy',
   );
   $export['habitat_enable_dev'] = $strongarm;
 
