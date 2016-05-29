@@ -2737,7 +2737,7 @@ function _os2web_borger_dk_create_kernetekst_html($xml) {
 
     // We replace the first <h2>-tag with <h2 class="mArticleX">.
     $pattern = '/<h2>/';
-    $replacement = '<h2 class="os2-accordion-heading-title mArticle" id="' . $baseclass . $counter . '">';
+    $replacement = '<div class="os2-accordion-heading"><h2 class="os2-accordion-heading-title mArticle" id="' . $baseclass . $counter . '">';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
     // We replace the first <h3>-tag with <h2 class="mArticleX">.
