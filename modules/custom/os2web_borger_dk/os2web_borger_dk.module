@@ -1011,7 +1011,7 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
     if (!$view && is_object($node)) {
       $field_microarticle_settings[$microno] = isset($node->$checkboxno) ? $node->$checkboxno : 1;
         // Body text (Article text).
-      $article_text .= "<div class=\"microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
+      $article_text .= "<div class=\"microArticle hest\" id=\"microArticle" . $microno . "\">" . "\r\n";
 
       $micro_h2 = "<h2 class=\"mArticle\" id=\"mArticle" . $microno . "\">";
       $micro_h2 .= $node->$h2_text_field . "</h2>";
@@ -1034,7 +1034,7 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
       }
       if ($node[$microno] != 0) {
         // Body text (Article text).
-        $article_text .= "<div class=\"microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
+        $article_text .= "<div class=\"hest99 microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
 
         $micro_h2 = "<h2 class=\"mArticle\" id=\"mArticle" . $microno . "\">";
         $micro_h2 .= $title . "</h2>";
@@ -2740,14 +2740,19 @@ function _os2web_borger_dk_create_kernetekst_html($xml) {
     $replacement = '<div class="os2-accordion-heading"><h2 class="os2-accordion-heading-title mArticle" id="' . $baseclass . $counter . '">';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
+    // We replace the first </h3>-tag with </h2>.
+    $pattern = '/<\/h2>/';
+    $replacement = '</h2></div>';
+    $html = preg_replace($pattern, $replacement, $html, 1);
+
     // We replace the first <h3>-tag with <h2 class="mArticleX">.
     $pattern = '/<h3>/';
-    $replacement = '<div class="os2-accordion-heading"><h2 class="os2-accordion-heading-title mArticle" id="' . $baseclass . $counter . '">';
+    $replacement = '<h2 class="mArticle" id="' . $baseclass . $counter . '">';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
     // We replace the first </h3>-tag with </h2>.
     $pattern = '/<\/h3>/';
-    $replacement = '</h2></div>';
+    $replacement = '</h2>';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
     // And we replace the first <div>-tag with <div class="mArticleX">.
