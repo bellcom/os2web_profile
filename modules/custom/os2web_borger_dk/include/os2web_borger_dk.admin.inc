@@ -343,6 +343,26 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#description' => t('Allow to import aricle many times.'),
     '#default_value' => variable_get('os2web_borger_dk_import_duplicate', 0),
   );
+  $form['os2web_borger_dk_settings_10'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Import English articles'),
+    '#collapsible' => TRUE,
+    '#group' => 'vertical_settings_tab',
+  );
+  $form['os2web_borger_dk_settings_10']['os2web_borger_dk_import_english'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow article import duplicated.'),
+    '#description' => t('Allow to import aricle many times.'),
+    '#default_value' => variable_get('os2web_borger_dk_import_english', 0),
+  );
+   $form['os2web_borger_dk_settings_10']['os2web_borger_dk_english_webservice'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Borger.dk English Webservice URL'),
+    '#default_value' => variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
   return system_settings_form($form);
 }
 
