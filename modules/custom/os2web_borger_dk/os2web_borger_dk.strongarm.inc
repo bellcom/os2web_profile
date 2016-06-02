@@ -43,6 +43,18 @@ function os2web_borger_dk_strongarm() {
       'meeting_detail_view' => array(
         'custom_settings' => FALSE,
       ),
+      'spotbox' => array(
+        'custom_settings' => FALSE,
+      ),
+      'list' => array(
+        'custom_settings' => FALSE,
+      ),
+      'includeable' => array(
+        'custom_settings' => FALSE,
+      ),
+      'diff_standard' => array(
+        'custom_settings' => FALSE,
+      ),
     ),
     'extra_fields' => array(
       'form' => array(
@@ -50,7 +62,13 @@ function os2web_borger_dk_strongarm() {
           'weight' => '0',
         ),
         'path' => array(
-          'weight' => '13',
+          'weight' => '3',
+        ),
+        'workbench_access' => array(
+          'weight' => '0',
+        ),
+        'metatags' => array(
+          'weight' => '4',
         ),
       ),
       'display' => array(),
@@ -70,7 +88,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_os2web_borger_dk_article';
   $strongarm->value = array(
-    0 => 'menu-indholdsmenu',
+    0 => 'main-menu',
   );
   $export['menu_options_os2web_borger_dk_article'] = $strongarm;
 
@@ -78,7 +96,7 @@ function os2web_borger_dk_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_parent_os2web_borger_dk_article';
-  $strongarm->value = 'menu-indholdsmenu:0';
+  $strongarm->value = 'main-menu:0';
   $export['menu_parent_os2web_borger_dk_article'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -101,6 +119,13 @@ function os2web_borger_dk_strongarm() {
   $strongarm->name = 'node_submitted_os2web_borger_dk_article';
   $strongarm->value = 1;
   $export['node_submitted_os2web_borger_dk_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_node_os2web_borger_dk_article_pattern';
+  $strongarm->value = '[node:menu-link:parents:join-path]/[node:title]';
+  $export['pathauto_node_os2web_borger_dk_article_pattern'] = $strongarm;
 
   return $export;
 }
