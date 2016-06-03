@@ -39,6 +39,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
   static $os2web_borger_dk_falter_form;
   if (isset($form['type']) && isset($form['#node'])) {
     if ($form_id == 'os2web_borger_dk_article_node_form') {
+
       if (isset($os2web_borger_dk_falter_form) && !empty($os2web_borger_dk_falter_form)) {
         // If the static form-cache has already been build then
         // we simply return the form-cache value instead of
@@ -54,7 +55,6 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
 
         $locked_os2web_types = array(
           'field_os2web_borger_dk_borgerurl' => 1,
-          'field_os2web_borger_dk_kle' => 2,
           'field_os2web_borger_dk_formterm' => 2,
         );
         $admin_display_fields = variable_get('os2web_borger_dk_display');
@@ -137,11 +137,9 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
             $body_text = (isset($form['body'][LANGUAGE_NONE]['0']['#entity']->body[LANGUAGE_NONE]['0']['value'])) ? $form['body'][LANGUAGE_NONE]['0']['#entity']->body[LANGUAGE_NONE]['0']['value'] : '';
 
             $form['body']['#access'] = FALSE;
-
             $doc = new DOMDocument();
             $doc->loadHTML('<?xml encoding="utf-8" ?>' . $body_text);
             $xpath = new DOMXPath($doc);
-
             $results = $xpath->query("//*[@class='microArticle']");
 
             $microno = 0;
@@ -173,7 +171,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                 '#type' => 'fieldset',
                 '#weight' => $weight,
               );
-
+              $form['#group_children']['os2web_borger_dk_micro_settings_' . $microno] = 'group_os2web_borger_dk_text';
               $form['os2web_borger_dk_micro_settings_' . $microno][$h2_text_field] = array(
                 '#type' => 'textfield',
                 '#title' => t('Title of Microarticle') . ' ' . $microno,
@@ -355,6 +353,7 @@ function os2web_borger_dk_after_build($form, &$form_state) {
   $nid = $form_state['values']['nid'];
   $admin_display_fields = variable_get('os2web_borger_dk_display', array(NULL));
   $microarticle = variable_get('os2web_borger_dk_microarticle_active');
+  $admin_required_fields = variable_get('os2web_borger_dk_field_required', array(NULL));
 
   // First we check if this is a node/add-type by checking the node->nid.
   if (!empty($nid)) {
@@ -366,6 +365,14 @@ function os2web_borger_dk_after_build($form, &$form_state) {
         if (!$microarticle) {
           os2web_borger_dk_fix_disabled($form[$type]);
         }
+      }
+    }
+    foreach ($admin_required_fields as $type => $item) {
+      if ($item) {
+        $form[$type]['#required'] = TRUE;
+        $form[$type][LANGUAGE_NONE]['#required'] = TRUE;
+        $form[$type][LANGUAGE_NONE][0]['#required'] = TRUE;
+        $form[$type][LANGUAGE_NONE][0]['value']['#required'] = TRUE;
       }
     }
     // Then we must disable all fields that has been marked as

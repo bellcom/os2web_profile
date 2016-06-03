@@ -537,17 +537,12 @@ function _os2web_borger_dk_create_kernetekst_html($xml) {
 
     $div_attr = $microarticle->attributes()->id;
     $search = '<div id="' . $div_attr . '">';
-    $replace = '<div class="os2-accordion microArticle" id="' . $div_attr . '">';
+    $replace = '<div class="microArticle" id="' . $div_attr . '">';
     $html = _os2web_borger_dk_create_html_from_xml($microarticle, $search, $replace);
 
     // We replace the first <h2>-tag with <h2 class="mArticleX">.
     $pattern = '/<h2>/';
-    $replacement = '<div class="os2-accordion-heading"><h2 class="os2-accordion-heading-title mArticle" id="' . $baseclass . $counter . '">';
-    $html = preg_replace($pattern, $replacement, $html, 1);
-
-    // We replace the first </h3>-tag with </h2>.
-    $pattern = '/<\/h2>/';
-    $replacement = '</h2></div>';
+    $replacement = '<h2 class="mArticle" id="' . $baseclass . $counter . '">';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
     // We replace the first <h3>-tag with <h2 class="mArticleX">.
@@ -562,7 +557,7 @@ function _os2web_borger_dk_create_kernetekst_html($xml) {
 
     // And we replace the first <div>-tag with <div class="mArticleX">.
     $pattern = '/<div>/';
-    $replacement = '<div class="os2-accordion-body ' . $baseclass . $counter . ' mArticle">';
+    $replacement = '<div class="' . $baseclass . $counter . ' mArticle">';
     $html = preg_replace($pattern, $replacement, $html, 1);
 
     $output["$div_attr"] = $html;

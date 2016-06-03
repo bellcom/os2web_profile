@@ -22,7 +22,6 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   // Some of the fields are locked from from being changed.
   $locked_os2web_types = array(
     'field_os2web_borger_dk_borgerurl' => 1,
-    'field_os2web_borger_dk_kle' => 2,
     'field_os2web_borger_dk_formterm' => 2,
   );
 
@@ -351,14 +350,73 @@ function os2web_borger_dk_settings_form($form, $form_state) {
   );
   $form['os2web_borger_dk_settings_10']['os2web_borger_dk_import_english'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Allow article import duplicated.'),
-    '#description' => t('Allow to import aricle many times.'),
+    '#title' => t('Import english articles.'),
+    '#description' => t('Allow to import english articles.'),
     '#default_value' => variable_get('os2web_borger_dk_import_english', 0),
   );
    $form['os2web_borger_dk_settings_10']['os2web_borger_dk_english_webservice'] = array(
     '#type' => 'textfield',
     '#title' => t('Borger.dk English Webservice URL'),
     '#default_value' => variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
+  // CSS classes.
+  $form['os2web_borger_dk_settings_11'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Micro articles CSS classes'),
+    '#collapsible' => TRUE,
+    '#group' => 'vertical_settings_tab',
+  );
+  $form['os2web_borger_dk_settings_11']['os2web_borger_dk_css_outer_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Microarticle outer div class'),
+    '#default_value' => variable_get('os2web_borger_dk_css_outer_class', 'os2-accordion'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
+  $form['os2web_borger_dk_settings_11']['os2web_borger_dk_css_outer_heading_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Microarticle heading div class'),
+    '#description' => t('User space to seperate.'),
+    '#default_value' => variable_get('os2web_borger_dk_css_outer_heading_class', 'os2-accordion-heading'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
+    $form['os2web_borger_dk_settings_11']['os2web_borger_dk_css_h2_heading_class'] = array(
+    '#type' => 'textfield',
+    '#description' => t('User space to seperate.'),
+    '#title' => t('Microarticle h2 class'),
+    '#default_value' => variable_get('os2web_borger_dk_css_h2_heading_class', 'os2-accordion-heading-title'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
+  $form['os2web_borger_dk_settings_11']['os2web_borger_dk_css_microbody_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Microarticle bodytext div class'),
+    '#description' => t('User space to seperate.'),
+    '#default_value' => variable_get('os2web_borger_dk_css_microbody_class', 'os2-accordion-body'),
+    '#group' => 'vertical_settings_tab',
+    '#size' => 60,
+    '#maxlength' => 130,
+  );
+    // Field setting required.
+  $form['os2web_borger_dk_settings_12'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Field required settings'),
+    '#collapsible' => TRUE,
+    '#group' => 'vertical_settings_tab',
+  );
+  $form['os2web_borger_dk_settings_12']['os2web_borger_dk_field_required'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Required field settings'),
+    '#options' => $newdata,
+    '#description' => t('Check or uncheck to set fields required in node form'),
+    '#default_value' => variable_get('os2web_borger_dk_field_required', array()),
     '#group' => 'vertical_settings_tab',
     '#size' => 60,
     '#maxlength' => 130,

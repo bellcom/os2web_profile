@@ -137,15 +137,6 @@ function os2web_borger_dk_node_load($nodes, $types) {
 
 
 
-/**
- * Helper function for re-ordering arrays (needed by theme_registry_alter).
- */
-function _os2web_borger_dk_insert_after_first_element(&$a, $element) {
-  if (is_array($a)) {
-    $first_element = array_shift($a);
-    array_unshift($a, $first_element, $element);
-  }
-}
 
 /**
  * Implements hook_node_view().
@@ -348,7 +339,26 @@ function os2web_borger_dk_update_article($nid) {
   node_save($node);
 
 }
+/**
+ * Implements hook_panels_pane_content_alter().
+ */
+function os2web_borger_dk_panels_pane_content_alter(&$content, $pane, $args,  $contexts) {
+  // Microarticle in panel.
+  if ($content->subtype == 'node:body' && $content->content['#bundle'] == 'os2web_borger_dk_article') {
 
+    $node = $content->content['#object'];
+
+    if (isset($node->os2web_borger_dk_microarticle)) {
+      $field_microarticle_settings = $node->os2web_borger_dk_microarticle['field_microarticle_settings'];
+      $body_text = $node->body[LANGUAGE_NONE]['0']['value'];
+
+      $article_text = _os2web_borger_dk_microarticle_helper($body_text, $field_microarticle_settings, TRUE);
+            // Content body shows only visible microarticles/ part of body_text.
+            $content->content[0]['#markup'] = $article_text;
+    }
+
+  }
+}
 /**
  * Function _os2web_borger_dk_microarticle_helper().
  */
@@ -371,7 +381,7 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
     if (!$view && is_object($node)) {
       $field_microarticle_settings[$microno] = isset($node->$checkboxno) ? $node->$checkboxno : 1;
         // Body text (Article text).
-      $article_text .= "<div class=\"microArticle hest\" id=\"microArticle" . $microno . "\">" . "\r\n";
+      $article_text .= "<div class=\"microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
 
       $micro_h2 = "<h2 class=\"mArticle\" id=\"mArticle" . $microno . "\">";
       $micro_h2 .= $node->$h2_text_field . "</h2>";
@@ -384,6 +394,12 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
       $article_text .= "\r\n</div>\r\n\r\n";
     }
     elseif ($view) {
+      // Get CSS from admin setting form.
+      $outer_class = variable_get('os2web_borger_dk_css_outer_class', 'os2-accordion');
+      $heading_class = variable_get('os2web_borger_dk_css_outer_heading_class', 'os2-accordion-heading');
+      $h2_heading_class = variable_get('os2web_borger_dk_css_h2_heading_class', 'os2-accordion-heading-title');
+      $body_class = variable_get('os2web_borger_dk_css_microbody_class', 'os2-accordion-body');
+
       foreach ($item->getElementsByTagName('h2') as $articletitle) {
         $title = trim($articletitle->nodeValue);
       }
@@ -394,12 +410,12 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
       }
       if ($node[$microno] != 0) {
         // Body text (Article text).
-        $article_text .= "<div class=\"hest99 microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
+        $article_text .= "<div class=\"" . $outer_class . " microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
 
-        $micro_h2 = "<h2 class=\"mArticle\" id=\"mArticle" . $microno . "\">";
-        $micro_h2 .= $title . "</h2>";
+        $micro_h2 = "<div class=\"" . $heading_class . "\"><h2 class=\"" . $h2_heading_class . " mArticle\" id=\"mArticle" . $microno . "\">";
+        $micro_h2 .= $title . "</h2></div>";
 
-        $micro_content = "<div class=\"mArticle" . $microno . " mArticle\">";
+        $micro_content = "<div class=\"" . $body_class . " mArticle" . $microno . " mArticle\">";
         $micro_content .= $text . "\r\n    </div>";
 
         $article_text .= $micro_h2 . "\r\n";
@@ -419,7 +435,6 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
-
   return $article_text;
 }
 /**
