@@ -889,14 +889,8 @@ function ckeditor_profile_settings_compile($global_profile, $profile) {
     $settings['loadPlugins'] = ckeditor_plugins_render($conf['loadPlugins']);
 
     if (array_key_exists('media', $settings['loadPlugins']) && module_exists('media')) {
-      module_load_include('inc', 'media', 'includes/media.browser');
-      $javascript = media_browser_js();
-      foreach ($javascript as $key => $definitions) {
-        foreach ($definitions as $definition) {
-          $function = 'drupal_add_' . $key;
-          call_user_func_array($function, $definition);
-        }
-      }
+		drupal_add_library('media', 'media_browser');
+		drupal_add_library('media', 'media_browser_settings');
       drupal_add_js(drupal_get_path('module', 'ckeditor') . '/plugins/media/library.js', array('scope' => 'footer', 'weight' => -20));
     }
   }
@@ -1202,7 +1196,7 @@ function ckeditor_profile_settings_compile($global_profile, $profile) {
 
   // add custom stylesheet if configured
   // lets hope it exists but we'll leave that to the site admin
-  $query_string = '?' . substr(variable_get('css_js_query_string', '0'), 0, 1);
+  $query_string = '?' . variable_get('css_js_query_string', '0');
   $css_files = array();
   switch ($conf['css_mode']) {
     case 'theme':
@@ -1363,7 +1357,7 @@ function ckeditor_profile_settings_compile($global_profile, $profile) {
  *
  */
 function ckeditor_load_by_field($field, $format, $show_toggle = TRUE, $add_fields_to_toggle = FALSE) {
-  global $theme;
+  global $user, $theme;
   static $processed_ids = array();
   static $is_running = FALSE;
   $use_ckeditor = FALSE;
@@ -1474,6 +1468,14 @@ function ckeditor_load_by_field($field, $format, $show_toggle = TRUE, $add_field
     $editor_url_path = ckeditor_path('url');
 
     if (!$is_running) {
+      // By default sessions are not started automatically for anonymous users.
+      // Start one for editing content so that we had a consistent token that is used in XSS filter.
+      if (isset($field['#entity']) && !empty($field['#entity']->created) && empty($user->uid)) {
+        drupal_session_start();
+        $_SESSION['ckeditor_anonymous_user'] = true;
+        drupal_page_is_cacheable(FALSE);
+      }
+
       if (!$ckeditor_in_default_format) {
         $load_method = 'ckeditor_basic.js';
         $load_time_out = 0;
