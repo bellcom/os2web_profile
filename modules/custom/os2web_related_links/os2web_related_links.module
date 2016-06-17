@@ -358,29 +358,3 @@ function os2web_related_links_get_parent_menu_link($path) {
   return $plid;
 }
 
-
-/**
- * Helper: retrieve os2web_borger_dk_article links.
- */
-function os2web_related_links_get_borger_dk_links($item) {
-  $borger_dk_links = array();
-  $doc = new DOMDocument('1.0', 'UTF-8');
-  //$doc->strictErrorChecking = FALSE;
-  $doc->loadHTML('<?xml encoding="UTF-8">' . $item[0]['value']);
-
-  $xml = simplexml_import_dom($doc);
-  $count = 0;
-
-  $results = $xml->xpath("//ul");
-  foreach ($results as $ul) {
-    foreach ($ul->li as $li) {
-      $url = (string) $li->a->attributes()->href;
-      $title = (string) $li->a;
-      $borger_dk_links[] = array(
-        'url' => $url,
-        'title' => $title,
-      );
-    }
-  }
-  return $borger_dk_links;
-}

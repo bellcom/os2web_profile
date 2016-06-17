@@ -1128,3 +1128,124 @@ function os2web_borger_dk_help($path, $arg) {
       return t('Missing documentation.');
   }
 }
+
+/**
+ * Implements hook_block_info().
+ */
+function os2web_borger_dk_block_info() {
+  $blocks = array();
+
+  $blocks['os2web_borger_dk_legislati'] = array(
+    'info' => t('Lovgivning block'),
+  );
+  $blocks['os2web_borger_dk_recommend'] = array(
+    'info' => t('Recommended block'),
+  );
+
+  return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function os2web_borger_dk_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+
+    case 'os2web_borger_dk_legislati':
+      $block['subject'] = t('Lovgivning');
+      $block['content'] = _os2web_borger_dk_block_content('field_os2web_borger_dk_legislati');
+      break;
+    case 'os2web_borger_dk_recommend':
+      $block['subject'] = t('Recommended');
+      $block['content'] = _os2web_borger_dk_block_content('field_os2web_borger_dk_recommend');
+      break;
+
+  }
+  return $block;
+
+}
+function _os2web_borger_dk_block_content($field) {
+  $related_links = array();
+  $entity = FALSE;
+  $eid = arg(1);
+  $output = '';
+
+  if (is_numeric($eid)) {
+    $entity = node_load($eid);
+  }
+  else {
+    return $output;
+  }
+
+  if (is_object($entity)) {
+    if ($field_array = field_get_items('node', $entity, $field)) {
+      $related_links = os2web_related_links_get_borger_dk_links($field_array);
+
+    }
+  }
+    // 2. Get borger.dk recommended links.
+  if (isset($output) && $output) {
+    foreach ($output as $key => $link) {
+      $related_links[$entity->nid . '_' . $key] = array(
+        'url' => $link['url'],
+        'title' => $link['title'],
+        'class' => 'ext-link',
+      );
+    }
+  }
+  $output = os2web_borger_dk_get_links_make_markup($related_links);
+  return $output;
+}
+/**
+ * Helper: retrieve os2web_borger_dk_article links.
+ */
+function os2web_related_links_get_borger_dk_links($item) {
+  $borger_dk_links = array();
+  $doc = new DOMDocument('1.0', 'UTF-8');
+  //$doc->strictErrorChecking = FALSE;
+  $doc->loadHTML('<?xml encoding="UTF-8">' . $item[0]['value']);
+
+  $xml = simplexml_import_dom($doc);
+  $count = 0;
+
+  $results = $xml->xpath("//ul");
+  foreach ($results as $ul) {
+    foreach ($ul->li as $li) {
+      $url = (string) $li->a->attributes()->href;
+      $title = (string) $li->a;
+      $borger_dk_links[] = array(
+        'url' => $url,
+        'title' => $title,
+      );
+    }
+  }
+  return $borger_dk_links;
+}
+/**
+ * Make block links markup.
+ */
+function os2web_borger_dk_get_links_make_markup($related_links, $class = NULL) {
+  if (!isset($class)) {
+    $output = '<ul class="related-links">';
+  }
+  else {
+    $output = '';
+  }
+
+  foreach ($related_links as $key => $link) {
+    $output .= '<li>';
+    if (isset($link['url'])) {
+      $output .= l($link['title'], $link['url'], array('attributes' => array('class' => $link['class'])));
+    }
+    else {
+      $output .= l($link['title'], drupal_get_path_alias('node/' . $link['nid']), array('attributes' => array('class' => $link['class'])));
+    }
+    $output .= '</li>';
+
+  }
+  if (!isset($class)) {
+    $output .= '</ul>';
+  }
+
+  return $output;
+}
