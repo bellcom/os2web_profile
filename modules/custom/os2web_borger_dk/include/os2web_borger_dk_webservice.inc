@@ -544,7 +544,7 @@ function _os2web_borger_dk_create_kernetekst_html($xml) {
 
     $div_attr = $microarticle->attributes()->id;
     $search = '<div id="' . $div_attr . '">';
-    $replace = '<div class="microArticle" id="' . $div_attr . '">';
+    $replace = '<div class="microArticle" id="microArticle' . $counter . '">';
     $html = _os2web_borger_dk_create_html_from_xml($microarticle, $search, $replace);
 
     // We replace the first <h2>-tag with <h2 class="mArticleX">.

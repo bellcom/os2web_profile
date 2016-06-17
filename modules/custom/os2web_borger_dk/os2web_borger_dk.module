@@ -168,7 +168,6 @@ function os2web_borger_dk_node_view($node, $view_mode, $langcode) {
             $body_text = $node->body[LANGUAGE_NONE]['0']['value'];
 
             $article_text = _os2web_borger_dk_microarticle_helper($body_text, $field_microarticle_settings, TRUE);
-
             // Content body shows only visible microarticles/ part of body_text.
             $node->content[$type]['0']['#markup'] = $article_text;
           }
@@ -355,9 +354,8 @@ function os2web_borger_dk_panels_pane_content_alter(&$content, $pane, $args,  $c
 
       $article_text = _os2web_borger_dk_microarticle_helper($body_text, $field_microarticle_settings, TRUE);
             // Content body shows only visible microarticles/ part of body_text.
-            $content->content[0]['#markup'] = $article_text;
+      $content->content[0]['#markup'] = $article_text;
     }
-
   }
 }
 /**
@@ -409,7 +407,7 @@ function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE)
       foreach ($item->getElementsByTagName('div')->item(0)->childNodes as $articletext) {
         $text .= $doc->saveHTML($articletext);
       }
-      if ($node[$microno] != 0) {
+      if (($node && $node[$microno] != 0) || !$node) {
         // Body text (Article text).
         $article_text .= "<div class=\"" . $outer_class . " microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
 
