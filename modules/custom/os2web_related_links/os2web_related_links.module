@@ -226,7 +226,11 @@ function _os2web_term_block_content_selfservice_links() {
 
   if (!empty($links)) {
     $output = '<ul class="selvbetjenings-links">';
-    $output .= os2web_related_links_make_markup($links, 'selvbetjenings-links');
+    $output .= '<li class="underterm-links level-0"><a>Mest anvendte</a>';
+    $output .= '<ul class="underterm-links level-0">';
+    $output .= os2web_related_links_make_markup($links, 'underterm-links');
+    $output .= '</ul>';
+    $output .= '</li>';
 
     $output .= _os2web_term_block_get_children($tid, 0);
     $output .= '</ul>';
@@ -273,11 +277,12 @@ function os2web_related_links_get_selfservice_links($node = NULL, $term) {
       $selfservicelink = node_load($link['nid']);
       if ($selfservicelink) {
         $link_fields = field_get_items('node', $selfservicelink, 'field_spot_link');
+        $link_title = field_get_items('node', $selfservicelink, 'field_vist_navn');
         if (!empty($link_fields)) {
           $link_field = array_shift($link_fields);
           $selfservicelinks[$link['nid']] = array(
             'url' => $link_field['url'],
-            'title' => $link_field['title'],
+            'title' => $link_title ? $link_title[0]['value'] : $link_field['title'],
           );
         }
       }
