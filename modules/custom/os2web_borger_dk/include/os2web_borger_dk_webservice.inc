@@ -22,20 +22,27 @@ function _os2web_borger_dk_create_soap_client($webservice = 'GetAllSites', $serv
   if (is_soap_fault($result_article) && !$import_english) {
     // An error was encountered and we examine it more closely.
     $error = _os2web_borger_dk_translate_soap_fault(2, $result_article->faultcode, $result_article->faultstring);
-
     return $result_error['error'] = $error;
   }
 
   if ($import_english && is_soap_fault($result_article)) {
+    if (isset($service_parameters['url'])) {
+      $pos = strpos($service_parameters['url'], 'borger.dk/Pages');
+
+      if ($pos === FALSE) {
+        $error = _os2web_borger_dk_translate_soap_fault($webservice, $result_article->faultcode, $result_article->faultstring);
+        drupal_set_message($result_article->faultstring, 'error');
+        return $result_error['error'] = $error;
+      }
+    }
     $wsdl = variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
     $client = new SoapClient($wsdl, array('exceptions' => 0));
     $result_article = $client->$webservice($service_parameters);
     if (is_soap_fault($result_article)) {
-      $error = _os2web_borger_dk_translate_soap_fault(2, $result_article->faultcode, $result_article->faultstring);
+      $error = _os2web_borger_dk_translate_soap_fault($webservice, $result_article->faultcode, $result_article->faultstring);
       drupal_set_message($result_article->faultstring, 'error');
       return $result_error['error'] = $error;
     }
-
   }
 
   return $result_article;

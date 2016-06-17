@@ -267,10 +267,11 @@ function os2web_borger_dk_node_validate($node, $form, &$form_state) {
           $url = $url_text;
           $pos = strpos($url, 'borger.dk/Sider');
           $import_english = variable_get('os2web_borger_dk_import_english', 0);
+
           if ($pos === FALSE && !$import_english) {
             form_set_error('os2web_borger_dk_article_url_text', t('The Borger.dk-URL is not valid, please write a valid Borger.dk-URL.'));
           }
-          elseif ($import_english) {
+          elseif ($import_english && $pos === FALSE) {
             $pos = strpos($url, 'borger.dk/Pages');
             if ($pos === FALSE) {
               form_set_error('os2web_borger_dk_article_url_text', t('The Borger.dk-URL is not valid, please write a valid Borger.dk-URL.'));

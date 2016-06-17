@@ -346,6 +346,7 @@ function os2web_borger_dk_settings_form($form, $form_state) {
     '#type' => 'fieldset',
     '#title' => t('Import English articles'),
     '#collapsible' => TRUE,
+    '#description' => t('Title search import will be disabled when English article import is active.'),
     '#group' => 'vertical_settings_tab',
   );
   $form['os2web_borger_dk_settings_10']['os2web_borger_dk_import_english'] = array(
