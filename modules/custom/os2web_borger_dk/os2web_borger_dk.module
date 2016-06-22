@@ -1191,7 +1191,9 @@ function _os2web_borger_dk_block_content($field) {
       );
     }
   }
-  $output = os2web_borger_dk_get_links_make_markup($related_links);
+  if (!empty($related_links)) {
+    $output = os2web_borger_dk_get_links_make_markup($related_links);
+  }
   return $output;
 }
 /**
