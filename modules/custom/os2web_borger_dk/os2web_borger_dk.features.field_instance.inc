@@ -35,6 +35,13 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -43,12 +50,9 @@ function os2web_borger_dk_field_default_field_instances() {
       ),
       'teaser' => array(
         'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
-        'weight' => 0,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 2,
       ),
     ),
     'entity_type' => 'node',
@@ -120,6 +124,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 20,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 20,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -130,7 +140,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 20,
       ),
     ),
     'entity_type' => 'node',
@@ -167,11 +177,17 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 9,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 10,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 8,
       ),
     ),
     'entity_type' => 'node',
@@ -214,6 +230,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 17,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 17,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -224,7 +246,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 14,
       ),
     ),
     'entity_type' => 'node',
@@ -261,6 +283,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 16,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 16,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -271,7 +299,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 13,
       ),
     ),
     'entity_type' => 'node',
@@ -308,6 +336,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 13,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 13,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -318,7 +352,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 12,
       ),
     ),
     'entity_type' => 'node',
@@ -355,11 +389,17 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 14,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 14,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 9,
       ),
     ),
     'entity_type' => 'node',
@@ -399,11 +439,17 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 15,
       ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 15,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 15,
       ),
     ),
     'entity_type' => 'node',
@@ -442,11 +488,17 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 10,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 11,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 16,
       ),
     ),
     'entity_type' => 'node',
@@ -487,6 +539,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 18,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -497,7 +555,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 19,
       ),
     ),
     'entity_type' => 'node',
@@ -578,6 +636,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 6,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -588,7 +652,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 18,
       ),
     ),
     'entity_type' => 'node',
@@ -668,6 +732,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 19,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -678,7 +748,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 17,
       ),
     ),
     'entity_type' => 'node',
@@ -727,6 +797,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 9,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -734,10 +810,11 @@ function os2web_borger_dk_field_default_field_instances() {
         'weight' => 0,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'hidden',
+        'module' => 'text',
         'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'type' => 'text_plain',
+        'weight' => 1,
       ),
     ),
     'entity_type' => 'node',
@@ -793,7 +870,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 4,
+      'weight' => 5,
     ),
   );
 
@@ -820,6 +897,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 5,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -830,7 +913,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 11,
       ),
     ),
     'entity_type' => 'node',
@@ -910,13 +993,19 @@ function os2web_borger_dk_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 8,
+        'weight' => 7,
       ),
       'related_block' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 2,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -928,7 +1017,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 5,
       ),
     ),
     'entity_type' => 'node',
@@ -1009,6 +1098,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 8,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -1019,7 +1114,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 4,
       ),
     ),
     'entity_type' => 'node',
@@ -1104,6 +1199,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 3,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -1114,7 +1215,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 3,
       ),
     ),
     'entity_type' => 'node',
@@ -1195,6 +1296,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 7,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -1202,20 +1309,22 @@ function os2web_borger_dk_field_default_field_instances() {
         'weight' => 0,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'hidden',
+        'module' => 'text',
         'settings' => array(),
-        'type' => 'hidden',
+        'type' => 'text_default',
         'weight' => 0,
       ),
     ),
     'entity_type' => 'node',
     'field_name' => 'field_os2web_borger_dk_pre_text',
-    'label' => 'Pre-text',
+    'label' => 'Intro / Resume (maks 2 linier!)',
     'required' => 0,
     'settings' => array(
       'better_formats' => array(
         'allowed_formats' => array(
           'blokindhold' => 0,
+          'email' => 0,
           'filtered_html' => 'filtered_html',
           'full_html' => 'full_html',
           'plain_text' => 'plain_text',
@@ -1226,6 +1335,9 @@ function os2web_borger_dk_field_default_field_instances() {
           'formats' => array(
             'blokindhold' => array(
               'weight' => -7,
+            ),
+            'email' => array(
+              'weight' => 0,
             ),
             'filtered_html' => array(
               'weight' => -10,
@@ -1239,7 +1351,12 @@ function os2web_borger_dk_field_default_field_instances() {
           ),
         ),
       ),
-      'text_processing' => 1,
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -1249,7 +1366,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 5,
+      'weight' => 4,
     ),
   );
 
@@ -1268,16 +1385,21 @@ function os2web_borger_dk_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 6,
+        'type' => 'hidden',
+        'weight' => 8,
       ),
       'related_block' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 4,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -1289,7 +1411,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 6,
       ),
     ),
     'entity_type' => 'node',
@@ -1374,6 +1496,12 @@ function os2web_borger_dk_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 0,
       ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 12,
+      ),
       'spotbox' => array(
         'label' => 'above',
         'settings' => array(),
@@ -1384,7 +1512,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 7,
       ),
     ),
     'entity_type' => 'node',
@@ -1462,13 +1590,19 @@ function os2web_borger_dk_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 7,
+        'weight' => 6,
       ),
       'related_block' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 0,
+      ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 1,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -1480,7 +1614,7 @@ function os2web_borger_dk_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 10,
       ),
     ),
     'entity_type' => 'node',
@@ -1548,6 +1682,7 @@ function os2web_borger_dk_field_default_field_instances() {
   t('Byline');
   t('FORM Emneord');
   t('Header');
+  t('Intro / Resume (maks 2 linier!)');
   t('KL Emneord');
   t('Kontaktblok');
   t('Legislation');
@@ -1555,7 +1690,6 @@ function os2web_borger_dk_field_default_field_instances() {
   t('Portalkategori');
   t('Portalservice/self-service');
   t('Post-text');
-  t('Pre-text');
   t('Recommended');
   t('Selvbetjening');
   t('Shortlist');
