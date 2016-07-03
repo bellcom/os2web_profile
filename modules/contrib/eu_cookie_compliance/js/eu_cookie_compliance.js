@@ -66,7 +66,7 @@
       popup.prependTo("body");
       var height = popup.height();
       popup.show()
-        .attr({"class": "sliding-popup-top clearfix"})
+        .attr({"class": "sliding-popup-top"})
         .css({"top": -1 * height})
         .animate({top: 0}, Drupal.settings.eu_cookie_compliance.popup_delay);
     } else {
@@ -108,8 +108,9 @@
   }
 
   Drupal.eu_cookie_compliance.getCurrentStatus = function() {
-    // return Drupal.eu_cookie_compliance.getCookie('cookie-agreed');
-    return false;
+	name = 'cookie-agreed';
+	value = Drupal.eu_cookie_compliance.getCookie(name);
+	return value;
   }
 
   Drupal.eu_cookie_compliance.changeStatus = function(value) {
@@ -141,7 +142,7 @@
 
   Drupal.eu_cookie_compliance.setStatus = function(status) {
     var date = new Date();
-    date.setDate(date.getDate() + parseInt(Drupal.settings.eu_cookie_compliance.cookie_lifetime));
+    date.setDate(date.getDate() + 100);
     var cookie = "cookie-agreed=" + status + ";expires=" + date.toUTCString() + ";path=" + Drupal.settings.basePath;
     if(Drupal.settings.eu_cookie_compliance.domain) {
       cookie += ";domain="+Drupal.settings.eu_cookie_compliance.domain;
