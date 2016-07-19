@@ -315,13 +315,14 @@ function _os2web_borger_dk_autocomplete_form_load_js($element) {
           $(".form-item-os2web-borger-dk-article-title-text").show();
         }
         else {
+
           $(".form-item-os2web-borger-dk-article-url-text").show();
           $(".form-item-os2web-borger-dk-article-title-text").hide();
         }
 
         $("#edit-os2web-borger-dk-article-title-search").click(function() {
           var checked = $(this).attr("checked");
-          if (checked) {
+           if($(this).is(":checked")){
             $(".form-item-os2web-borger-dk-article-url-text").hide(500);
             $(".form-item-os2web-borger-dk-article-title-text").show(500);
           }
@@ -333,7 +334,7 @@ function _os2web_borger_dk_autocomplete_form_load_js($element) {
       }
     }
   })(jQuery);';
-  drupal_add_js($js, 'inline');
+  drupal_add_js($js, array('type'=>'inline', 'scope' => 'footer'));
 
   return $element;
 }
