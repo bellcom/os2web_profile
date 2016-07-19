@@ -12,37 +12,26 @@
  */
 function _os2web_borger_dk_create_soap_client($webservice = 'GetAllSites', $service_parameters = NULL) {
   $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
+  if (isset($service_parameters['url'])) {
+    $pos_en = strpos($service_parameters['url'], 'borger.dk/Pages');
+
+    if ($pos_en) {
+      $wsdl = variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
+    }
+  }
+  if (isset($service_parameters['language']) && $service_parameters['language'] == 'en') {
+    $wsdl = variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
+  }
+
   // We use a soap-client to fetch the specified article from Borger.dk.
   $client = new SoapClient($wsdl, array('exceptions' => 0));
   $result_article = $client->$webservice($service_parameters);
   $result_error = array();
 
-  $import_english = variable_get('os2web_borger_dk_import_english', 0);
-
-  if (is_soap_fault($result_article) && !$import_english) {
+  if (is_soap_fault($result_article)) {
     // An error was encountered and we examine it more closely.
     $error = _os2web_borger_dk_translate_soap_fault(2, $result_article->faultcode, $result_article->faultstring);
     return $result_error['error'] = $error;
-  }
-
-  if ($import_english && is_soap_fault($result_article)) {
-    if (isset($service_parameters['url'])) {
-      $pos = strpos($service_parameters['url'], 'borger.dk/Pages');
-
-      if ($pos === FALSE) {
-        $error = _os2web_borger_dk_translate_soap_fault($webservice, $result_article->faultcode, $result_article->faultstring);
-        drupal_set_message($result_article->faultstring, 'error');
-        return $result_error['error'] = $error;
-      }
-    }
-    $wsdl = variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
-    $client = new SoapClient($wsdl, array('exceptions' => 0));
-    $result_article = $client->$webservice($service_parameters);
-    if (is_soap_fault($result_article)) {
-      $error = _os2web_borger_dk_translate_soap_fault($webservice, $result_article->faultcode, $result_article->faultstring);
-      drupal_set_message($result_article->faultstring, 'error');
-      return $result_error['error'] = $error;
-    }
   }
 
   return $result_article;
@@ -252,9 +241,15 @@ function _os2web_borger_dk_GetArticleByUrl($borgerdk_url) {
   else {
     // If no errors was encountered we fetch the resulting ArticleID.
     $id2get = $result_list->GetArticleIDByUrlResult->ArticleID;
+    $la = 'da';
+    $pos_en = strpos($borgerdk_url, 'borger.dk/Pages');
+
+      if ($pos_en) {
+        $la = 'en';
+      }
 
     // Then we use the article-ID to fetch the actual Borger.dk-article.
-    $article = _os2web_borger_dk_GetArticleByID($id2get);
+    $article = _os2web_borger_dk_GetArticleByID($id2get, $la);
   }
 
   return $article;
@@ -263,7 +258,7 @@ function _os2web_borger_dk_GetArticleByUrl($borgerdk_url) {
 /**
  * Function _os2web_borger_dk_GetArticleByID().
  */
-function _os2web_borger_dk_GetArticleByID($borgerdk_id, $use_constraints = TRUE) {
+function _os2web_borger_dk_GetArticleByID($borgerdk_id, $la = 'da') {
   // Check the admin setting.
   $admin_municipality = variable_get('os2web_borger_dk_municipality_active');
   // This function uses the Borger.dk WebService
@@ -275,7 +270,7 @@ function _os2web_borger_dk_GetArticleByID($borgerdk_id, $use_constraints = TRUE)
     return $error;
   }
 
-  $array_get_article = array('articleID' => $borgerdk_id);
+  $array_get_article = array('articleID' => $borgerdk_id, 'language' => $la);
 
   // If municipality is set, then get article by id and municipality code.
   if ($admin_municipality != 0) {
