@@ -12,7 +12,6 @@ foreach ($result as $item) {
 $articles = array();
 $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
 $articles = _os2web_borger_dk_GetArticlesByIDs($article_id_list, NULL, $wsdl);
-error_log(__FILE__ . ' : ' . __LINE__ . ' : $articles : ' .  print_r($articles, 1));
 
 foreach ($articles as $article) {
   $external_id = $article['external_id'];
@@ -24,7 +23,8 @@ foreach ($articles as $article) {
     if (empty($article['no_updates'])) {
       // We only update articles that does not contain an error.
       if (empty($article['Exceptions']) && empty($article['error'])) {
-        _os2web_borger_dk_update_node_content($nid, $article);
+        $node = _os2web_borger_dk_update_node_content($nid, $article);
+        node_save($node);
       }
       if (!empty($article['Exceptions'])) {
         $any_webservice_errors = TRUE;
