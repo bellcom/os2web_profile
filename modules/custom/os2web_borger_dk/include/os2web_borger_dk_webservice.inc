@@ -13,9 +13,9 @@
 function _os2web_borger_dk_create_soap_client($webservice = 'GetAllSites', $service_parameters = NULL) {
   $wsdl = variable_get('os2web_borger_dk_webservice', 'https://www.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
   if (isset($service_parameters['url'])) {
-    $pos_en = strpos($service_parameters['url'], 'borger.dk/Pages');
+    $la = os2web_borger_dk_check_import_article_language_byURL($service_parameters['url']);
 
-    if ($pos_en) {
+    if ($la == 'en') {
       $wsdl = variable_get('os2web_borger_dk_english_webservice', 'https://lifeindenmark.borger.dk/_vti_bin/borger/ArticleExport.svc?wsdl');
     }
   }
@@ -75,14 +75,14 @@ function _os2web_borger_dk_GetArticleIDsBySiteID($site_id, $use_constraints = TR
 /**
  * Function _os2web_borger_dk_GetAllArticles().
  */
-function _os2web_borger_dk_GetAllArticles() {
+function _os2web_borger_dk_GetAllArticles($la = 'da') {
   // This function uses the Borger.dk Webservice
   // GetAllArticles in order to fetch a list of
   // availlable articles (by title).
   $errors = array();
 
   _os2web_borger_dk_check_webservice_constraints();
-  $result_list = _os2web_borger_dk_create_soap_client('GetAllArticles');
+  $result_list = _os2web_borger_dk_create_soap_client('GetAllArticles',array('language' => $la));
 
   if (is_array($result_article) && isset($result_article['error'])) {
     return $result_article;
@@ -121,7 +121,7 @@ function _os2web_borger_dk_GetAllArticles() {
 /**
  * Function _os2web_borger_dk_GetArticlesByIDs().
  */
-function _os2web_borger_dk_GetArticlesByIDs($borgerdk_ids = NULL, $updated_after = NULL) {
+function _os2web_borger_dk_GetArticlesByIDs($borgerdk_ids = NULL, $updated_after = NULL, $la = 'da') {
   // This function uses the Borger.dk WebService GetArticlesByIDs
   // in order to fetch a list of Borger.dk-articles by article-IDs
   // and an "updateAfter"-datestamp.
@@ -140,7 +140,7 @@ function _os2web_borger_dk_GetArticlesByIDs($borgerdk_ids = NULL, $updated_after
   if (empty($updated_after) && !empty($borgerdk_ids)) {
     // We have a specified list of articles to fetch.
     // Then we execute our webservice-request.
-    $result_list = _os2web_borger_dk_create_soap_client('GetArticlesByIDs', array('articleIDs' => $borgerdk_ids));
+    $result_list = _os2web_borger_dk_create_soap_client('GetArticlesByIDs', array('articleIDs' => $borgerdk_ids, 'language' => $la));
 
   }
   elseif (!empty($updated_after) && empty($borgerdk_ids)) {
@@ -157,6 +157,7 @@ function _os2web_borger_dk_GetArticlesByIDs($borgerdk_ids = NULL, $updated_after
     $parameters = array(
       'articleIDs' => $borgerdk_ids,
       'updatedAfter' => $updated_after,
+      'language' => $la,
     );
     $result_list = _os2web_borger_dk_create_soap_client('GetArticlesByIDs', $parameters);
 
@@ -241,13 +242,12 @@ function _os2web_borger_dk_GetArticleByUrl($borgerdk_url) {
   else {
     // If no errors was encountered we fetch the resulting ArticleID.
     $id2get = $result_list->GetArticleIDByUrlResult->ArticleID;
-    $la = 'da';
-    $pos_en = strpos($borgerdk_url, 'borger.dk/Pages');
 
-      if ($pos_en) {
-        $la = 'en';
-      }
+    $la = os2web_borger_dk_check_import_article_language_byURL($borgerdk_url);
 
+    if (!$la) {
+      $la = 'da';
+    }
     // Then we use the article-ID to fetch the actual Borger.dk-article.
     $article = _os2web_borger_dk_GetArticleByID($id2get, $la);
   }
