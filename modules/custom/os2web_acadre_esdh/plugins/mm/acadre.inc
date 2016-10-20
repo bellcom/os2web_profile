@@ -11,6 +11,7 @@ define('ACADRE_MM_PUB_FOCUS', FALSE);
 define('ACADRE_MM_ACCESS_OPEN', 1);
 define('ACADRE_MM_ACCESS_LUKKET', 2);
 define('ACADRE_MM_ACCESS_PERSON', 3);
+define('MM_REPUBLISH_SUBVERSION', TRUE);
 
 /**
  * Plugin definition with callbacks
@@ -178,6 +179,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
       'title' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='name']")),
       'meeting_id' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='sysid']")),
       'system_id' => $info['sysid'],
+      'path' => $real_path,
       'publication_id' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='sysid']")),
       'creation_date' => strtotime((string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='producedate']"))),
       'description' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='description']")),
