@@ -343,6 +343,7 @@ function os2web_esdh_provider_has_api($api) {
     }
     if (os2web_esdh_provider_supports($api, 'available')) {
       if (!os2web_esdh_provider_invoke($api, 'available')) {
+          watchdog('esdh provider', 'Could not inwoke API: %api', array('%api' => $api), WATCHDOG_ERROR);
         return FALSE;
       }
     }
