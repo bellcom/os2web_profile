@@ -42,6 +42,9 @@ function os2web_borger_dk_uninstall() {
   if (db_table_exists('os2web_borger_dk_article_titles')) {
     db_query('DROP TABLE {os2web_borger_dk_article_titles}');
   }
+  if (db_table_exists('os2web_borger_dk_article_titles_en')) {
+    db_query('DROP TABLE {os2web_borger_dk_article_titles_en}');
+  }
 }
 
 /**
@@ -197,6 +200,57 @@ function os2web_borger_dk_schema() {
         'length' => 255,
         'not null' => TRUE,
         'description' => 'Borger.dk-URL of the article (ie. Borger.dk article-URL).',
+      ),
+      'FORMFields' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'medium',
+        'description' => 'FORM Fields of the article item.',
+      ),
+      'PublishingDate' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Published date of the article item, as a Unix timestamp.',
+      ),
+      'LastUpdated' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Last updated of the article item, as a Unix timestamp.',
+      ),
+    ),
+    'primary key' => array('ArticleID'),
+    'indexes' => array(
+      'borger_dk_title_index' => array('ArticleTitle'),
+      'borger_dk_url_index' => array('ArticleUrl'),
+    ),
+  );
+
+  $schema['os2web_borger_dk_article_titles_en'] = array(
+    'description' => 'Table for storing a list of availlable article items, and articles imported from lifeindenmark.borger.dk.',
+    'fields' => array(
+      'ArticleID'  => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Primary Key: the node identifier for an article item.',
+      ),
+      'ArticleStatus' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Status of the article (ie. lifeindenmark.borger.dk article-status): 0 = Not imported, >0 = Node->nid, <0 = Deleted',
+      ),
+      'ArticleTitle'  => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Title of the lifeindenmark.borger.dk article.',
+      ),
+      'ArticleUrl'  => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Borger.dk-URL of the article (ie. lifeindenmark.borger.dk article-URL).',
       ),
       'FORMFields' => array(
         'type' => 'text',

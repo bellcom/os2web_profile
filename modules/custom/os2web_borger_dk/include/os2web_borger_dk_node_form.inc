@@ -16,8 +16,8 @@ function _os2web_borger_dk_autocomplete_callback($string = '') {
       ->condition('o.ArticleStatus', 0, '>=')
       ->condition('o.ArticleTitle', db_like($string) . '%', 'LIKE')
       ->range(0, 10);
-    $result = $query->execute();
 
+    $result = $query->execute();
     // Add matches to $matches.
     foreach ($result as $row) {
       if ($row->ArticleStatus > 0) {
@@ -26,7 +26,29 @@ function _os2web_borger_dk_autocomplete_callback($string = '') {
       else {
         $row_name = $row->ArticleTitle . ' (ID:' . $row->ArticleID . ')';
       }
+      $row_name .= ' [DA]';
       $matches[$row_name] = check_plain($row_name);
+    }
+    if ($import_english = variable_get('os2web_borger_dk_import_english', 0)) {
+      // Add english title.
+      $query_2 = db_select('os2web_borger_dk_article_titles_en', 'o')
+        ->fields('o', array('ArticleID', 'ArticleStatus', 'ArticleTitle'))
+        ->condition('o.ArticleStatus', 0, '>=')
+        ->condition('o.ArticleTitle', db_like($string) . '%', 'LIKE')
+        ->range(0, 10);
+
+      $result_2 = $query_2->execute();
+      foreach ($result_2 as $row) {
+
+        if ($row->ArticleStatus > 0) {
+          $row_name = $row->ArticleTitle . ' [*](ID:' . $row->ArticleID . ')';
+        }
+        else {
+          $row_name = $row->ArticleTitle . ' (ID:' . $row->ArticleID . ')';
+        }
+        $row_name .= ' [EN]';
+        $matches[$row_name] = check_plain($row_name);
+      }
     }
   }
   drupal_json_output($matches);
@@ -65,7 +87,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
         $initial_values = array();
 
         $data['title'] = array('label' => 'Title');
-        $visible_items = (isset($form['#node']->os2web_borger_dk_article['field_settings'])) ? $form['#node']->os2web_borger_dk_article['field_settings'] : NULL;
+        $visible_items = (isset($form['#node']->os2web_borger_dk_article['field_settings'])) ? $form['#node']->os2web_borger_dk_article['field_settings'] : array();
         $admin_last_settings = variable_get('os2web_borger_dk_admin_last_settings');
 
         foreach ($data as $type => $item) {
@@ -86,12 +108,6 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
                 if ($admin_last_settings[$type] != $admin_display_fields[$type]
                     && $visible_items[$type] == $admin_last_settings[$type]) {
                   $initial_values[] = $type;
-                }
-                else {
-                  if ($admin_last_settings[$type] != $admin_display_fields[$type]
-                      && $visible_items[$type] == $admin_last_settings[$type]) {
-                    $initial_values[] = $type;
-                  }
                 }
               }
             }
@@ -125,6 +141,7 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
             '#submit' => array('os2web_borger_dk_sync_submit'),
           );
         }
+
         $form['#after_build'][] = 'os2web_borger_dk_after_build';
 
         // Micro articles.
@@ -179,13 +196,13 @@ function os2web_borger_dk_form_alter(&$form, &$form_state, $form_id) {
               );
               // If body (article text) visible/editable option is checked
               // by ADMIN and EDITOR, then forms disabled is false.
-              if ($visible_items['body'] === "body" && $admin_display_fields['body'] === "body" && $value_editable['body'] === "body") {
+              if (empty($visible_items) || ($visible_items['body'] === "body" && $admin_display_fields['body'] === "body" && $value_editable['body'] === "body") || empty($value_editable)) {
+
                 $form['os2web_borger_dk_micro_settings_' . $microno][$text_area] = array(
                   // '#title' => t('Microarticle ' . $microno),
                   '#type' => 'textarea',
                   '#default_value' => trim($text),
                 );
-
                 $form['os2web_borger_dk_micro_settings_' . $microno][$checkboxno] = array(
                   '#type' => 'checkbox',
                   '#title' => t('Visible'),
@@ -267,8 +284,8 @@ function os2web_borger_dk_autocomplete_form(&$form, $form_state) {
     '#size' => 60,
     '#maxlength' => 255,
   );
-  $import_english = variable_get('os2web_borger_dk_import_english', 0);
-  if ($titles_autocomplete && !$import_english) {
+
+  if ($titles_autocomplete) {
     $form['os2web_borger_dk_article_import']['os2web_borger_dk_article_title_text'] = array(
       '#type' => 'textfield',
       '#title' => t('Borger.dk Article title'),
@@ -315,13 +332,14 @@ function _os2web_borger_dk_autocomplete_form_load_js($element) {
           $(".form-item-os2web-borger-dk-article-title-text").show();
         }
         else {
+
           $(".form-item-os2web-borger-dk-article-url-text").show();
           $(".form-item-os2web-borger-dk-article-title-text").hide();
         }
 
         $("#edit-os2web-borger-dk-article-title-search").click(function() {
           var checked = $(this).attr("checked");
-          if (checked) {
+           if($(this).is(":checked")){
             $(".form-item-os2web-borger-dk-article-url-text").hide(500);
             $(".form-item-os2web-borger-dk-article-title-text").show(500);
           }
@@ -333,7 +351,7 @@ function _os2web_borger_dk_autocomplete_form_load_js($element) {
       }
     }
   })(jQuery);';
-  drupal_add_js($js, 'inline');
+  drupal_add_js($js, array('type'=>'inline', 'scope' => 'footer'));
 
   return $element;
 }

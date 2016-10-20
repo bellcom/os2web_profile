@@ -119,12 +119,21 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
         $aid = -1;
         // This preg_match() looks for the last pattern like [33334]
         // and if found extracts the numeric portion.
-        $result = preg_match('/\(ID:([0-9]+)\)$/', $borger_dk_title, $matches);
+        $result = preg_match('/\(ID:([0-9]+)\)/', $borger_dk_title, $matches);
+        $result_la = preg_match('/\[DA\]$/', $borger_dk_title, $matches_la);
+        if ($result_la > 0) {
+          $table = 'os2web_borger_dk_article_titles';
+          $la = 'da';
+        }
+        else {
+          $table = 'os2web_borger_dk_article_titles_en';
+          $la = 'en';
+        }
         if ($result > 0) {
           // If $result is nonzero, we found a match and can use
           // it as the index into $matches.
           $aid = $matches[$result];
-          $sql = "SELECT `ArticleID`, `ArticleStatus` FROM {os2web_borger_dk_article_titles} WHERE `ArticleID` = " . $aid . " LIMIT 1";
+          $sql = "SELECT `ArticleID`, `ArticleStatus` FROM {" . $table . "} WHERE `ArticleID` = " . $aid . " LIMIT 1";
           $data = db_query($sql)->fetchObject();
           if ($data->ArticleStatus < 0) {
             // This article is no longer availlable and we tell the user so.
@@ -157,10 +166,11 @@ function os2web_borger_dk_node_submit(&$node, $form, &$form_state) {
         }
         if (isset($aid) && $aid >= 0) {
           // We have not imported this article before, and we do so now.
-          $article = _os2web_borger_dk_GetArticleByID($aid);
+          $article = _os2web_borger_dk_GetArticleByID($aid, $la);
         }
         else {
-          $borger_dk_title = preg_replace('/ \(ID:([0-9]+)\)$/', '', $borger_dk_title);
+
+          $borger_dk_title = preg_replace('/ \(ID:([0-9]+)\)/', '', $borger_dk_title);
           drupal_set_message(t('Could not find any Borger.dk article with title "!title"', array(
             '!title' => $borger_dk_title)), 'warning');
           drupal_goto('node/add/os2web-borger-dk-article');
