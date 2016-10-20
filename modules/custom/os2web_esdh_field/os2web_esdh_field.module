@@ -17,13 +17,17 @@ function os2web_esdh_field_field_info() {
   return array(
     'os2web_esdh_field_case_ident' => array(
       'label' => t('ESDH Case'),
-      'description' => t('Sags-id skal være på formen år/nummer eller år-nummer. Kun én værdi er tilladte.'),
+      'description' => t(
+        'Sags-id skal være på formen år/nummer eller år-nummer. Kun én værdi er tilladte.'
+      ),
       'default_widget' => 'os2web_esdh_field_case_ident_wid',
       'default_formatter' => 'os2web_esdh_field_case_ident_for',
     ),
     'os2web_esdh_field_doc_ident' => array(
       'label' => t('ESDH Document'),
-      'description' => t('Dokument-id skal være på formen nummer/år eller nummer-år. Flere dokumenter skal være adskildt af , (komma).'),
+      'description' => t(
+        'Dokument-id skal være på formen nummer/år eller nummer-år. Flere dokumenter skal være adskildt af , (komma).'
+      ),
       'default_widget' => 'os2web_esdh_field_doc_ident_wid',
       'default_formatter' => 'os2web_esdh_field_doc_ident_for',
     ),
@@ -66,12 +70,21 @@ function os2web_esdh_field_field_widget_info() {
 /**
  * Implements hook_field_widget_form().
  */
-function os2web_esdh_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+function os2web_esdh_field_field_widget_form(
+  &$form,
+  &$form_state,
+  $field,
+  $instance,
+  $langcode,
+  $items,
+  $delta,
+  $element
+) {
   $field_name = $field['field_name'];
   $field_type = $field['type'];
   $default = '';
   if (isset($form_state['node']->{$field_name}[$langcode][$delta][$field_type])) {
-    $default = ($form_state['node']->{$field_name}[$langcode][$delta][$field_type])? : 0;
+    $default = ($form_state['node']->{$field_name}[$langcode][$delta][$field_type]) ?: 0;
   }
   switch ($instance['widget']['type']) {
     case 'os2web_esdh_field_case_ident_wid':
@@ -117,7 +130,15 @@ function os2web_esdh_field_field_is_empty($item, $field) {
 /**
  * Implements hook_field_validate().
  */
-function os2web_esdh_field_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+function os2web_esdh_field_field_validate(
+  $entity_type,
+  $entity,
+  $field,
+  $instance,
+  $langcode,
+  $items,
+  &$errors
+) {
   foreach ($items as $delta => $item) {
 
     // Validate all esdh case fields
@@ -130,7 +151,10 @@ function os2web_esdh_field_field_validate($entity_type, $entity, $field, $instan
         if (!$valid && ($value != '')) {
           $errors[$field['field_name']][$langcode][$delta][] = array(
             'error' => 'Ugyldig fremstilling af sags-id. Sags-id skal være på formen år/nummer eller år-nummer. Flere sager skal være adskilt af , (komma).',
-            'message' => t('%name: illegal value.', array('%name' => $instance['label'])),
+            'message' => t(
+              '%name: illegal value.',
+              array('%name' => $instance['label'])
+            ),
           );
         }
       }
@@ -146,7 +170,10 @@ function os2web_esdh_field_field_validate($entity_type, $entity, $field, $instan
         if (!$valid && ($docid != '')) {
           $errors[$field['field_name']][$langcode][$delta][] = array(
             'error' => 'Ugyldig fremstilling af dokument-id. Dokument-id skal være på formen nummer/år eller nummer-år. Flere dokumenter skal være adskildt af , (komma).',
-            'message' => t('%name: illegal value.', array('%name' => $instance['label'])),
+            'message' => t(
+              '%name: illegal value.',
+              array('%name' => $instance['label'])
+            ),
           );
         }
       }
@@ -157,7 +184,15 @@ function os2web_esdh_field_field_validate($entity_type, $entity, $field, $instan
 /**
  * Implements hook_field_formatter_view().
  */
-function os2web_esdh_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function os2web_esdh_field_field_formatter_view(
+  $entity_type,
+  $entity,
+  $field,
+  $instance,
+  $langcode,
+  $items,
+  $display
+) {
   $element = array();
   switch ($display['type']) {
     case 'os2web_esdh_field_case_ident_for':
@@ -169,7 +204,10 @@ function os2web_esdh_field_field_formatter_view($entity_type, $entity, $field, $
           foreach ($ids as $id) {
             $cases[] = trim($id);
           }
-          $element[$delta]['#markup'] = '<div class="fullcaserender">' . theme('os2web_esdh_case', array('id' => $cases)) . '</div>';
+          $element[$delta]['#markup'] = '<div class="fullcaserender">' . theme(
+              'os2web_esdh_case',
+              array('id' => $cases)
+            ) . '</div>';
         }
       }
       break;
@@ -182,7 +220,10 @@ function os2web_esdh_field_field_formatter_view($entity_type, $entity, $field, $
           foreach ($ids as $id) {
             $docs[] = trim($id);
           }
-          $element[$delta]['#markup'] = '<div class="documenttable">' . theme('os2web_esdh_document', array('id' => $docs)) . '</div>';
+          $element[$delta]['#markup'] = '<div class="documenttable">' . theme(
+              'os2web_esdh_document',
+              array('id' => $docs)
+            ) . '</div>';
         }
       }
       break;
@@ -235,9 +276,15 @@ function theme_os2web_esdh_case($vars) {
       // Ignore hidden cases.
       continue;
     }
-    $docids = array_merge($docids, os2web_esdh_provider_invoke('cm', 'get_case_docs', $id));
+    $docids = array_merge(
+      $docids,
+      os2web_esdh_provider_invoke('cm', 'get_case_docs', $id)
+    );
   }
-  $html = theme('os2web_esdh_document', array('id' => $docids, 'iscase' => TRUE));
+  $html = theme(
+    'os2web_esdh_document',
+    array('id' => $docids, 'iscase' => TRUE)
+  );
   return $html;
 }
 
@@ -249,10 +296,13 @@ function theme_os2web_esdh_document($vars) {
   if (!function_exists('os2web_esdh_provider_has_api')) {
     return '';
   }
-
+//HEST
   // Check for correct api and required functions are implemented.
-  if (!os2web_esdh_provider_has_api('cm')) {
-    drupal_set_message(t('Error in document lookup API. Check status.'), 'error');
+  if (!os2web_esdh_provider_has_api('cp')) {
+    drupal_set_message(
+      t('Error in document lookup API. Check status.'),
+      'error'
+    );
     return '';
   }
   $id = $vars['id'];
@@ -262,12 +312,22 @@ function theme_os2web_esdh_document($vars) {
   $html = '';
   $rows = array();
   foreach ($id as $docid) {
-    $doc = os2web_esdh_provider_invoke('cm', 'get_document', $docid);
+    $doc = os2web_esdh_provider_invoke('cp', 'get_document', $docid);
     if (_os2web_esdh_field_doc_access($docid)) {
       // Only show public documents.
-      if (($doc !== FALSE) && _os2web_esdh_field_case_access($doc['case_reference'])) {
+      if (($doc !== FALSE) && _os2web_esdh_field_case_access(
+          $doc['case_reference']
+        )
+      ) {
         $rows[] = array(
-          l($doc['title'], os2web_esdh_provider_invoke('cm', 'get_document_file', $docid)) . '<span class="documentdate">' . format_date(strtotime($doc['last_update']), 'custom', 'd/m/Y') . '</span>',
+          l(
+            $doc['title'],
+            os2web_esdh_provider_invoke('cp', 'get_document_file', $docid)
+          ) . '<span class="documentdate">' . format_date(
+            strtotime($doc['last_update']),
+            'custom',
+            'd/m/Y'
+          ) . '</span>',
         );
       }
     }
@@ -281,6 +341,7 @@ function theme_os2web_esdh_document($vars) {
   $html .= theme('table', array('rows' => $rows));
   return $html;
 }
+
 /**
  * Checks access conditions for a case.
  *
@@ -361,7 +422,9 @@ function _os2web_esdh_field_array_compare(array $a1, array $a2) {
 function os2web_esdh_field_os2web_help($sections) {
 
   // Fields.
-  $sections['fields'] = t('<p><b>Link to cases and documents:</b> Many contenttypes has ability to link to cases and documents in the ESDH case system. When pages gets linked to cases and documents, links to them will automatically gets generated at the bottom of the page.</p>');
+  $sections['fields'] = t(
+    '<p><b>Link to cases and documents:</b> Many contenttypes has ability to link to cases and documents in the ESDH case system. When pages gets linked to cases and documents, links to them will automatically gets generated at the bottom of the page.</p>'
+  );
 
   return $sections;
 }
