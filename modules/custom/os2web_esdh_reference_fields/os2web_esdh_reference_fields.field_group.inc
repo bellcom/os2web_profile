@@ -23,9 +23,9 @@ function os2web_esdh_reference_fields_field_group_info() {
     'label' => 'Sager og dokumenter',
     'weight' => '6',
     'children' => array(
-      0 => 'field_os2web_base_field_case',
-      1 => 'field_os2web_base_field_doc',
-      2 => 'field_os2web_base_field_casesort',
+      0 => 'field_os2web_base_field_doc',
+      1 => 'field_os2web_base_case_ref',
+      2 => 'field_os2web_base_doc_ref',
     ),
     'format_type' => 'fieldset',
     'format_settings' => array(
