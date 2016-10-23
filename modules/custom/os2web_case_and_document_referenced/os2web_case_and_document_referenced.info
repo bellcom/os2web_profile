@@ -1,0 +1,17 @@
+name = OS2web case and document - referenced
+core = 7.x
+package = OS2Web - ESDH
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = os2web_esdh_reference_fields
+dependencies[] = views
+dependencies[] = views_content
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[field_base][] = field_os2web_base_case_ref
+features[field_base][] = field_os2web_base_doc_ref
+features[field_instance][] = field_collection_item-field_os2web_paragraphs-field_os2web_base_case_ref
+features[field_instance][] = field_collection_item-field_os2web_paragraphs-field_os2web_base_doc_ref
+features[views_view][] = os2web_acadre_document_displayer
+features_exclude[dependencies][ctools] = ctools
+project path = profiles/os2web/modules/custom

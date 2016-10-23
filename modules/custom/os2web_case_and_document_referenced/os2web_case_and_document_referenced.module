@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the OS2web case and document - referenced feature.
+ */
+
+include_once 'os2web_case_and_document_referenced.features.inc';
