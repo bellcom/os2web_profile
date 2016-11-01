@@ -15,6 +15,12 @@ $plugin = array(
  * This functions handles a request on the webservice API.
  */
 function os2web_acadre_esdh_cp_handle_request() {
+  if (!(isset($_SERVER['PHP_AUTH_PW']) && isset($_SERVER['PHP_AUTH_USER'])
+    && $_SERVER['PHP_AUTH_PW']==variable_get('os2web_cp_basic_auth_psw') &&  $_SERVER['PHP_AUTH_USER']==variable_get('os2web_cp_basic_auth_username'))) {
+    header('HTTP/1.0 403 Forbidden');
+    die('You are not allowed to access.');
+  }
+
   module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/ArpService.class');
   if (isset($_GET['wsdl'])) {
     TraenPublishingDestinationSystemService::getWSDL($_GET['wsdl']);

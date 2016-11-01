@@ -117,6 +117,24 @@ function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$f
     '#title' => t('URL for Adlib service endpoint'),
     '#description' => t('URL to the webservice endpoint that runs the Adlib service.'),
   );
+  if (os2web_esdh_provider_has_api('cp')) {
+    $form['os2web_cp_config_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Acadre ESDH Case Pushing backend configuration'),
+    );
+    $form['os2web_cp_config_group']['os2web_cp_basic_auth_username'] = array(
+      '#type' => 'textfield',
+      '#default_value' => variable_get('os2web_cp_basic_auth_username', ''),
+      '#title' => t('Username'),
+      '#description' => t('Username for access to the webservice'),
+    );
+    $form['os2web_cp_config_group']['os2web_cp_basic_auth_psw'] = array(
+      '#type' => 'textfield',
+      '#default_value' => variable_get('os2web_cp_basic_auth_psw', ''),
+      '#title' => t('Password'),
+      '#description' => t('Password for access to the webservice'),
+    );
+  }
 }
 
 /**
