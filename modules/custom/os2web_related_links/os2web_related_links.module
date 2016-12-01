@@ -345,6 +345,12 @@ function os2web_related_links_get_selfservice_links($node = NULL, $term) {
             'title' => $link_title ? $link_title[0]['value'] : $link_field['title'],
           );
         }
+        elseif ($document_link) {
+          $selfservicelinks[$link['nid']] = array(
+            'url' => $document_link,
+            'title' => $link_title[0]['value'],
+          );
+        }
       }
     }
   }
