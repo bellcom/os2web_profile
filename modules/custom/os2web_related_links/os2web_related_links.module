@@ -77,6 +77,14 @@ function _os2web_related_links_block_content($entity_type = 'node') {
   }
   $related_links = os2web_related_links_get_links($entity, $entity_type);
 
+  if ($entity_type == 'node' && $entity->type == 'borger_dk_article' && module_exists('bellcom_borgerdk_migrate')) {
+    $links_from_article = bellcom_borgerdk_migrate_get_related_links($entity);
+    if (is_array($related_links)) {
+      $related_links = array_merge($related_links, $links_from_article);
+    }
+    else $related_links = $links_from_article;
+  }
+
   if (!empty($related_links)) {
     $output = os2web_related_links_make_markup($related_links);
   }
@@ -91,6 +99,14 @@ function _os2web_related_links_block_content_selfservice() {
     $entity = node_load($eid);
   }
   $links = os2web_related_links_get_selfservice_links($entity);
+
+  if ($entity->type == 'borger_dk_article' && module_exists('bellcom_borgerdk_migrate')) {
+    $links_from_article = bellcom_borgerdk_migrate_get_selfservice_links($entity);
+    if (is_array($links)) {
+      $links = array_merge($links, $links_from_article);
+    }
+    else $links = $links_from_article;
+  }
 
   if (!empty($links)) {
     $output = os2web_related_links_make_markup($links);
