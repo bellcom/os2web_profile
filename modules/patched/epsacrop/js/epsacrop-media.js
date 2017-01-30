@@ -23,12 +23,10 @@ Drupal.behaviors.EPSACropMediaElement = {
       // When someone clicks the link to manage EPSA crops
       epsaButton.bind('click', function (e) {
         e.preventDefault();
-        var elem = $(this).parents('.media-widget');
-        // Handle media widgets with an unlimited cardinality.
-        if ($(this).parent('td').length === 1) {
-          elem = $(this).parents('tr').find('.media-widget');
-        }
-        var fileInfo = epsaDialogSettings[elem.attr('id')+'-upload'];
+        var fileInfo = epsaDialogSettings[$(this).attr('data-parentid')];
+        console.log($(this));
+        console.log(fileInfo);
+
         var fid = fidField.val();
         if(!fileInfo.fid || fileInfo.fid != fid) {
           //if no file info or file has been replaced, get if via ajax using the fid
