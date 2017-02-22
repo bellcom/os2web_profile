@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Implements hook_ckeditor_plugin().
+ */
+function ckeditor_a11ychecker_ckeditor_plugin() {
+  return array(
+    'a11ychecker' => array(
+      'name' => 'a11ychecker',
+      'desc' => t('CKEditor Accessibility Checker'),
+      'path' => libraries_get_path('ckeditor/plugins/a11ychecker', TRUE) . '/',
+      'buttons' => array(
+        'A11ychecker' => array(
+          'icon' => 'icons/a11ychecker.png',
+          'label' => t('Accessibility Checker'),
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function ckeditor_a11ychecker_libraries_info() {
+  return array(
+    'a11ychecker' => array(
+      'name' => 'CKEditor Accessibility Checker',
+      'vendor url' => 'http://ckeditor.com/addon/a11ychecker',
+      'download url' => 'http://ckeditor.com/addon/a11ychecker',
+    ),
+  );
+}
