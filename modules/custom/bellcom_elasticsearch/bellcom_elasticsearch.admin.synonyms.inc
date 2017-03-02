@@ -128,20 +128,20 @@ function bellcom_elasticsearch_synonyms_index_submit($form, &$form_state) {
           if ($duplicate_plain_list) {
             bellcom_elasticsearch_api_add_analyzer_as_plaintext($client, $index_name, $data);
           }
+          bellcom_elasticsearch_api_index_open($client, $index_name);
         } catch (Exception $e) {
           drupal_set_message(t('Error while updating index: ') . $e->getMessage(), 'warning');
           watchdog('bellcom_elasticsearch', $e->getMessage(), WATCHDOG_WARNING);
-        } finally {
           bellcom_elasticsearch_api_index_open($client, $index_name);
         }
       } else {
         try {
           bellcom_elasticsearch_api_index_close($client, $index_name);
           bellcom_elasticsearch_api_add_analyzer_as_file($client, $index_name, '');
+          bellcom_elasticsearch_api_index_open($client, $index_name);
         } catch (Exception $e) {
           drupal_set_message(t('Error while updating index: ') . $e->getMessage(), 'warning');
           watchdog('bellcom_elasticsearch', $e->getMessage(), WATCHDOG_WARNING);
-        } finally {
           bellcom_elasticsearch_api_index_open($client, $index_name);
         }
       }
