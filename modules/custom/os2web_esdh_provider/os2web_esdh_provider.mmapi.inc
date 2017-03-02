@@ -733,26 +733,18 @@ function _os2web_esdh_provider_similar_file_exists($filename) {
   if (file_exists($filename)) {
     return $filename;
   }
-
   $dir = dirname($filename);
   $file = _os2web_esdh_provider_glob($dir, $filename);
-  if ($file = _os2web_esdh_provider_glob($dir, $filename))
+  if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
     return $file;
+  }
   //if file not found try to convert filenames into UTF-8
   else if (shell_exec('which convmv')) {
     shell_exec('convmv -r -f ISO-8859-1 -t UTF-8 ' . $dir . '/* --notest');
-    if ($file = _os2web_esdh_provider_glob($dir, $filename))
-      return $file;
-}
-
-  /*$files = glob($dir . '/*');
-  $lcase_filename = strtolower($filename);
-  foreach ($files as $file) {
-    if (strtolower($file) == $lcase_filename) {
+    if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
       return $file;
     }
-  }*/
- // return  '/var/www/test.fredericia.dk/public_html/sites/default/files/acadre/Files_1790_1897877/16-3585_v1_F?rregistrering Falstersgade 9.pdf.PDF';
+  }
   return FALSE;
 }
 
@@ -775,7 +767,7 @@ function _os2web_esdh_provider_glob($dir, $filename) {
       return $file;
     }
   }
-  return false;
+  return FALSE;
 }
 
 /**
