@@ -87,6 +87,16 @@ function os2web_contact_block_view($delta = '') {
   return $block;
 }
 
+function os2web_contact_node_view($node, $view_mode, $langcode) {
+  if ($node->type == 'os2web_contact_contact') {
+    $node->content['field_os2web_contact_field_dept'] = field_view_field('node', $node, 'field_os2web_contact_field_dept', array(
+      'label'=>'hidden'));
+    $node->content['field_os2web_contact_field_info'] = field_view_field('node', $node, 'field_os2web_contact_field_info', array(
+      'label'=>'hidden'));
+  }
+}
+
+
 /**
  * Implements hook_os2web_help().
  */
