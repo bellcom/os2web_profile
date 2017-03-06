@@ -138,7 +138,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     os2web_esdh_provider_log('Importing meeting with ' . count($meeting['items']) . ' bullet points.');
     watchdog('acadre MM', '[XML_ID: !id] Start import agenda !meeting_sub_id with !number bullets, force: !force',
         array('!id' => $PROCESSING_MEETING_ID, '!meeting_sub_id' => $meeting['meeting_sub_id'], '!number' => count($meeting['items']), '!force' => intval($force)), WATCHDOG_DEBUG);
- 
+
     // Meeting already exist.
     // Either update, republish, delete or skip.
     if ($nid) {
@@ -170,7 +170,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
           $republish = TRUE;
           $reason = 'NEW REFERAT VERSION';
       }
-     
+
       // Republish.
       if ($republish) {
         watchdog('acadre MM', '[XML_ID: !id] Republishing into !nid. Reason: !reason', array('!id' => $PROCESSING_MEETING_ID, '!nid' => $nid, '!reason' => $reason), WATCHDOG_INFO);
@@ -280,9 +280,9 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     if (module_exists('os2dagsorden_esdh_provider')){
       os2dagsorden_esdh_provider_committee_add_subid($committee_term, $meeting['committee_id']);
     }
-    
+
     os2web_esdh_provider_index_meeting_update_committee_tid($meeting_id['id'], $meeting['meeting_sub_id'], $committee_term->tid);
-     
+
     $node->field_os2web_meetings_location[LANGUAGE_NONE][0]['tid'] = _acadre_esdh_import_term($meeting['location'], 'os2web_meetings_tax_location')->tid;
     // Add QBrick info @FIXME This should be in a node_save hook in qbrick
     // module.
@@ -368,7 +368,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
  *   List of imported node ids
  */
 function _os2web_esdh_provider_import_items($items) {
-    
+
   global $PROCESSING_MEETING_ID, $PROCESSING_BP;
 
   $nids = array();
@@ -424,7 +424,7 @@ function _os2web_esdh_provider_import_items($items) {
            // watchdog('acadre MM', 'There was an error importing file %uri ', array('%uri' => $enclosure['uri']), WATCHDOG_ERROR);
            watchdog('acadre MM', '[XML_ID: !id] [BP: !sysid] There was an error importing file !uri ',
               array('!id' => $PROCESSING_MEETING_ID, '!sysid' => $PROCESSING_BP, '!uri' => $enclosure['uri']), WATCHDOG_ERROR);
-           
+
           }
         }
       }
@@ -448,7 +448,7 @@ function _os2web_esdh_provider_import_items($items) {
  *   List of imported node ids
  */
 function _os2web_esdh_provider_import_bullets($bullets) {
-    
+
   global $PROCESSING_MEETING_ID, $PROCESSING_BP;
 
   // Since we need to run this often,
@@ -526,6 +526,7 @@ function _os2web_esdh_provider_import_file($file_meta) {
     // Completely unprocessed file.
     $uri_old = $uri_in;
     $uri_in = _os2web_esdh_provider_similar_file_exists(drupal_realpath($uri_in));
+
     if ($uri_in === FALSE || FALSE === file_unmanaged_copy($uri_in, $uri_out, FILE_EXISTS_REPLACE)) {
       // Bummed out on copy.
       watchdog('acadre MM', 'File copy failed for %infile -> %outfile. Check folder permissions.', array(
@@ -696,21 +697,26 @@ function _os2web_esdh_provider_node_tab_page($nid, $op = FALSE) {
  *   Sanetized filename with same extension.
  */
 function _os2web_esdh_provider_sanetize_filename($filename) {
-  // Replace whitespace.
-  // $filename = str_replace(' ', '_', $filename);
-  // Remove remaining unsafe characters.
-  // $filename = preg_replace('![^0-9A-Za-z_.- ]!', '', $filename);
-  $filename = preg_replace('![/"]!', '-', $filename);
-  // Remove multiple consecutive non-alphabetical characters.
-  $filename = preg_replace('/(_)_+|(\.)\.+|(-)-+/', '\\1\\2\\3', $filename);
-  // Force lowercase to prevent issues on case-insensitive file systems.
-  // $filename = strtolower($filename);
-  $pi = pathinfo($filename);
-  if (isset($pi['extension'])) {
-    return substr(trim($pi['filename']), 0, 160) . '.' . $pi['extension'];
+  if (module_exists('transliteration')) {
+    $filename = transliteration_clean_filename($filename);
   }
   else {
-    return substr(trim($pi['filename']), 0, 160);
+    // Replace whitespace.
+    // $filename = str_replace(' ', '_', $filename);
+    // Remove remaining unsafe characters.
+    // $filename = preg_replace('![^0-9A-Za-z_.- ]!', '', $filename);
+    $filename = preg_replace('![/"]!', '-', $filename);
+    // Remove multiple consecutive non-alphabetical characters.
+    $filename = preg_replace('/(_)_+|(\.)\.+|(-)-+/', '\\1\\2\\3', $filename);
+    // Force lowercase to prevent issues on case-insensitive file systems.
+    // $filename = strtolower($filename);
+  }
+  $pi = pathinfo($filename);
+  if (isset($pi['extension'])) {
+    return mb_substr(trim($pi['filename']), 0, 160) . '.' . $pi['extension'];
+  }
+  else {
+    return mb_substr(trim($pi['filename']), 0, 160);
   }
 }
 
@@ -727,8 +733,33 @@ function _os2web_esdh_provider_similar_file_exists($filename) {
   if (file_exists($filename)) {
     return $filename;
   }
-
   $dir = dirname($filename);
+  $file = _os2web_esdh_provider_glob($dir, $filename);
+  if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
+    return $file;
+  }
+  //if file not found try to convert filenames into UTF-8
+  else if (shell_exec('which convmv')) {
+    shell_exec('convmv -r -f ISO-8859-1 -t UTF-8 ' . $dir . '/* --notest');
+    if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
+      return $file;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Case insensitive glob
+ *
+ * @param string $filename
+ *   Filename
+ * @param string $dir
+ *   Directory name
+ *
+ * @return mixed
+ *   False if file not found, case corrected filename if found.
+ */
+function _os2web_esdh_provider_glob($dir, $filename) {
   $files = glob($dir . '/*');
   $lcase_filename = strtolower($filename);
   foreach ($files as $file) {
@@ -863,7 +894,7 @@ function _os2web_esdh_provider_bpa_body_format() {
   return $cache;
 }
 
-function os2web_esdh_provider_filter_html_tags($data) {    
+function os2web_esdh_provider_filter_html_tags($data) {
     $tags = explode(',', variable_get('os2web_esdh_provider_filtered_tags', ''));
     foreach ($tags as $tag) {
         preg_match_all('#<' . $tag . '(.*?)>(.*?)</' . $tag . '>#is', $data, $matches);
@@ -872,35 +903,35 @@ function os2web_esdh_provider_filter_html_tags($data) {
             $data = str_replace($match, $filtred_data, $data);
         }
     }
-           
-    while(preg_match('/(<a name=Acadre(.*?)>((.*?\\s*?))+<\\/a>\\s*)+/',$data, $aTags)>0){   
+
+    while(preg_match('/(<a name=Acadre(.*?)>((.*?\\s*?))+<\\/a>\\s*)+/',$data, $aTags)>0){
        $str = _os2web_esdh_provider_strip_only($aTags[0],  'a');
        $data = str_replace($aTags[0],$str, $data);
      }
     $stripped_tags = explode(',', variable_get('os2web_esdh_provider_stripped_tags', ''));
     $data = _os2web_esdh_provider_strip_only($data,  $stripped_tags);
-       
+
     //remove all img tags that link missing files
     $data =  _os2web_esdh_provider_remove_img_tags($data);
-    //replace all <p></p> and <p>&nbsp;</p> tags with <br />  
+    //replace all <p></p> and <p>&nbsp;</p> tags with <br />
     $data = preg_replace('#(<p>((<span>)*?)(|&nbsp;)((<\/span>)*?)<\/p>\s*)+#i', '<br />', $data);
-    //replace multiple &nbsp; tags with...  
+    //replace multiple &nbsp; tags with...
     $data = preg_replace('/(\x{00A0}|&nbsp;){2,}/u', variable_get('os2web_esdh_provider_tab_tag', '&nbsp;'), $data);
     return $data;
 }
 
 function _os2web_esdh_provider_remove_img_tags($data){
-  preg_match_all('/<img[^>]+>/i',$data, $imgTags); 
+  preg_match_all('/<img[^>]+>/i',$data, $imgTags);
   for ($i = 0; $i < count($imgTags[0]); $i++) {
     // get the source string
      preg_match('/src="([^"]+)/i',$imgTags[0][$i], $imgage);
-  
+
      $file_headers = @get_headers($imgage[0]);
      if($file_headers=== FALSE or $file_headers[0] == 'HTTP/1.0 404 Not Found')       {
          $data = str_replace($imgTags[0][$i], "",  $data);
-     }  
+     }
    }
-  
+
   return $data;
 }
 
