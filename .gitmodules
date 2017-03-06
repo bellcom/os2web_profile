@@ -1,0 +1,3 @@
+[submodule "modules/custom/bellcom_borgerdk"]
+	path = modules/custom/bellcom_borgerdk
+	url = https://github.com/bellcom/bellcom_borgerdk.git
