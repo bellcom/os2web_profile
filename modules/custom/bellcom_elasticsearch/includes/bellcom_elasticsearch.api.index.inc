@@ -26,7 +26,7 @@ function bellcom_elasticsearch_api_add_analyzer_as_file($client, $index_id, $syn
           'analyzer' => [
             'bellcom_elasticsearch_analyser' => [
               'tokenizer' => 'whitespace',
-              'filter' => ['synonym', 'lowercase', 'stopwords']
+              'filter' => ['synonym', 'lowercase', 'stopwords', 'danish_stemmer']
             ]
           ],
           'filter' => [
@@ -42,6 +42,10 @@ function bellcom_elasticsearch_api_add_analyzer_as_file($client, $index_id, $syn
               'type' => 'stop',
               'stopwords' => '_danish_'
             ],
+            'danish_stemmer' => [
+              'type' => 'stemmer',
+              'name' => 'danish'
+            ]
           ]
         ]
       ]
@@ -60,7 +64,7 @@ function bellcom_elasticsearch_api_add_analyzer_as_plaintext($client, $index_id,
           'analyzer' => [
             'bellcom_elasticsearch_analyser' => [
               'tokenizer' => 'whitespace',
-              'filter' => ['synonym_plainttext', 'lowercase', 'stopwords']
+              'filter' => ['synonym_plainttext', 'lowercase', 'stopwords', 'danish_stemmer']
             ]
           ],
           'filter' => [
@@ -79,6 +83,10 @@ function bellcom_elasticsearch_api_add_analyzer_as_plaintext($client, $index_id,
               'type' => 'stop',
               'stopwords' => '_danish_'
             ],
+            'danish_stemmer' => [
+              'type' => 'stemmer',
+              'name' => 'danish'
+            ]
           ]
         ]
       ]
