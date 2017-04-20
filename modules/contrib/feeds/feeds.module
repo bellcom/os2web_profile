@@ -613,8 +613,10 @@ function feeds_node_validate($node, $form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      drupal_set_message($e->getMessage(), 'error');
-      form_set_error('title', t('Could not retrieve title from feed.'));
+      if (feeds_importer($importer_id)->config['fetcher']['config']['source_required'] == 1) {
+        drupal_set_message($e->getMessage(), 'error');
+        form_set_error('title', t('Could not retrieve title from feed.'));
+      }
     }
   }
 }
@@ -650,7 +652,7 @@ function feeds_node_insert($node) {
   if (isset($node->feeds) && $importer_id = feeds_get_importer_id($node->type)) {
     $source = feeds_source($importer_id, $node->nid);
     // Start import if requested.
-    if (feeds_importer($importer_id)->config['import_on_create'] && !isset($node->feeds['suppress_import'])) {
+    if ($source->hasFetcherSource() && feeds_importer($importer_id)->config['import_on_create'] && !isset($node->feeds['suppress_import'])) {
       $source->startImport();
     }
     // Schedule the source.
@@ -665,8 +667,13 @@ function feeds_node_update($node) {
   // Source attached to node.
   if (isset($node->feeds) && $importer_id = feeds_get_importer_id($node->type)) {
     $source = feeds_source($importer_id, $node->nid);
+    $had_fetcher_source = $source->hasFetcherSource();
     $source->addConfig($node->feeds);
     $source->save();
+    // Fetcher source was emptied or filled.
+    if ($had_fetcher_source != $source->hasFetcherSource()) {
+      $source->schedule();
+    }
   }
 }
 

@@ -307,17 +307,20 @@ class FeedsSource extends FeedsConfigurable {
       'period' => $period,
       'periodic' => TRUE,
     );
-    if ($period == FEEDS_SCHEDULE_NEVER && $this->progressImporting() === FEEDS_BATCH_COMPLETE) {
+
+    if (!$this->hasFetcherSource() || $period == FEEDS_SCHEDULE_NEVER && $this->progressImporting() === FEEDS_BATCH_COMPLETE) {
       JobScheduler::get('feeds_source_import')->remove($job);
     }
-    elseif ($this->progressImporting() === FEEDS_BATCH_COMPLETE) {
-      JobScheduler::get('feeds_source_import')->set($job);
-    }
-    else {
-      // Feed is not fully imported yet, so we put this job back in the queue
-      // immediately for further processing.
-      $queue = DrupalQueue::get('feeds_source_import');
-      $queue->createItem($job);
+    elseif ($this->hasFetcherSource()) {
+      if ($this->progressImporting() === FEEDS_BATCH_COMPLETE) {
+        JobScheduler::get('feeds_source_import')->set($job);
+      }
+      else {
+        // Feed is not fully imported yet, so we put this job back in the queue
+        // immediately for further processing.
+        $queue = DrupalQueue::get('feeds_source_import');
+        $queue->createItem($job);
+      }
     }
   }
 
@@ -858,6 +861,14 @@ class FeedsSource extends FeedsConfigurable {
    */
   protected function releaseLock() {
     lock_release("feeds_source_{$this->id}_{$this->feed_nid}");
+  }
+
+  /**
+   * Checks if the fetch source is empty.
+   */
+  public function hasFetcherSource() {
+    $fetcher_source_config = $this->getConfigFor($this->importer->fetcher);
+    return !empty($fetcher_source_config['source']);
   }
 
   /**
