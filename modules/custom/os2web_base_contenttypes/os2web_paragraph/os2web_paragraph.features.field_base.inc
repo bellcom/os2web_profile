@@ -10,14 +10,13 @@
 function os2web_paragraph_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_os2web_paragraph'
+  // Exported field_base: 'field_os2web_paragraph'.
   $field_bases['field_os2web_paragraph'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_paragraph',
-    'foreign keys' => array(),
     'indexes' => array(
       'revision_id' => array(
         0 => 'revision_id',
@@ -33,21 +32,13 @@ function os2web_paragraph_field_default_field_bases() {
     'type' => 'field_collection',
   );
 
-  // Exported field_base: 'field_os2web_paragraph_ref'
+  // Exported field_base: 'field_os2web_paragraph_ref'.
   $field_bases['field_os2web_paragraph_ref'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_paragraph_ref',
-    'foreign keys' => array(
-      'nid' => array(
-        'columns' => array(
-          'nid' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'nid' => array(
         0 => 'nid',
@@ -87,21 +78,13 @@ function os2web_paragraph_field_default_field_bases() {
     'type' => 'node_reference',
   );
 
-  // Exported field_base: 'field_os2web_paragraph_text'
+  // Exported field_base: 'field_os2web_paragraph_text'.
   $field_bases['field_os2web_paragraph_text'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_paragraph_text',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -114,21 +97,13 @@ function os2web_paragraph_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_os2web_paragraph_title'
+  // Exported field_base: 'field_os2web_paragraph_title'.
   $field_bases['field_os2web_paragraph_title'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_paragraph_title',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -143,15 +118,18 @@ function os2web_paragraph_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_paragraphs'
+  // Exported field_base: 'field_os2web_paragraphs'.
   $field_bases['field_os2web_paragraphs'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_paragraphs',
-    'foreign keys' => array(),
-    'indexes' => array(),
+    'indexes' => array(
+      'revision_id' => array(
+        0 => 'revision_id',
+      ),
+    ),
     'locked' => 0,
     'module' => 'field_collection',
     'settings' => array(
