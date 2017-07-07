@@ -30,12 +30,10 @@ function os2web_contact_get_block() {
       if (isset($path[1]) && is_numeric($path[1])) {
         $ent = node_load($path[1]);
         $field = field_get_items('node', $ent, 'field_os2web_base_field_contact');
-        if ($field_hide = field_get_items('node', $ent, 'field_os2web_base_hide_contact')) {
-          if ($field_hide[0]['value']) {
+
+        if ($ent->field_svendborg_hide_contact['und'][0]['value']) {
             $hide_contact = TRUE;
-          }
         }
-        
       }
     }
     else {
