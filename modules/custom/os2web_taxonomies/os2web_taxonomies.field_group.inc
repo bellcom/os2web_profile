@@ -24,8 +24,8 @@ function os2web_taxonomies_field_group_info() {
     'weight' => '14',
     'children' => array(
       0 => 'field_os2web_base_field_banner',
-      1 => 'field_os2web_base_field_logo',
-      2 => 'field_os2web_base_field_image',
+      1 => 'field_os2web_base_field_image',
+      2 => 'field_os2web_base_field_logo',
       3 => 'field_os2web_base_field_media',
     ),
     'format_type' => 'htab',
@@ -145,12 +145,12 @@ function os2web_taxonomies_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Term',
-    'weight' => '3',
+    'weight' => '1',
     'children' => array(
-      0 => 'group_indstillinger',
-      1 => 'group_selvbetjening',
-      2 => 'group_spotbokse',
-      3 => 'group_billeder',
+      0 => 'group_billeder',
+      1 => 'group_indstillinger',
+      2 => 'group_selvbetjening',
+      3 => 'group_spotbokse',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
