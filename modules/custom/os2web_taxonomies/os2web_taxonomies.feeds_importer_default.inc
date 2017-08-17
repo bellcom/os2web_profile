@@ -11,7 +11,7 @@ function os2web_taxonomies_feeds_importer_default() {
   $export = array();
 
   $feeds_importer = new stdClass();
-  $feeds_importer->disabled = FALSE; /* Edit this to true to make a default feeds_importer disabled initially */
+  $feeds_importer->disabled = TRUE; /* Edit this to true to make a default feeds_importer disabled initially */
   $feeds_importer->api_version = 1;
   $feeds_importer->id = 'os2web_taxonomies_feed_gis';
   $feeds_importer->config = array(
@@ -239,7 +239,7 @@ function os2web_taxonomies_feeds_importer_default() {
   $export['os2web_taxonomies_feed_kle'] = $feeds_importer;
 
   $feeds_importer = new stdClass();
-  $feeds_importer->disabled = FALSE; /* Edit this to true to make a default feeds_importer disabled initially */
+  $feeds_importer->disabled = TRUE; /* Edit this to true to make a default feeds_importer disabled initially */
   $feeds_importer->api_version = 1;
   $feeds_importer->id = 'os2web_taxonomies_feed_org';
   $feeds_importer->config = array(
@@ -329,7 +329,7 @@ function os2web_taxonomies_feeds_importer_default() {
   $export['os2web_taxonomies_feed_org'] = $feeds_importer;
 
   $feeds_importer = new stdClass();
-  $feeds_importer->disabled = FALSE; /* Edit this to true to make a default feeds_importer disabled initially */
+  $feeds_importer->disabled = TRUE; /* Edit this to true to make a default feeds_importer disabled initially */
   $feeds_importer->api_version = 1;
   $feeds_importer->id = 'os2web_taxonomies_feed_politics';
   $feeds_importer->config = array(
