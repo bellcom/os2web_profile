@@ -73,6 +73,16 @@ function bellcom_elasticsearch_menu() {
     'file' => 'bellcom_elasticsearch.admin.synonyms.inc',
   );
 
+  $items['admin/config/search/content_types_weight'] = array(
+    'title' => 'Content type weight',
+    'description' => 'Configure weight for individual content types',
+    'type' => MENU_NORMAL_ITEM | MENU_LOCAL_TASK,
+    'access arguments' => array('administer search_api'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bellcom_elasticsearch_content_type_weight_settings_page'),
+    'file' => 'bellcom_elasticsearch.admin.inc',
+  );
+
   return $items;
 }
 
@@ -181,6 +191,18 @@ function _bellcom_elasticsearch_get_boosting($query_string = NULL) {
         'term' => array('node:nid' => $phrase->nid)
       ),
     );
+  }
+
+  //adding node custom weight
+  foreach (node_type_get_types() as $type) {
+    if ($weight = variable_get('bellcom_elasticsearch_content_type_weight_' . $type->type)) {
+      $boosting[] = array(
+        'weight' => $weight,
+        'filter' => array(
+          'term' => array('node:type' => $type->type)
+        ),
+      );
+    }
   }
 
   return $boosting;
