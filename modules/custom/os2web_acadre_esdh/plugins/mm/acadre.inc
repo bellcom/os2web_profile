@@ -105,7 +105,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
           'access' => (string) array_shift($xml_item->xpath('field/@access')),
           'filesfolder' => (string) array_shift($xml_item->xpath('field/@filesfolder')),
           'xmlfilename' => (string) array_shift($xml_item->xpath('field/@xmlfilename')),
-          'docfilename' => (string) array_shift($xml_item->xpath('field/@docfilename')),
+          'docfilename' => ($xml_item->xpath('field/@pdffilename')) ? (string) array_shift($xml_item->xpath('field/@pdffilename')) : (string) array_shift($xml_item->xpath('field/@docfilename')),
           'type' => (int) array_shift($xml_item->xpath('field/@type')),
         );
        
