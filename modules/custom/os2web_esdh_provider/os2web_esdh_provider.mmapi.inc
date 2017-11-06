@@ -507,7 +507,17 @@ function _os2web_esdh_provider_import_file($file_meta) {
   $fname = str_replace(array('(', ')'), '', $fname);
 
   $uri_out = $pinfo['dirname'] . '/' . _os2web_esdh_provider_sanetize_filename($fname . '.' . strtolower($pinfo['extension']));
-  $uri_pdf = $pinfo['dirname'] . '/' . _os2web_esdh_provider_sanetize_filename($fname . '.pdf');
+  if (_os2web_esdh_provider_similar_file_exists(drupal_realpath($uri_out))) {
+    $file_counter = 0;
+    do {
+      $uri_out = $pinfo['dirname'] . '/' . _os2web_esdh_provider_sanetize_filename(mb_substr($fname, 0, 145) . '_' . $file_counter++ . '.' . strtolower($pinfo['extension']));
+      watchdog('acadre MM', 'Checking !file_counter and !uri_out:',
+        array('!file_counter' => $file_counter, '!uri_out' => $uri_out), WATCHDOG_DEBUG);
+    } while (_os2web_esdh_provider_similar_file_exists(drupal_realpath($uri_out)));
+  }
+  $new_pinfo = pathinfo($uri_out);
+  $uri_pdf = $pinfo['dirname'] . '/' . $new_pinfo['filename'] . '.pdf';
+  //$uri_pdf = $pinfo['dirname'] . '/' . _os2web_esdh_provider_sanetize_filename($fname . '.pdf');
 
   os2web_esdh_provider_log('Start import file ' . $uri_out . ' ');
 
