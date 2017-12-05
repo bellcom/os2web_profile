@@ -1,0 +1,159 @@
+<?php
+
+//Telling ctools where plugins directory are.
+function social_media_buttons_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+/*
+ * Getting the function we need to get global variables from inc/ folder.
+ * So that we can use it in $form as #defatul_value.
+*/
+function social_media_buttons_form($form, &$form_state) {   
+   
+    $path = drupal_get_path('module', 'social_media_buttons');
+    require ($path . '/inc/return_module_variables.php');
+    
+    $options = array();
+    $options["Facebook"] = 'Facebook';
+    $options["Twitter"] = 'Twitter';
+    $options["LinkedIn"] = 'LinkedIn';
+    
+    //Custom function to get #default_values for the $form.
+    $default_value_array = social_media_buttons_return_variables();
+    
+    //When installing the module for the first time, there will be no variables to get.
+    if(empty($default_value_array)) {
+        $default_value_array = array(0,0);
+    }
+    
+  $form['social_media_button_checkboxes'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Wich share buttons should be shown?'),
+    '#default_value' => $default_value_array,
+    '#options' => $options,
+  );  
+      
+  $form['social_media_button_checkboxes_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+  
+  return $form;
+}
+
+function social_media_buttons_form_submit($form, &$form_state) {
+    variable_set('social_media_button_checkboxes', $form_state['values']); // Serialized as necessary, so it will store an array
+}
+
+function social_media_buttons_menu() {
+    $items['admin/config/content/socialmediabuttons'] = array(
+        'title' => 'Social Media Buttons',
+        'description' => 'Turn on the Social media buttons that you would like the users to share nodes to.',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('social_media_buttons_form'),
+        'access arguments' => array('administer SocialMediaButtons settings'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+/*
+ * This is needed for the social media Crawlers to render the page better.
+ * The Crawlers are working differently, IMO this is the best overall match for them all (Facebook, LinkedIn).
+ * NOTE: Facebook share API states that images will not get read by the Crawler
+ * the first time a user hits the facebook share button!
+ * reference:
+ * https://developers.facebook.com/docs/sharing/best-practices
+ * under Pre-caching images section.
+ */
+function social_media_buttons_preprocess_html(&$vars) {
+      
+    $og_url = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:url', 
+        'content' => $_SERVER["REQUEST_SCHEME"]."://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"],
+        ),
+    );
+
+    drupal_add_html_head($og_url, 'Facebook_URL');
+
+    $og_type = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:type', 
+        'content' => "website",
+        ),
+    );
+
+    drupal_add_html_head($og_type, 'Facebook_TYPE');
+     
+    $og_title = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:title', 
+        'content' => drupal_get_title(),
+        ),
+    );
+
+    drupal_add_html_head($og_title, 'Facebook_TITLE');
+
+    $og_description = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:description', 
+        'content' => NULL,
+        ),
+    );
+
+    drupal_add_html_head($og_description, 'Facebook_DESCRIPTION');
+
+    $og_siteName = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:site_name', 
+        'content' => variable_get('site_name'),
+        ),
+    );
+
+    drupal_add_html_head($og_siteName, 'Facebook_SITENAME');
+
+    $og_img = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:image', 
+        'content' => NULL,
+        ),
+    );
+
+    drupal_add_html_head($og_img, 'Facebook_IMG');
+
+    $og_img_width = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:image:width', 
+        'content' => "600",
+        ),
+    );
+
+    drupal_add_html_head($og_img_width, 'Facebook_IMG_WIDTH');
+
+    $og_img_height = array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+        'property' => 'og:image:height', 
+        'content' => "300",
+        ),
+    );
+
+    drupal_add_html_head($og_img_height, 'Facebook_IMG_HEIGHT');
+
+    //Getting the path of the image and description and inserting it to the content attr.  
+    $path = drupal_get_path('module', 'social_media_buttons');
+    drupal_add_js($path . '/js/mapImage.js');  
+    drupal_add_js($path . '/js/mapDescription.js'); 
+}
+

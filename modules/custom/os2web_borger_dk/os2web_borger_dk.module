@@ -1,0 +1,1358 @@
+<?php
+
+/**
+ * @file
+ * Code for the OS2web - Borger.dk feature.
+ */
+
+include_once 'os2web_borger_dk.features.inc';
+include_once 'include/os2web_borger_dk_menu_import.inc';
+
+require('include/os2web_borger_dk_webservice.inc');
+require('include/os2web_borger_dk_node_submit.inc');
+require('include/os2web_borger_dk_node_form.inc');
+
+/**
+ * Text formats
+ */
+define('BORGERDK_TEXT_FORMAT_PLAIN', variable_get('os2web_borger_dk_articles_text_format_plain', 'plain_text'));
+define('BORGERDK_TEXT_FORMAT_HTML', variable_get('os2web_borger_dk_articles_text_format_html', 'full_html'));
+
+/**
+ * Implements hook_menu().
+ */
+function os2web_borger_dk_menu() {
+  $items = array();
+  $items['admin/config/os2web_borger_dk'] = array(
+    'title' => 'OS2web borger.dk settings',
+    'description' => 'General settings for Borger.dk articles, fx, modify fields display, editable and syncronization time',
+    'position' => 'right',
+    'weight' => -10,
+    'page callback' => 'system_admin_menu_block_page',
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+    'access arguments' => array('administer os2web borgerdk article settings'),
+  );
+
+  $items['admin/config/os2web_borger_dk/settings'] = array(
+    'title' => 'OS2web Borger.dk Settings',
+    'description' => 'General settings for the OS2Web borger.dk',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os2web_borger_dk_settings_form'),
+    'access arguments' => array('administer os2web borgerdk article settings'),
+    'file' => 'include/os2web_borger_dk.admin.inc',
+  );
+
+  $items['import/os2web_borger_dk/autocomplete'] = array(
+    'page callback' => '_os2web_borger_dk_autocomplete_callback',
+    'page arguments' => array(3),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'include/os2web_borger_dk_node_form.inc',
+  );
+
+  return $items;
+}
+/**
+ * Implements hook_permission().
+ */
+function os2web_borger_dk_permission() {
+  return array(
+    'administer os2web borgerdk article settings' => array(
+      'title' => t('Administer OS2Web Borger.dk article settings'),
+      'description' => t('Administer settings for the OS2Web Borger.dk article import module.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_action_info().
+ */
+function os2web_borger_dk_action_info() {
+  return array(
+    'os2web_borger_dk_articles_update_action' => array(
+      'type' => 'node',
+      'label' => t('Update article from borger.dk'),
+      'configurable' => FALSE,
+    ),
+  );
+}
+/**
+ * Update a node with content from borger.dk.
+ *
+ * @param $node
+ *   A node object.
+ * @param $context
+ *   (optional) Array of additional information about what triggered the action.
+ *   Not used for this action.
+ *
+ * @ingroup actions
+ */
+function os2web_borger_dk_articles_update_action($node, $context = array()) {
+  if ($node->type == 'os2web_borger_dk_article') {
+    os2web_borger_dk_update_article($node->nid);
+    watchdog('action', 'Update %title with content from borger.dk.', array('%title' => $node->title));
+  }
+}
+/**
+ * Implements hook_node_load().
+ */
+function os2web_borger_dk_node_load($nodes, $types) {
+  // Decide whether any of $types are relevant to our purpose.
+  // We only work on the "os2web_borger_dk_article" node-types.
+  if (in_array('os2web_borger_dk_article', $types)) {
+    // Gather our extra data for each of these nodes.
+    $result = db_query('SELECT nid, external_id, external_status, external_url, field_settings, field_microarticle_settings, published_date, last_updated FROM {os2web_borger_dk_article} WHERE nid IN (:nids)', array(
+      ':nids' => array_keys($nodes)));
+    // Get admin microarticles settings.
+    $microarticle = variable_get('os2web_borger_dk_microarticle_active', FALSE);
+    // Add our extra data to the node objects.
+    foreach ($result as $record) {
+      $field_settings = unserialize($record->field_settings);
+      $nodes[$record->nid]->os2web_borger_dk_article = array(
+        'external_id' => $record->external_id,
+        'external_status' => $record->external_status,
+        'external_url' => $record->external_url,
+        'field_settings' => $field_settings,
+        'published_date' => $record->published_date,
+        'last_updated' => $record->last_updated,
+      );
+      // If microarticle option is set to display.
+      if ($microarticle) {
+        $field_microaritcle_settings = unserialize($record->field_microarticle_settings);
+        $nodes[$record->nid]->os2web_borger_dk_microarticle = array(
+          'field_microarticle_settings' => $field_microaritcle_settings,
+        );
+      }
+      // If microarticle option is NOT set to display,then we set an empty array
+      // to node->os2web_borger_dk_microarticle[''field_microarticle_settings].
+      else {
+        $nodes[$record->nid]->os2web_borger_dk_microarticle = array(
+          'field_microarticle_settings' => '',
+        );
+      }
+    }
+  }
+}
+
+
+
+
+/**
+ * Implements hook_node_view().
+ */
+function os2web_borger_dk_node_view($node, $view_mode, $langcode) {
+  if ($node->type == 'os2web_borger_dk_article') {
+    $fields = $node->os2web_borger_dk_article['field_settings'];
+    // First get admin display settings.
+    $admin_display_fields = variable_get('os2web_borger_dk_display');
+    $locked_os2web_types = array('field_os2web_borger_dk_borgerurl' => 1);
+    // We get admin microarticle display settings.
+    $microarticle = variable_get('os2web_borger_dk_microarticle_active', FALSE);
+    if ($microarticle) {
+      $field_microarticle_settings = $node->os2web_borger_dk_microarticle['field_microarticle_settings'];
+    }
+
+    foreach ($admin_display_fields as $type => $value) {
+      // If ADMIN set this field to display.
+      if ($admin_display_fields[$type]) {
+        // Microarticles : if microarticle is set up to show by admin.
+        if ($microarticle) {
+          $content_field = (isset($node->content[$type]['#field_name'])) ? $node->content[$type]['#field_name'] : '';
+          // Check if content field is body and field_microarticle_settings
+          // is NOT empty.
+          // The field_microarticle_setting will be empty when a new
+          // article is imported and shown in a form, then node_view
+          // will display full body text.
+          if ($content_field == 'body' && !empty($field_microarticle_settings)) {
+            $body_text = $node->body[LANGUAGE_NONE]['0']['value'];
+
+            $article_text = _os2web_borger_dk_microarticle_helper($body_text, $field_microarticle_settings, TRUE);
+            // Content body shows only visible microarticles/ part of body_text.
+            $node->content[$type]['0']['#markup'] = $article_text;
+          }
+        }
+        elseif ($type == 'body') {
+          $node->content['body']['0']['#markup'] = $node->body[LANGUAGE_NONE]['0']['value'];
+        }
+
+        // End of microarticles.
+        // If EDITOR set this field to be hidden.
+        if ($fields[$type] == '0') {
+          $content_field = (isset($node->content[$type]['#field_name'])) ? $node->content[$type]['#field_name'] : '';
+          if ($content_field == $type) {
+            $node->content[$type]['0']['#markup'] = '';
+          }
+        }
+      }
+
+      // If ADMIN set this field to be hidden.
+      else {
+        $content_field = (isset($node->content[$type]['#field_name'])) ? $node->content[$type]['#field_name'] : '';
+        if ($content_field == $type) {
+          $node->content[$type]['0']['#markup'] = '';
+        }
+      }
+    }
+    drupal_add_js(drupal_get_path('module', 'os2web_borger_dk') . '/js/os2web_borger_dk.js', 'file');
+    drupal_add_css(drupal_get_path('module', 'os2web_borger_dk') . '/css/os2web_borger_dk.css', 'file');
+
+    // Set the page-title if field-value is given.
+    if (!empty($node->field_os2web_borger_dk_pagetitle[LANGUAGE_NONE][0]['value'])) {
+      drupal_set_title($node->field_os2web_borger_dk_pagetitle[LANGUAGE_NONE][0]['value']);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function os2web_borger_dk_node_delete($node) {
+  if ($node->type == 'os2web_borger_dk_article') {
+    // First we delete the article-data from the node-additions table.
+    db_delete('os2web_borger_dk_article')
+        ->condition('nid', $node->nid)
+        ->execute();
+    // Then we set the status to "not imported" in the "Titles list"-table.
+    db_update('os2web_borger_dk_article_titles')
+        ->fields(array('ArticleStatus' => 0))
+        ->condition('ArticleStatus', $node->nid, '=')
+        ->execute();
+  // Then we set the status to "not imported" in the "Titles list"-table.
+    db_update('os2web_borger_dk_article_titles_en')
+        ->fields(array('ArticleStatus' => 0))
+        ->condition('ArticleStatus', $node->nid, '=')
+        ->execute();
+  }
+}
+
+/**
+ * Implements hook_node_validate().
+ */
+function os2web_borger_dk_node_validate($node, $form, &$form_state) {
+  if ($node->type == 'os2web_borger_dk_article') {
+    // Enforce a minimum word length of 3 on punch lines.
+    $admin_title_search = variable_get('os2web_borger_dk_titles_sync', FALSE);
+    $titles_search = isset($form_state['values']['os2web_borger_dk_article_title_search']) ? $form_state['values']['os2web_borger_dk_article_title_search'] : FALSE;
+    $url_text = isset($form_state['values']['os2web_borger_dk_article_url_text']) ? $form_state['values']['os2web_borger_dk_article_url_text'] : FALSE;
+
+    // If admin config set up : import Borger.dk article by URL.
+    // TODO: Check if this if-statement works as expected, and
+    // if we can drop the "!isset($node->nid)" part.
+    if ((!$admin_title_search) || ($titles_search == '0' && !isset($node->nid))) {
+      if (!$titles_search && !isset($node->nid)) {
+        if (!empty($url_text)) {
+          $url = $url_text;
+          $la = os2web_borger_dk_check_import_article_language_byURL($url);
+
+          if ($la === FALSE) {
+            form_set_error('os2web_borger_dk_article_url_text', t('The Borger.dk-URL is not valid, please write a valid Borger.dk-URL.'));
+          }
+
+        }
+        else {
+          form_set_error('os2web_borger_dk_article_url_text', t('The Borger.dk-URL is empty, please write a valid Borger.dk-URL.'));
+        }
+      }
+    }
+    // If admin config set up : import Borger.dk article by article title.
+    else {
+      // If search article checkbox by Title-search is CHECKED.
+      // TODO: Check if we can drop this if-statement. The else-statement above.
+      // should be sufficient if the matched if-statement really works.
+      if ($titles_search == '1') {
+        $borger_dk_title = !empty($form_state['values']['os2web_borger_dk_article_title_text']) ? $form_state['values']['os2web_borger_dk_article_title_text'] : FALSE;
+        if (!$borger_dk_title) {
+          form_set_error('os2web_borger_dk_article_title_text', t('The Borger.dk Article title is empty, please write a Borger.dk Article title'));
+        }
+        $matches = array();
+        $aid = 0;
+        // This preg_match() looks for the last pattern like
+        // [33334] and if found extracts the numeric portion.
+        $result = preg_match('/\(ID:([0-9]+)\)/', $borger_dk_title, $matches);
+        $result_la = preg_match('/\[DA\]$/', $borger_dk_title, $matches_la);
+        if ($result_la > 0) {
+          $table = 'os2web_borger_dk_article_titles';
+          $la = 'da';
+        }
+        else {
+          $table = 'os2web_borger_dk_article_titles_en';
+          $la = 'en';
+        }
+        if ($result > 0) {
+          // If $result is nonzero, we found a match and can use
+          // it as the index into $matches.
+          $aid = $matches[$result];
+          $status = db_query('SELECT ArticleStatus FROM {' . $table . '} WHERE ArticleID = :aid', array(
+            ':aid' => $aid))->fetchField();
+          if ($status < 0) {
+            // This article is no longer availlable and we tell the user so.
+            drupal_set_message(t('The Borger.dk article with title "!title" is no longer availlable', array(
+              '!title' => $borger_dk_url)), 'warning');
+            form_set_error('os2web_borger_dk_article_title_text', t('The Borger.dk Article-title has been deleted, please write a valid Borger.dk-URL.'));
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/**
+ * Update a single article with latest content from borger.dk
+ *
+ * @param int $nid
+ *   The node we are updating.
+ */
+function os2web_borger_dk_update_article($nid) {
+  // First we find the external_id, and last_update time for this article.
+  $data = db_query('SELECT external_id, external_url, last_updated FROM {os2web_borger_dk_article} WHERE nid = :nid', array(
+    ':nid' => $nid))->fetchObject();
+
+  // Then we fetch the article item from the Borger.dk webservice.
+  $article = _os2web_borger_dk_GetArticleByUrl($data->external_url);
+
+  // Now we update the node content with the fetched article content.
+  $node = _os2web_borger_dk_update_node_content($nid, $article);
+  if (variable_get('os2web_borger_dk_microarticle_active')) {
+    $body_text = isset($node->body[LANGUAGE_NONE][0]['value']) ? $node->body[LANGUAGE_NONE][0]['value'] : '';
+    _os2web_borger_dk_microarticle_helper($body_text, $node, FALSE);
+  }
+  node_save($node);
+
+}
+/**
+ * Implements hook_panels_pane_content_alter().
+ */
+function os2web_borger_dk_panels_pane_content_alter(&$content, $pane, $args,  $contexts) {
+  // Microarticle in panel.
+  if ($content->subtype == 'node:body' && $content->content['#bundle'] == 'os2web_borger_dk_article') {
+
+    $node = $content->content['#object'];
+
+    if (isset($node->os2web_borger_dk_microarticle)) {
+      $field_microarticle_settings = $node->os2web_borger_dk_microarticle['field_microarticle_settings'];
+      $body_text = $node->body[LANGUAGE_NONE]['0']['value'];
+
+      $article_text = _os2web_borger_dk_microarticle_helper($body_text, $field_microarticle_settings, TRUE);
+            // Content body shows only visible microarticles/ part of body_text.
+      $content->content[0]['#markup'] = $article_text;
+    }
+  }
+}
+/**
+ * Function _os2web_borger_dk_microarticle_helper().
+ */
+function _os2web_borger_dk_microarticle_helper($body_text, $node, $view = FALSE) {
+  $article_text = '';
+  $doc = new DOMDocument();
+  $doc->loadHTML('<?xml encoding="utf-8" ?>' . $body_text);
+  $xpath = new DOMXPath($doc);
+
+  $results = $xpath->query("//*[@class='microArticle']");
+
+  $microno = 0;
+  foreach ($results as $item) {
+    $microno++;
+
+    $checkboxno = 'os2web_borger_dk_micro_' . $microno;
+    $h2_text_field = 'os2web_borger_dk_micro_h2_' . $microno;
+    $text_area = 'os2web_borger_dk_micro_textarea_' . $microno;
+
+    if (!$view && is_object($node)) {
+      $field_microarticle_settings[$microno] = isset($node->$checkboxno) ? $node->$checkboxno : 1;
+        // Body text (Article text).
+      $article_text .= "<div class=\"microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
+
+      $micro_h2 = "<h2 class=\"mArticle\" id=\"mArticle" . $microno . "\">";
+      $micro_h2 .= $node->$h2_text_field . "</h2>";
+
+      $micro_content = "<div class=\"mArticle" . $microno . " mArticle\">";
+      $micro_content .= $node->$text_area . "\r\n    </div>";
+
+      $article_text .= $micro_h2 . "\r\n";
+      $article_text .= $micro_content;
+      $article_text .= "\r\n</div>\r\n\r\n";
+    }
+    elseif ($view) {
+      // Get CSS from admin setting form.
+      $outer_class = variable_get('os2web_borger_dk_css_outer_class', 'os2-accordion');
+      $heading_class = variable_get('os2web_borger_dk_css_outer_heading_class', 'os2-accordion-heading');
+      $h2_heading_class = variable_get('os2web_borger_dk_css_h2_heading_class', 'os2-accordion-heading-title');
+      $body_class = variable_get('os2web_borger_dk_css_microbody_class', 'os2-accordion-body');
+
+      foreach ($item->getElementsByTagName('h2') as $articletitle) {
+        $title = trim($articletitle->nodeValue);
+      }
+
+      $text = '';
+      foreach ($item->getElementsByTagName('div')->item(0)->childNodes as $articletext) {
+        $text .= $doc->saveHTML($articletext);
+      }
+      if (($node && $node[$microno] != 0) || !$node) {
+        // Body text (Article text).
+        $article_text .= "<div class=\"" . $outer_class . " microArticle\" id=\"microArticle" . $microno . "\">" . "\r\n";
+
+        $micro_h2 = "<div class=\"" . $heading_class . "\"><h2 class=\"" . $h2_heading_class . " mArticle\" id=\"mArticle" . $microno . "\">";
+        $micro_h2 .= $title . "</h2></div>";
+
+        $micro_content = "<div class=\"" . $body_class . " mArticle" . $microno . " mArticle\">";
+        $micro_content .= $text . "\r\n    </div>";
+
+        $article_text .= $micro_h2 . "\r\n";
+        $article_text .= $micro_content;
+        $article_text .= "\r\n</div>\r\n\r\n";
+      }
+    }
+    // End of body text (Article text).
+  }
+  if (!$view && is_object($node)) {
+
+    $serialized_microarticle = serialize($field_microarticle_settings);
+    db_update('os2web_borger_dk_article')
+        ->fields(array(
+          'field_microarticle_settings' => $serialized_microarticle,
+        ))
+        ->condition('nid', $node->nid, '=')
+        ->execute();
+  }
+  return $article_text;
+}
+/**
+ * Function _os2web_borger_dk_update_node_content().
+ */
+function _os2web_borger_dk_update_node_content($nid, $article) {
+  if (!empty($article['Exceptions']) || !empty($article['error'])) {
+    return;
+  }
+  if ($nid && is_numeric($nid)) {
+    // First we load the corresponding node.
+    $node = node_load($nid, NULL, TRUE);
+  }
+  else {
+    $node = new stdClass();
+    $node->language = 'da';
+    $node->uid = 1;
+    $node->created = !empty($node->date) ? strtotime($node->date) : REQUEST_TIME;
+    $node->type = 'os2web_borger_dk_article';
+    $node->validated = TRUE;
+  }
+
+  // And we update all the node-fields with the article-values.
+  $node->title = $article['title'];
+
+  $body = '';
+  foreach ($article['kernetekst'] as $div => $content) {
+    $body .= $content . "\n";
+  }
+
+  $node->title = (!empty($article['title'])) ? $article['title'] : '';
+
+  $node->body[LANGUAGE_NONE][0]['value'] = $body;
+  $node->body[LANGUAGE_NONE][0]['safe_value'] = $body;
+  $node->body[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_byline[LANGUAGE_NONE][0]['value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+  $node->field_os2web_borger_dk_byline[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['byline'])) ? $article['byline'] : '';
+  $node->field_os2web_borger_dk_byline[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_PLAIN;
+
+  $node->field_os2web_borger_dk_header[LANGUAGE_NONE][0]['value'] = (!empty($article['header'])) ? $article['header'] : '';
+  $node->field_os2web_borger_dk_header[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['header'])) ? $article['header'] : '';
+  $node->field_os2web_borger_dk_header[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_selfservi[LANGUAGE_NONE][0]['value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+  $node->field_os2web_borger_dk_selfservi[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['selvbetjeningslinks'])) ? $article['selvbetjeningslinks'] : '';
+  $node->field_os2web_borger_dk_selfservi[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_recommend[LANGUAGE_NONE][0]['value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+  $node->field_os2web_borger_dk_recommend[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['anbefaler'])) ? $article['anbefaler'] : '';
+  $node->field_os2web_borger_dk_recommend[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_legislati[LANGUAGE_NONE][0]['value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+  $node->field_os2web_borger_dk_legislati[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['lovgivning'])) ? $article['lovgivning'] : '';
+  $node->field_os2web_borger_dk_legislati[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_shortlist[LANGUAGE_NONE][0]['value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+  $node->field_os2web_borger_dk_shortlist[LANGUAGE_NONE][0]['safe_value'] = (!empty($article['huskeliste'])) ? $article['huskeliste'] : '';
+  $node->field_os2web_borger_dk_shortlist[LANGUAGE_NONE][0]['format'] = BORGERDK_TEXT_FORMAT_HTML;
+
+  $node->field_os2web_borger_dk_borgerurl[LANGUAGE_NONE][0]['value'] = $article['external_url'];
+
+  // Some fields from borger_dk_article can not be syncronized nor changed here.
+  $node->os2web_borger_dk_article['external_id'] = $article['external_id'];
+  $node->os2web_borger_dk_article['external_url'] = $article['external_url'];
+
+  $external_status = (empty($article['Exceptions']) && empty($article['error'])) ? 1 : 0;
+  $external_status = (!empty($article['error']) && $article['error_type'] == 'not_found') ? -1 : $external_status;
+
+  $node->os2web_borger_dk_article['external_status'] = $external_status;
+  $node->os2web_borger_dk_article['published_date'] = strtotime($article['published_date']);
+  $node->os2web_borger_dk_article['last_updated'] = strtotime($article['last_updated']);
+
+  db_update('os2web_borger_dk_article')
+      ->fields(array('last_updated' => strtotime($article['last_updated'])))
+      ->condition('nid', $nid, '=')
+      ->execute();
+
+  return $node;
+}
+
+
+
+/**
+ * Function os2web_borger_dk_import_articles_now_form_submit().
+ */
+function os2web_borger_dk_import_articles_now_form_submit($form, &$form_state) {
+  if ($form_state['submitted'] == 1) {
+    // First we find the list of availlable articles at Borger.dk.
+    $operations = array();
+
+    $titles_availlable = _os2web_borger_dk_GetAllArticles('da');
+
+    // Then get a list of already imported articles to update.
+    $update_items = array();
+    $sql = 'SELECT n.nid, ba.external_id FROM {node} AS n LEFT JOIN {os2web_borger_dk_article} AS ba ON n.nid = ba.nid WHERE n.type LIKE :node_type';
+    $result = db_query($sql, array(':node_type' => 'os2web_borger_dk_article'));
+    foreach ($result as $record) {
+      $update_items[$record->external_id] = $record->nid;
+    }
+
+    // Create a list of batch-operations to perform for every 10 articles.
+    $max_count = 0;
+    $full_id_list = array();
+    foreach ($titles_availlable as $title) {
+      if (isset($title['ArticleID'])) {
+        $full_id_list[] = $title['ArticleID'];
+        $max_count += 1;
+      }
+
+    }
+    // We add 1 to the max_count because we have to create menu_links.
+    // after all the articles have been imported.
+    $max_count += 1;
+
+    // Then we split the lsit of id's to import into groups of 10.
+    $groups = array_chunk($full_id_list, 10);
+    foreach ($groups as $gid => $group) {
+      // Set the batch operation to import 10 articles at a time.
+      $operations[] = array('_os2web_borger_dk_batch_article_import', array($group,
+          $max_count, $update_items));
+    }
+
+    // Then import the menu from Borger.dk and tag all imported articles.
+    $operations[] = array('_os2web_borger_dk_articles_cronbatch_wrapper', array($max_count));
+
+    $batch = array(
+      'operations' => $operations,
+      'title' => t('Importing articles from Borger.dk'),
+      'init_message' => t('Import job is starting.'),
+      'progress_message' => t('Processed @current out of @total.'),
+      'finished' => 'os2web_borger_dk_batch_article_import_finished',
+    );
+
+    // Finally we execute the batch process(es).
+    batch_set($batch);
+  }
+}
+/**
+ * Function _os2web_borger_dk_batch_article_import().
+ */
+function _os2web_borger_dk_batch_article_import($external_id_list, $max_count, $update_items, &$context) {
+
+  if (empty($context['sandbox'])) {
+    $context['sandbox'] = array();
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = $max_count;
+  }
+
+  foreach ($external_id_list as $eid) {
+    // Import the Borger.dk-article with the given ArticleID.
+    $article = _os2web_borger_dk_GetArticleByID($eid, FALSE);
+    if (empty($article['Exceptions']) && empty($article['error'])) {
+      $title = $article['title'];
+
+      $nid = FALSE;
+      // Then check if this node should be updated or created.
+      if (!isset($update_items[$eid])) {
+        _os2web_borger_dk_create_article_node($nid, $article);
+      }
+      else {
+        // This is an already imported article, and we should
+        // update the node-content.
+        $nid = $update_items[$eid];
+        // If a nid was found we can update the node with the
+        // article from Borger.dk.
+        if (is_numeric($nid)) {
+          $node = _os2web_borger_dk_update_node_content($nid, $article);
+          node_save($node);
+        }
+      }
+
+      $context['results'][] = $nid . ' : ' . check_plain($title);
+      $context['message'] = 'Imported title: ' . check_plain($title);
+    }
+    else {
+      $context['results'][] = 'Error: Could not import article with ArticleID: ' . $eid;
+      $context['message'] = 'Error: Could not import article with ArticleID: ' . $eid;
+    }
+
+    // Update our progress information.
+    $context['sandbox']['progress']++;
+  }
+  $context['finished'] = 1;
+
+}
+
+/**
+ * Function os2web_borger_dk_batch_article_import_finished().
+ */
+function os2web_borger_dk_batch_article_import_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('@count results processed.', array('@count' => count($results))));
+    drupal_set_message(t('The final result was "%final"', array('%final' => end($results))));
+  }
+  else {
+    $error_operation = reset($operations);
+    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array(
+      '@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+  }
+  drupal_goto('admin/config/os2web_borger_dk/settings');
+}
+
+function _os2web_borger_dk_create_article_node($nid, $article, $pid = NULL) {
+  $node = _os2web_borger_dk_update_node_content($nid, $article);
+  $field_settings = $form_state['values']['os2web_borger_dk_field_settings'];
+  // Check admin field settings : are there fields set as hidden by admin.
+  $admin_display_fields = variable_get('os2web_borger_dk_display');
+  foreach ($admin_display_fields as $type => $items) {
+    if ($admin_display_fields[$type]) {
+      $field_settings[$type] = $type;
+    }
+  }
+  // TODO: Perform a logical-test (on paper) to
+  // see if the external_status is correct.
+  $external_status = (empty($article['Exceptions']) && empty($article['error'])) ? 1 : 0;
+  $external_status = (!empty($article['error']) && $article['error_type'] == 'not_found') ? -1 : $external_status;
+
+  if (!empty($article['Exceptions']) || !empty($article['error'])) {
+    drupal_set_message(t('An exception was thrown by the Borger.dk webservice for the specified URL.'), 'error');
+    drupal_set_message(t('You can fetch this article when the webservice is responsive again.'), 'error');
+  }
+  else {
+    $node = node_submit($node);
+    // We need to store the field values and article-settings.
+    node_save($node);
+    db_insert('os2web_borger_dk_article')
+      ->fields(array(
+        'nid' => $node->nid,
+        'external_id' => $article['external_id'],
+        'external_status' => $external_status,
+        'external_url' => $article['external_url'],
+        'field_settings' => serialize($field_settings),
+        'field_microarticle_settings' => serialize(),
+        'last_updated' => strtotime($article['last_updated']),
+        'published_date' => strtotime($article['published_date']),
+      ))
+      ->execute();
+    $table = os2web_borger_dk_titles_helper_get_table($article['external_url']);
+    // Then we need to update the ArticleStatus in the Title-list.
+    if ($node->nid) {
+       db_update($table)
+              ->fields(array('ArticleStatus' => $node->nid))
+              ->condition('ArticleID', $article['external_id'], '=')
+              ->execute();
+
+    }
+    if (is_numeric($pid)) {
+      _os2web_borger_dk_add_node_menu($node, $pid);
+    }
+  }
+  return $node;
+}
+/**
+ * Functioin _os2web_borger_dk_import_supplement_article().
+ */
+function _os2web_borger_dk_import_supplement_article($value, $pid) {
+
+  // Import the Borger.dk-article with the given ArticleID.
+  $article = _os2web_borger_dk_GetArticleByID($value, FALSE);
+
+  if (empty($article['Exceptions']) && empty($article['error'])) {
+
+    $nid = FALSE;
+    $node = _os2web_borger_dk_create_article_node($nid, $article, $pid);
+
+    $table = os2web_borger_dk_titles_helper_get_table($article['external_url']);
+
+    db_insert($table)
+          ->fields(array(
+            'ArticleID' => $article['external_id'],
+            'ArticleTitle' => $article['title'],
+            'ArticleUrl' => $article['external_url'],
+            'LastUpdated' => strtotime($article['last_updated']),
+            'PublishingDate' => strtotime($article['published_date']),
+            'FORMFields' => $article['FORMFields'],
+          ))
+          ->execute();
+  }
+}
+
+/**************** Borger.dk Cron. ********************************************/
+/**
+ * Implements hook_cron().
+ */
+function os2web_borger_dk_cron() {
+  $cron_settings_time_articles = variable_get('os2web_borger_dk_nightly_article_sync', FALSE);
+  $titles_autocomplete = variable_get('os2web_borger_dk_titles_sync', FALSE);
+  $borger_dk_menus_import = variable_get('os2web_borger_dk_menus_import', FALSE);
+  $cron_settings_time_menus = variable_get('os2web_borger_dk_nightly_menu_sync');
+
+  // Then we can find out if it is time for our cron-job to run.
+  if (!empty($cron_settings_time_articles) || !empty($cron_settings_time_menus)) {
+    $current_time = time();
+    $current_hour = date('G', $current_time);
+    if ($current_hour == '0') {
+      $current_hour = '24';
+    }
+
+    // Is it time for auto-updating imported Borger.dk-articles.
+    if ($cron_settings_time_articles == $current_hour) {
+      // Run the auto-update for articles already imported.
+      _os2web_borger_dk_cronbatch();
+
+      // Fetch availlable Borger.dk-titles if autocomplete has been activated.
+      if ($titles_autocomplete) {
+        // We must fetch a list of all availlable articles from Borger.dk.
+        _os2web_borger_dk_titles_cronbatch();
+      }
+    }
+
+    // Is it time for auto-updating imported Borger.dk-menus.
+    if ($cron_settings_time_menus == $current_hour) {
+      $this_run = time();
+      $last_run = variable_get('os2web_borger_dk_menus_last_update', $this_run);
+      $weekly = variable_get('os2web_borger_dk_weekly_borger_dk_menus_import', 0);
+      // 7 * 24 * 60 * 60 = 604800. We deduct 800 seconds to give
+      // the cron-request some time to start.
+      if (!empty($weekly) && ($weekly > 0) && ($this_run - $last_run > 604000)) {
+        // It is "about" a week ago now, so we start the cronbatch-job now.
+        _os2web_borger_dk_menus_cronbatch();
+      }
+      elseif (empty($weekly) || ($weekly == 0)) {
+        // If run daily then we start the cronbatch-job now.
+        _os2web_borger_dk_menus_cronbatch();
+      }
+    }
+  }
+
+  // We check for deleted-items in the queue at every cron-run.
+  _os2web_borger_dk_cron_queue();
+}
+
+/**
+ * Function _os2web_borger_dk_articles_cronbatch_wrapper().
+ */
+function _os2web_borger_dk_articles_cronbatch_wrapper() {
+  // _os2web_borger_dk_menus_cronbatch(TRUE);
+  $context['sandbox']['progress']++;
+  $context['message'] = t("Importing articles from Borger.dk.");
+  $context['finished'] = 1;
+}
+
+/**
+ * Function _os2web_borger_dk_cron_queue().
+ */
+function _os2web_borger_dk_cron_queue() {
+  $queue = DrupalQueue::get('os2web_borger_dk_delete_queue');
+  $result = db_query('SELECT nid, external_id FROM {os2web_borger_dk_article} WHERE external_status = -2');
+  foreach ($result as $item) {
+    $qitem = array('nid' => $item->nid, 'external_id' => $item->external_id);
+    $queue->createItem($qitem);
+  }
+}
+
+/**
+ * Function _os2web_borger_dk_cronbatch().
+ */
+function _os2web_borger_dk_cronbatch() {
+  // First we determine the time for our last check for new updates.
+  $this_run = time();
+  $last_run = variable_get('os2web_borger_dk_last_update', time());
+  $updated_after = date('Y-m-d\TH\:i\:s', $last_run);
+  $titles_autocomplete = variable_get('os2web_borger_dk_titles_sync', FALSE);
+
+  // Next we get a list of all imported articles.
+  $article_id_list = array();
+  $article_id_to_nid = array();
+  $result = db_query('SELECT nid, external_id FROM {os2web_borger_dk_article} WHERE external_status > 0');
+  foreach ($result as $item) {
+    // We also build an index of "external_id" => "nid".
+    $article_id2nid[$item->external_id] = $item->nid;
+    $article_id_list[] = $item->external_id;
+  }
+
+  // Then we get all the updated articles. We can not(!) use the LastUpdated-
+  // field in the 'os2web_borger_dk_titles'-table since it only works when
+  // titles-autocomplete has been activated.
+  $articles = array();
+  $articles = _os2web_borger_dk_GetArticlesByIDs($article_id_list, $updated_after);
+
+  // We must check if the webservice throws ANY errors.
+  $any_webservice_errors = FALSE;
+  // $deleted_items = array();
+  $deleted_ids = array();
+  $error_items = array();
+  // And for each of the found articles we update the node content.
+  foreach ($articles as $article) {
+    $external_id = $article['external_id'];
+    // We only update articles we already know the nid for (just in case).
+    if (!empty($article_id2nid[$external_id])) {
+      $nid = $article_id2nid[$external_id];
+
+      // First we check if the article is an error-array.
+      if (empty($article['no_updates'])) {
+        // We only update articles that does not contain an error.
+        if (empty($article['Exceptions']) && empty($article['error'])) {
+          $node = _os2web_borger_dk_update_node_content($nid, $article);
+          node_save($node);
+        }
+        if (!empty($article['Exceptions'])) {
+          $any_webservice_errors = TRUE;
+        }
+      }
+      else {
+        // Articles with errors might have been deleted, and we must handle it.
+        // But if "Titles autocomplete" is active, then it will be handled by
+        // the titles-auto-update in the cron-function:
+        // _os2web_borger_dk_titles_cronbatch().
+        if (!$titles_autocomplete) {
+          // Try to get this one article, to see if it still exists.
+          $item = _os2web_borger_dk_GetArticleByID($external_id);
+          if (!empty($item['error']) && $item['error'] == 1) {
+            if (!empty($item['error_type']) && ($item['error_type'] == 'not_found')) {
+              // $deleted_items[$nid] = $item;
+              $deleted_ids[] = $nid;
+            }
+            else {
+              $error_items[$nid] = $item;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Next we update/queue the articles that should be deleted.
+  // Deleted_ids will only contain elements
+  // if "Titles autocomplete" is inactive.
+  if (!empty($deleted_ids)) {
+    $sql = "UPDATE {os2web_borger_dk_article} SET external_status = -2 WHERE nid IN (:nids)";
+    $nid_list = implode(',', $deleted_ids);
+    db_query($sql, array(':updated' => $this_run, ':nids' => $nid_list));
+  }
+
+  // Then we log the errors that occured but we could not handle.
+  if (!empty($error_items)) {
+    foreach ($error_items as $nid => $error) {
+      $msg = 'Borger.dk webservice returned an error for nid=%nid, external_id=%eid. Error code: %ecode. Error string: %estring';
+      watchdog(
+        'OS2web Borger.dk',
+        $msg,
+        $variables = array(
+          '%nid' => $nid,
+          '%eid' => $error['external_id'],
+          '%ecode' => $error['error_code'],
+          '%estring' => $error['error_string'],
+        )
+      );
+    }
+  }
+
+  // Now we must update the "last_updated" variable.
+  // But only if no errors were encountered.
+  if (!$any_webservice_errors) {
+    variable_set('os2web_borger_dk_last_update', $this_run);
+    $updated_at = date('Y-m-d\TH\:i\:s', $this_run);
+    $msg = 'All Borger.dk webservice articles have been updated succesfully at: %success';
+    watchdog('OS2web Borger.dk', $msg, $variables = array('%success' => $updated_at));
+  }
+  else {
+    $should_have_been = date('Y-m-d\TH\:i\:s', $this_run);
+    $msg = 'Borger.dk webservice threw errors while updating articles at: %runtime. Not all articles have been updated. Last succesful automated update was at: %success';
+    watchdog(
+      'OS2web Borger.dk',
+      $msg,
+      $variables = array(
+        '%runtime' => $should_have_been,
+        '%success' => $updated_after,
+      )
+    );
+  }
+}
+
+/**
+ * Function _os2web_borger_dk_titles_cronbatch().
+ */
+function _os2web_borger_dk_titles_cronbatch($first_run = FALSE) {
+  $borger_dk_menus_import = variable_get('os2web_borger_dk_menus_import', FALSE);
+  $titles_availlable = array();
+  $titles_availlable_en = array();
+
+  $titles_availlable = _os2web_borger_dk_GetAllArticles('da');
+  $known_ids = os2web_borger_dk_titles_helper($titles_availlable);
+
+  $titles_availlable_en = _os2web_borger_dk_GetAllArticles('en');
+  $known_ids_en = os2web_borger_dk_titles_helper($titles_availlable_en, 'en');
+
+  // NB: If this is run for the first time we should do an early exit.
+  // No need to look for data to delete when no data exists.
+  if ($first_run) {
+    // Calling functions should never set this. Only called from hook_install.
+    return;
+  }
+  os2web_borger_dk_titles_helper_queue($known_ids, 'os2web_borger_dk_article_titles');
+  os2web_borger_dk_titles_helper_queue($known_ids_en, 'os2web_borger_dk_article_titles_en');
+}
+
+/**
+ * Helper function, to import/update titles tables.
+ */
+function os2web_borger_dk_titles_helper($titles_availlable, $la = NULL) {
+  // We must update the table of Borger.dk Article titles.
+  // And to do that we must know what is already there, so that we can mark
+  // un-listed titles for deletion.
+  $table = 'os2web_borger_dk_article_titles';
+  if (isset($la)) {
+    $table .= '_' . $la;
+  }
+  $titles_result = db_query('SELECT `ArticleID`, `ArticleStatus`, `LastUpdated` FROM {' . $table . '} WHERE `ArticleStatus` >= 0');
+  $known_ids = array();
+  if ($titles_result) {
+    foreach ($titles_result as $item) {
+      $aid = $item->ArticleID;
+      $known_ids[$aid] = array('ArticleStatus' => $item->ArticleStatus, 'LastUpdated' => $item->LastUpdated);
+    }
+  }
+
+  foreach ($titles_availlable as $id => $item) {
+    $aid = $item['ArticleID'];
+    // Check the known status (if any).
+    if (isset($known_ids[$aid])) {
+      // Before we update we check if it has been changed.
+      $updated = strtotime($item['LastUpdated']);
+      if ($updated > $known_ids[$aid]['LastUpdated']) {
+        // We know about this article and we update the DB-entry
+        // because the content has changed since we updated it last.
+        db_update($table)
+            ->fields(array(
+              'ArticleTitle' => $item['ArticleTitle'],
+              'ArticleUrl' => $item['ArticleUrl'],
+              'LastUpdated' => $updated,
+              'FORMFields' => $item['FORMFields'],
+            ))
+            ->condition('ArticleID', $aid, '=')
+            ->execute();
+      }
+      // We remove this item from the list of known ID's so that we can
+      // find out if all the known ID's were found in the list.
+      unset($known_ids[$aid]);
+    }
+    else {
+      // This is a new article-title and we must insert it into DB.
+      db_insert($table)
+          ->fields(array(
+            'ArticleID' => $aid,
+            'ArticleTitle' => $item['ArticleTitle'],
+            'ArticleUrl' => $item['ArticleUrl'],
+            'LastUpdated' => strtotime($item['LastUpdated']),
+            'PublishingDate' => strtotime($item['PublishingDate']),
+            'FORMFields' => $item['FORMFields'],
+          ))
+          ->execute();
+    }
+  }
+  return $known_ids;
+
+}
+function os2web_borger_dk_titles_helper_queue($known_ids, $table) {
+    // Now we handle the known_ids that has not been found in the article-list.
+  if (!empty($known_ids)) {
+    // We keep the titles-list updated, and because this is used primarily
+    // to autocomplete titles on import we MUST keep it up to date, and can
+    // not have "non-availlable" article titles "ready for import"!
+    $aid_list = implode(',', array_keys($known_ids));
+    $sql = "UPDATE {" . $table . "} SET `ArticleStatus` = -1 WHERE `ArticleID` IN (:aids)";
+    db_query($sql, array(':aids' => $aid_list));
+
+    // We create a queue for handling the many SoapClient->request's needed
+    // for examinig if all unknown articles has been deleted.
+    $queue = DrupalQueue::get('os2web_borger_dk_check_status_queue');
+
+    $arg = '';
+    if ($table == 'os2web_borger_dk_article_titles') {
+      $arg = ' AND `external_url` LIKE "%Sider%"';
+    }
+    elseif ($table == 'os2web_borger_dk_article_titles_en') {
+      $arg = ' AND `external_url` LIKE "%Pages%"';
+    }
+
+    $sql = 'SELECT `nid`, `external_id` FROM {os2web_borger_dk_article} WHERE `external_id` IN (:aids)' . $arg;
+    $result = db_query($sql, array(':aids' => $aid_list));
+
+    // Step through the known_ids that has not been found.
+    foreach ($result as $item) {
+      $qitem = array('nid' => $item->nid, 'external_id' => $item->external_id);
+      $queue->createItem($qitem);
+      $log .= '=> Item: ' . print_r($qitem, TRUE) . "\n";
+    }
+  }
+}
+/**
+ * Implements hook_cron_queue_info().
+ */
+function os2web_borger_dk_cron_queue_info() {
+  $queues = array();
+  $queues['os2web_borger_dk_delete_queue'] = array(
+    // Function to call for each item.
+    'worker callback' => '_os2web_borger_dk_delete_queue_callback',
+    // Seconds to spend working on the queue.
+    'time' => 20,
+  );
+  $queues['os2web_borger_dk_check_status_queue'] = array(
+    // Function to call for each item.
+    'worker callback' => '_os2web_borger_dk_status_check_queue_callback',
+    // Seconds to spend working on the queue.
+    'time' => 60,
+  );
+
+  return $queues;
+}
+
+/**
+ * Function _os2web_borger_dk_status_check_queue_callback().
+ */
+function _os2web_borger_dk_status_check_queue_callback($data) {
+  // Uses SoapClient->request GetArticleByID to check the
+  // status of a Borger.dk Article with the Borger.dk-WebService.
+  if (!isset($data['nid']) || !isset($data['external_id'])) {
+    return;
+  }
+
+  // Try to get this one article, to see if it still exists.
+  $item = _os2web_borger_dk_GetArticleByID($data['external_id']);
+  if (!empty($item['error']) && $item['error'] == 1) {
+    if (!empty($item['error_type']) && ($item['error_type'] == 'not_found')) {
+      // Not found articles are marked for deletion,
+      // which is handled by another queue.
+      $sql = "UPDATE {os2web_borger_dk_article} SET `external_status` = -2 WHERE `nid` = :nid";
+      db_query($sql, array(':nid' => $data['nid']));
+    }
+    else {
+      $msg = 'Borger.dk webservice returned an error for an imported article with id=%aid. ';
+      $msg .= 'The error-struck article can be found here: %alink. ';
+      $msg .= 'Error code: %ecode. Error string: %estring';
+      watchdog(
+        'OS2web Borger.dk',
+        $msg,
+        $variables = array(
+          '%aid' => $data['external_id'],
+          '%alink' => l(t('node/') . $data['nid']),
+          '%ecode' => $item['error_code'],
+          '%estring' => $item['error_string'],
+        )
+      );
+    }
+  }
+  elseif (!isset($item['Exceptions'])) {
+    // Well - NO ERRORS AND NO EXCEPTIONS - WHATS UP:
+    // We un-mark this title, and let it point back to the borger_dk_article.
+    $table = os2web_borger_dk_titles_helper_get_table($data['external_url']);
+
+    $sql = "UPDATE {" . $table . "} SET `ArticleStatus` = :nid WHERE `ArticleID` = :aid";
+    db_query($sql, array(':nid' => $data['nid'], ':aid' => $data['external_id']));
+  }
+}
+
+/**
+ * Function _os2web_borger_dk_delete_queue_callback().
+ */
+function _os2web_borger_dk_delete_queue_callback($data) {
+  // This function loads a node with node_load, sets the status
+  // to un-published, writes a log-message,
+  // and stores it as a new revision.
+  // Each data-element point to an article that should be deleted / unpublished.
+  // First we load the current node.
+  $node = node_load($data['nid']);
+  // Then we put our update into a new revision for easy re-publishing.
+  $node->revision = 1;
+  // And we make it un-published.
+  $node->status = 0;
+  // We also insert a log-message that explains our actions.
+  $node->log = t('Un-publishing article because it has been deleted at Borger.dk. This is an un-published copy of the revision from %date.', array(
+    '%date' => format_date($node->revision_timestamp)));
+  // And we mark the "external-link-table-item" as deleted (status = -1).
+  $node->os2web_borger_dk_article['external_status'] = -1;
+  // Finally we store the new revision.
+  node_save($node);
+
+  $msg = 'Cronjob has un-published the article node/%nid because is has been deleted at Borger.dk';
+  watchdog('OS2web Borger.dk', $msg, $variables = array('%nid' => $node->nid));
+}
+
+
+/***************** End of Borger.dk cron. ***********************************/
+
+
+/**
+ * Implements hook_os2web_help().
+ */
+function os2web_borger_dk_os2web_help($sections) {
+
+  // Content types.
+  $sections['contenttype'] = t('<p><b>Borger.dk Article:</b> Add
+                               <a href="@url" target="_blank">borger.dk articles</a>
+                               directly from borger.dk, and implement them in your sites structure.<br />
+                               <i><a href="@borger" target="_blank">
+                               See the advanced documentation for the borger.dk module</a>(.pdf)</i></p>',
+                               array(
+                                 '@url' => url('node/add/os2web-borger-dk-article'),
+                                 '@borger' => file_create_url(
+                                    drupal_get_path('module', 'os2web_borger_dk') . '/doc/Guide til OS2web borger.dk - articles.pdf'
+                                 ),
+                               )
+                             );
+
+  $sections['import'] = t('<p><b>Automatic import of Borger.dk articles:
+                          </b><a href="@url" target="_blank">Configure automatic import and syncronization of articles located on Borger.dk</a>
+                          <br />See an advanced guide for setting up an import here:
+                          <a href="@import-guide" target="_blank">Borger.dk menu import.pdf</a>
+                          (<i>Danish only</i>)</p>',
+                          array(
+                            '@url' => url('admin/config/os2web_borger_dk/settings'),
+                            '@import-guide' => file_create_url(
+                                drupal_get_path('module', 'os2web_borger_dk') . '/doc/Borger.dk menu import.pdf'
+                            ),
+                          )
+                        );
+  return $sections;
+
+}
+
+/**
+ * Implements hook_help().
+ */
+function os2web_borger_dk_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#os2web_borger_dk':
+      // TODO.
+      return t('Missing documentation.');
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function os2web_borger_dk_block_info() {
+  $blocks = array();
+
+  $blocks['os2web_borger_dk_legislati'] = array(
+    'info' => t('Lovgivning block'),
+  );
+  $blocks['os2web_borger_dk_recommend'] = array(
+    'info' => t('Recommended block'),
+  );
+
+  return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function os2web_borger_dk_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+
+    case 'os2web_borger_dk_legislati':
+      $block['subject'] = t('Lovgivning');
+      $block['content'] = _os2web_borger_dk_block_content('field_os2web_borger_dk_legislati');
+      break;
+    case 'os2web_borger_dk_recommend':
+      $block['subject'] = t('Recommended');
+      $block['content'] = _os2web_borger_dk_block_content('field_os2web_borger_dk_recommend');
+      break;
+
+  }
+  return $block;
+
+}
+/**
+ * Get article field value to block content.
+ */
+function _os2web_borger_dk_block_content($field) {
+  $related_links = array();
+  $entity = FALSE;
+  $eid = arg(1);
+  $output = '';
+
+  if (is_numeric($eid)) {
+    $entity = node_load($eid);
+  }
+  else {
+    return $output;
+  }
+
+  if (is_object($entity)) {
+    if ($field_array = field_get_items('node', $entity, $field)) {
+      $related_links = os2web_related_links_get_borger_dk_links($field_array);
+
+    }
+  }
+    // 2. Get borger.dk recommended links.
+  if (isset($output) && $output) {
+    foreach ($output as $key => $link) {
+      $related_links[$entity->nid . '_' . $key] = array(
+        'url' => $link['url'],
+        'title' => $link['title'],
+        'class' => 'ext-link',
+      );
+    }
+  }
+  if (!empty($related_links)) {
+    $output = os2web_borger_dk_get_links_make_markup($related_links);
+  }
+  return $output;
+}
+/**
+ * Helper: retrieve os2web_borger_dk_article links.
+ */
+function os2web_related_links_get_borger_dk_links($item) {
+  $borger_dk_links = array();
+  $doc = new DOMDocument('1.0', 'UTF-8');
+  //$doc->strictErrorChecking = FALSE;
+  $doc->loadHTML('<?xml encoding="UTF-8">' . $item[0]['value']);
+
+  $xml = simplexml_import_dom($doc);
+  $count = 0;
+
+  $results = $xml->xpath("//ul");
+  foreach ($results as $ul) {
+    foreach ($ul->li as $li) {
+      $url = (string) $li->a->attributes()->href;
+      $title = (string) $li->a;
+      $borger_dk_links[] = array(
+        'url' => $url,
+        'title' => $title,
+      );
+    }
+  }
+  return $borger_dk_links;
+}
+/**
+ * Make block links markup.
+ */
+function os2web_borger_dk_get_links_make_markup($related_links, $class = NULL) {
+  if (!isset($class)) {
+    $output = '<ul class="related-links">';
+  }
+  else {
+    $output = '';
+  }
+
+  foreach ($related_links as $key => $link) {
+    $output .= '<li>';
+    if (isset($link['url'])) {
+      $output .= l($link['title'], $link['url'], array('attributes' => array('class' => $link['class'])));
+    }
+    else {
+      $output .= l($link['title'], drupal_get_path_alias('node/' . $link['nid']), array('attributes' => array('class' => $link['class'])));
+    }
+    $output .= '</li>';
+
+  }
+  if (!isset($class)) {
+    $output .= '</ul>';
+  }
+
+  return $output;
+}
+/**
+ * Helper function to check article langauge by url.
+ */
+function os2web_borger_dk_check_import_article_language_byURL($url) {
+  if ($pos_en = strpos($url, 'borger.dk/Pages')) {
+    return 'en';
+  }
+  elseif ($pos = strpos($url, 'borger.dk/Sider')) {
+    return 'da';
+  }
+  else {
+    return FALSE;
+  }
+}
+function os2web_borger_dk_titles_helper_get_table($url) {
+  $la = os2web_borger_dk_check_import_article_language_byURL($url);
+  $table = 'os2web_borger_dk_article_titles';
+
+  if ($la == 'en') {
+    $table = 'os2web_borger_dk_article_titles_en';
+  }
+
+  return $table;
+}
+/**
+ * Add table 'os2web_borger_dk_article_titles_en' for english article title search.
+ */
+function os2web_borger_dk_update_7210() {
+  // Add english title table for autocomplete search.
+  $schema['os2web_borger_dk_article_titles_en'] = array(
+    'description' => 'Table for storing a list of availlable article items, and articles imported from lifeindenmark.borger.dk.',
+    'fields' => array(
+      'ArticleID'  => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Primary Key: the node identifier for an article item.',
+      ),
+      'ArticleStatus' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Status of the article (ie. lifeindenmark.borger.dk article-status): 0 = Not imported, >0 = Node->nid, <0 = Deleted',
+      ),
+      'ArticleTitle'  => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Title of the lifeindenmark.borger.dk article.',
+      ),
+      'ArticleUrl'  => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Borger.dk-URL of the article (ie. lifeindenmark.borger.dk article-URL).',
+      ),
+      'FORMFields' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'medium',
+        'description' => 'FORM Fields of the article item.',
+      ),
+      'PublishingDate' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Published date of the article item, as a Unix timestamp.',
+      ),
+      'LastUpdated' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Last updated of the article item, as a Unix timestamp.',
+      ),
+    ),
+    'primary key' => array('ArticleID'),
+    'indexes' => array(
+      'borger_dk_title_index' => array('ArticleTitle'),
+      'borger_dk_url_index' => array('ArticleUrl'),
+    ),
+  );
+  db_create_table('os2web_borger_dk_article_titles_en', $schema['os2web_borger_dk_article_titles_en']);
+  _os2web_borger_dk_titles_cronbatch(TRUE);
+}

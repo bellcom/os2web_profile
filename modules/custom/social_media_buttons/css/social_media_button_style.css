@@ -1,0 +1,28 @@
+/*
+Custom style for the social media buttons and headline (pane title).
+*/
+.social-media-pane-title{
+    text-align: center;
+}
+.pane-social-media-buttons .pane-title
+{
+   text-align: center; 
+}
+.social-media-buttons-wrapper{
+    text-align: center;
+}
+.social_media_button_link{
+    padding: 3px;
+}
+.social_media_button_link img{
+    max-height: 30px;
+    max-width: 30px;
+    border-radius: 100%;
+    padding: 2px;
+    display: inline-block;
+    border: 3px solid #d9d9d9;
+}
+.social_media_button_link:hover img{
+    border-color: #b3b3b3;
+}
+

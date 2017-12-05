@@ -1,0 +1,10 @@
+name = Social Media Buttons
+description = This Module provides social media buttons for sharing your content/nodes.
+core = 7.x
+dependencies[] = panels
+dependencies[] = ctools
+dependencies[] = page_manager
+
+stylesheets[all][] = css/social_media_button_style.css
+
+configure = admin/config/content/socialmediabuttons
