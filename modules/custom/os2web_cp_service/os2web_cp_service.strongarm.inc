@@ -24,6 +24,12 @@ function os2web_cp_service_strongarm() {
         'path' => array(
           'weight' => '30',
         ),
+        'metatags' => array(
+          'weight' => '44',
+        ),
+        'redirect' => array(
+          'weight' => '30',
+        ),
       ),
       'display' => array(),
     ),
@@ -61,6 +67,12 @@ function os2web_cp_service_strongarm() {
           'weight' => '0',
         ),
         'path' => array(
+          'weight' => '30',
+        ),
+        'metatags' => array(
+          'weight' => '44',
+        ),
+        'redirect' => array(
           'weight' => '30',
         ),
       ),
