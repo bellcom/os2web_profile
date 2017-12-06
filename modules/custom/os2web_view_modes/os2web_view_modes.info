@@ -1,0 +1,4 @@
+name        = 'OS2Web view modes'
+description = 'Contains view modes for OS2Web.'
+core        = 7.x
+package     = 'OS2Web custom'

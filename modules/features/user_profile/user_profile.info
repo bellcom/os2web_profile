@@ -1,6 +1,6 @@
 name = User profile
 core = 7.x
-package = Fredercia
+package = OS2Web - Backend
 version = 7.x-1.0
 dependencies[] = page_manager
 dependencies[] = views
