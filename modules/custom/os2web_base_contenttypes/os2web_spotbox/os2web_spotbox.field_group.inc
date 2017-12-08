@@ -24,9 +24,7 @@ function os2web_spotbox_field_group_info() {
     'weight' => '1',
     'children' => array(
       0 => 'field_os2web_spotbox_big_image',
-      1 => 'field_os2web_spotbox_ref_kle',
-      2 => 'field_os2web_spotbox_sitestruct',
-      3 => 'title',
+      1 => 'title',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -86,8 +84,6 @@ function os2web_spotbox_field_group_info() {
     'children' => array(
       0 => 'group_billeder',
       1 => 'group_links',
-      2 => 'group_taksonomi',
-      3 => 'group_tekst',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
@@ -107,10 +103,10 @@ function os2web_spotbox_field_group_info() {
   $field_group->entity_type = 'node';
   $field_group->bundle = 'os2web_spotbox_box';
   $field_group->mode = 'form';
-  $field_group->parent_name = 'group_spotbox';
+  $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Emneord',
-    'weight' => '4',
+    'weight' => '1',
     'children' => array(
       0 => 'field_os2web_spotbox_editor_tags',
       1 => 'field_os2web_spotbox_organizati',
@@ -118,14 +114,20 @@ function os2web_spotbox_field_group_info() {
       3 => 'field_os2web_spotbox_promote_to',
       4 => 'field_os2web_spotbox_ref_place',
     ),
-    'format_type' => 'htab',
+    'format_type' => 'div',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Emneord',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => '',
         'required_fields' => 1,
+        'id' => '',
+        'classes' => 'hidden',
+        'description' => '',
+        'show_label' => '1',
+        'label_element' => 'h3',
+        'effect' => 'none',
+        'speed' => 'fast',
       ),
+      'formatter' => 'open',
     ),
   );
   $field_groups['group_taksonomi|node|os2web_spotbox_box|form'] = $field_group;
@@ -138,23 +140,30 @@ function os2web_spotbox_field_group_info() {
   $field_group->entity_type = 'node';
   $field_group->bundle = 'os2web_spotbox_box';
   $field_group->mode = 'form';
-  $field_group->parent_name = 'group_spotbox';
+  $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Tekst og video',
     'weight' => '2',
     'children' => array(
       0 => 'body',
-      1 => 'field_os2web_spotbox_video',
+      1 => 'field_os2web_spotbox_ref_kle',
+      2 => 'field_os2web_spotbox_sitestruct',
+      3 => 'field_os2web_spotbox_video',
     ),
-    'format_type' => 'htab',
+    'format_type' => 'div',
     'format_settings' => array(
       'label' => 'Tekst og video',
       'instance_settings' => array(
         'required_fields' => 1,
-        'classes' => '',
+        'id' => '',
+        'classes' => 'hidden',
         'description' => '',
+        'show_label' => '1',
+        'label_element' => 'h3',
+        'effect' => 'none',
+        'speed' => 'fast',
       ),
-      'formatter' => 'closed',
+      'formatter' => 'open',
     ),
   );
   $field_groups['group_tekst|node|os2web_spotbox_box|form'] = $field_group;

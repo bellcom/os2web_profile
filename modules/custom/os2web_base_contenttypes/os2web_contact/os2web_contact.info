@@ -41,4 +41,5 @@ features[variable][] = menu_parent_os2web_contact_contact
 features[variable][] = node_options_os2web_contact_contact
 features[variable][] = node_preview_os2web_contact_contact
 features[variable][] = node_submitted_os2web_contact_contact
+features[variable][] = pathauto_node_os2web_contact_contact_pattern
 features_exclude[dependencies][os2web_contact_advanced] = os2web_contact_advanced

@@ -50,46 +50,46 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['pager']['options']['tags']['last'] = 'sidste »';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'node';
-  /* Forbindelse: Feeds item: Owner feed */
+  /* Relationship: Feeds item: Owner feed */
   $handler->display->display_options['relationships']['feed_nid']['id'] = 'feed_nid';
   $handler->display->display_options['relationships']['feed_nid']['table'] = 'feeds_item';
   $handler->display->display_options['relationships']['feed_nid']['field'] = 'feed_nid';
-  /* Felt: Indhold: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Felt: Feeds item: Owner feed nid */
+  /* Field: Feeds item: Owner feed nid */
   $handler->display->display_options['fields']['feed_nid']['id'] = 'feed_nid';
   $handler->display->display_options['fields']['feed_nid']['table'] = 'feeds_item';
   $handler->display->display_options['fields']['feed_nid']['field'] = 'feed_nid';
-  /* Felt: Feeds log: Feed node id */
+  /* Field: Feeds log: Feed node id */
   $handler->display->display_options['fields']['feed_nid_1']['id'] = 'feed_nid_1';
   $handler->display->display_options['fields']['feed_nid_1']['table'] = 'feeds_log';
   $handler->display->display_options['fields']['feed_nid_1']['field'] = 'feed_nid';
-  /* Felt: Feeds item: Owner feed nid */
+  /* Field: Feeds item: Owner feed nid */
   $handler->display->display_options['fields']['feed_nid_2']['id'] = 'feed_nid_2';
   $handler->display->display_options['fields']['feed_nid_2']['table'] = 'feeds_item';
   $handler->display->display_options['fields']['feed_nid_2']['field'] = 'feed_nid';
-  /* Felt: Global: Vis */
+  /* Field: Global: View */
   $handler->display->display_options['fields']['view']['id'] = 'view';
   $handler->display->display_options['fields']['view']['table'] = 'views';
   $handler->display->display_options['fields']['view']['field'] = 'view';
-  /* Sorteringskriterie: Indhold: Oprettelsesdato */
+  /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Filterkriterie: Indhold: Udgivet */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filterkriterie: Indhold: Type */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -127,14 +127,14 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['defaults']['footer'] = FALSE;
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
-  /* Felt: Indhold: Nid */
+  /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
   $handler->display->display_options['fields']['nid']['field'] = 'nid';
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Dato */
+  /* Field: Content: Dato */
   $handler->display->display_options['fields']['field_os2web_postlistedato']['id'] = 'field_os2web_postlistedato';
   $handler->display->display_options['fields']['field_os2web_postlistedato']['table'] = 'field_data_field_os2web_postlistedato';
   $handler->display->display_options['fields']['field_os2web_postlistedato']['field'] = 'field_os2web_postlistedato';
@@ -151,7 +151,7 @@ function os2web_postlister_views_default_views() {
     'multiple_from' => '',
     'multiple_to' => '',
   );
-  /* Felt: Indhold: Organisation */
+  /* Field: Content: Organisation */
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['id'] = 'field_os2web_base_field_organiz';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['table'] = 'field_data_field_os2web_base_field_organiz';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['field'] = 'field_os2web_base_field_organiz';
@@ -162,7 +162,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['type'] = 'taxonomy_term_reference_plain';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['delta_offset'] = '0';
-  /* Felt: Indhold: Direktørområde */
+  /* Field: Content: Direktørområde */
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['id'] = 'field_os2web_postlist_dept';
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['table'] = 'field_data_field_os2web_postlist_dept';
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['field'] = 'field_os2web_postlist_dept';
@@ -173,7 +173,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['empty'] = '[field_os2web_base_field_organiz]';
   $handler->display->display_options['fields']['field_os2web_postlist_dept']['type'] = 'taxonomy_term_reference_plain';
-  /* Felt: Indhold: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
@@ -183,7 +183,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Global: Vis */
+  /* Field: Global: View */
   $handler->display->display_options['fields']['view']['id'] = 'view';
   $handler->display->display_options['fields']['view']['table'] = 'views';
   $handler->display->display_options['fields']['view']['field'] = 'view';
@@ -194,7 +194,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['view']['view'] = 'nypostliste';
   $handler->display->display_options['fields']['view']['display'] = 'attachment_1';
   $handler->display->display_options['fields']['view']['arguments'] = '[!nid]';
-  /* Felt: Indhold: Redigér-link */
+  /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
@@ -206,7 +206,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['alter']['link_class'] = 'btn btn-warning btn-xs';
   $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
-  /* Felt: Indhold: Slet-link */
+  /* Field: Content: Delete link */
   $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
   $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
@@ -217,7 +217,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['delete_node']['alter']['make_link'] = TRUE;
   $handler->display->display_options['fields']['delete_node']['alter']['link_class'] = 'btn btn-danger btn-xs';
   $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Ingen post */
+  /* Field: Content: Ingen post */
   $handler->display->display_options['fields']['field_os2web_post_ingen_post']['id'] = 'field_os2web_post_ingen_post';
   $handler->display->display_options['fields']['field_os2web_post_ingen_post']['table'] = 'field_data_field_os2web_post_ingen_post';
   $handler->display->display_options['fields']['field_os2web_post_ingen_post']['field'] = 'field_os2web_post_ingen_post';
@@ -228,14 +228,14 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['field_os2web_post_ingen_post']['hide_empty'] = TRUE;
   $handler->display->display_options['fields']['field_os2web_post_ingen_post']['empty_zero'] = TRUE;
   $handler->display->display_options['defaults']['sorts'] = FALSE;
-  /* Sorteringskriterie: Indhold: Dato (field_os2web_postlistedato) */
+  /* Sort criterion: Content: Dato (field_os2web_postlistedato) */
   $handler->display->display_options['sorts']['field_os2web_postlistedato_value']['id'] = 'field_os2web_postlistedato_value';
   $handler->display->display_options['sorts']['field_os2web_postlistedato_value']['table'] = 'field_data_field_os2web_postlistedato';
   $handler->display->display_options['sorts']['field_os2web_postlistedato_value']['field'] = 'field_os2web_postlistedato_value';
   $handler->display->display_options['sorts']['field_os2web_postlistedato_value']['order'] = 'DESC';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
-  /* Filterkriterie: Indhold: Har taksonomiterm */
+  /* Filter criterion: Content: Has taxonomy term */
   $handler->display->display_options['filters']['tid']['id'] = 'tid';
   $handler->display->display_options['filters']['tid']['table'] = 'taxonomy_index';
   $handler->display->display_options['filters']['tid']['field'] = 'tid';
@@ -262,14 +262,14 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['filters']['tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['tid']['type'] = 'select';
   $handler->display->display_options['filters']['tid']['vocabulary'] = 'postlister';
-  /* Filterkriterie: Indhold: Udgivet */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filterkriterie: Indhold: Type */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -277,7 +277,7 @@ function os2web_postlister_views_default_views() {
     'postliste_import' => 'postliste_import',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
-  /* Filterkriterie: Indhold: Dato (field_os2web_postlistedato) */
+  /* Filter criterion: Content: Dato (field_os2web_postlistedato) */
   $handler->display->display_options['filters']['field_os2web_postlistedato_value_1']['id'] = 'field_os2web_postlistedato_value_1';
   $handler->display->display_options['filters']['field_os2web_postlistedato_value_1']['table'] = 'field_data_field_os2web_postlistedato';
   $handler->display->display_options['filters']['field_os2web_postlistedato_value_1']['field'] = 'field_os2web_postlistedato_value';
@@ -302,7 +302,7 @@ function os2web_postlister_views_default_views() {
   );
   $handler->display->display_options['filters']['field_os2web_postlistedato_value_1']['form_type'] = 'date_popup';
   $handler->display->display_options['filters']['field_os2web_postlistedato_value_1']['year_range'] = '-5:+0';
-  /* Filterkriterie: Indhold: Dato (field_os2web_postlistedato) */
+  /* Filter criterion: Content: Dato (field_os2web_postlistedato) */
   $handler->display->display_options['filters']['field_os2web_postlistedato_value']['id'] = 'field_os2web_postlistedato_value';
   $handler->display->display_options['filters']['field_os2web_postlistedato_value']['table'] = 'field_data_field_os2web_postlistedato';
   $handler->display->display_options['filters']['field_os2web_postlistedato_value']['field'] = 'field_os2web_postlistedato_value';
@@ -422,7 +422,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['footer'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
-  /* Felt: Indhold: Redigér-link */
+  /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
@@ -436,7 +436,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Rediger';
-  /* Felt: Indhold: Slet-link */
+  /* Field: Content: Delete link */
   $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
   $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
@@ -449,7 +449,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['delete_node']['alter']['link_class'] = 'btn btn-danger btn-xs';
   $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['delete_node']['element_default_classes'] = FALSE;
-  /* Felt: Indhold: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
@@ -460,7 +460,7 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Feeds item: Owner feed nid */
+  /* Field: Feeds item: Owner feed nid */
   $handler->display->display_options['fields']['feed_nid']['id'] = 'feed_nid';
   $handler->display->display_options['fields']['feed_nid']['table'] = 'feeds_item';
   $handler->display->display_options['fields']['feed_nid']['field'] = 'feed_nid';
@@ -468,20 +468,20 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['fields']['feed_nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['feed_nid']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['feed_nid']['separator'] = '';
-  /* Felt: Indhold: Organisation */
+  /* Field: Content: Organisation */
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['id'] = 'field_os2web_base_field_organiz';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['table'] = 'field_data_field_os2web_base_field_organiz';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['field'] = 'field_os2web_base_field_organiz';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['label'] = '';
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_os2web_base_field_organiz']['delta_offset'] = '0';
-  /* Felt: Indhold: Afs/Modtager navn */
+  /* Field: Content: Afs/Modtager navn */
   $handler->display->display_options['fields']['field_os2web_postlist_afs_name']['id'] = 'field_os2web_postlist_afs_name';
   $handler->display->display_options['fields']['field_os2web_postlist_afs_name']['table'] = 'field_data_field_os2web_postlist_afs_name';
   $handler->display->display_options['fields']['field_os2web_postlist_afs_name']['field'] = 'field_os2web_postlist_afs_name';
   $handler->display->display_options['fields']['field_os2web_postlist_afs_name']['label'] = 'Afsender';
   $handler->display->display_options['fields']['field_os2web_postlist_afs_name']['type'] = 'text_plain';
-  /* Felt: Indhold: Dokumentdato */
+  /* Field: Content: Dokumentdato */
   $handler->display->display_options['fields']['field_s2web_postlist_docdate_uni']['id'] = 'field_s2web_postlist_docdate_uni';
   $handler->display->display_options['fields']['field_s2web_postlist_docdate_uni']['table'] = 'field_data_field_s2web_postlist_docdate_uni';
   $handler->display->display_options['fields']['field_s2web_postlist_docdate_uni']['field'] = 'field_s2web_postlist_docdate_uni';
@@ -492,17 +492,17 @@ function os2web_postlister_views_default_views() {
     'multiple_from' => '',
     'multiple_to' => '',
   );
-  /* Felt: Indhold: Løbenummer */
+  /* Field: Content: Løbenummer */
   $handler->display->display_options['fields']['field_os2web_postlist_id']['id'] = 'field_os2web_postlist_id';
   $handler->display->display_options['fields']['field_os2web_postlist_id']['table'] = 'field_data_field_os2web_postlist_id';
   $handler->display->display_options['fields']['field_os2web_postlist_id']['field'] = 'field_os2web_postlist_id';
   $handler->display->display_options['fields']['field_os2web_postlist_id']['type'] = 'text_plain';
-  /* Felt: Indhold: Sagsansvarlig */
+  /* Field: Content: Sagsansvarlig */
   $handler->display->display_options['fields']['field_os2web_postlist_resp']['id'] = 'field_os2web_postlist_resp';
   $handler->display->display_options['fields']['field_os2web_postlist_resp']['table'] = 'field_data_field_os2web_postlist_resp';
   $handler->display->display_options['fields']['field_os2web_postlist_resp']['field'] = 'field_os2web_postlist_resp';
   $handler->display->display_options['fields']['field_os2web_postlist_resp']['type'] = 'text_plain';
-  /* Felt: Indhold: Journaldato */
+  /* Field: Content: Journaldato */
   $handler->display->display_options['fields']['field_s2web_postlist_journda_uni']['id'] = 'field_s2web_postlist_journda_uni';
   $handler->display->display_options['fields']['field_s2web_postlist_journda_uni']['table'] = 'field_data_field_s2web_postlist_journda_uni';
   $handler->display->display_options['fields']['field_s2web_postlist_journda_uni']['field'] = 'field_s2web_postlist_journda_uni';
@@ -514,7 +514,7 @@ function os2web_postlister_views_default_views() {
     'multiple_to' => '',
   );
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Kontekstuelt filter: Feeds item: Owner feed nid */
+  /* Contextual filter: Feeds item: Owner feed nid */
   $handler->display->display_options['arguments']['feed_nid']['id'] = 'feed_nid';
   $handler->display->display_options['arguments']['feed_nid']['table'] = 'feeds_item';
   $handler->display->display_options['arguments']['feed_nid']['field'] = 'feed_nid';
@@ -525,14 +525,14 @@ function os2web_postlister_views_default_views() {
   $handler->display->display_options['arguments']['feed_nid']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
-  /* Filterkriterie: Indhold: Udgivet */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filterkriterie: Indhold: Type */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -561,8 +561,9 @@ function os2web_postlister_views_default_views() {
     t('.'),
     t(','),
     t('Feed node id'),
-    t('Vis'),
+    t('View'),
     t('Page'),
+    t('more'),
     t('<br/>
 [field_os2web_postlistedato]'),
     t('[field_os2web_postlistedato] - [field_os2web_base_field_organiz] '),

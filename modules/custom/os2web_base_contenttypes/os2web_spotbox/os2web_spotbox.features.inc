@@ -36,16 +36,18 @@ function os2web_spotbox_image_default_styles() {
   $styles['os2web_spotbox_image'] = array(
     'label' => 'os2web_spotbox_image',
     'effects' => array(
-      12 => array(
+      1 => array(
         'name' => 'epsacrop_crop',
         'data' => array(
-          'width' => 300,
-          'height' => 261,
+          'width' => 360,
+          'height' => 175,
           'anchor' => 'center-center',
+          'disable_scale' => 0,
           'jcrop_settings' => array(
             'aspect_ratio' => '',
             'bgcolor' => 'white',
             'bgopacity' => 0.6,
+            'fallback' => 0,
           ),
         ),
         'weight' => 2,
@@ -66,7 +68,7 @@ function os2web_spotbox_node_info() {
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
-      'title_label' => t('Overskrift'),
+      'title_label' => t('Kaldenavn'),
       'help' => '',
     ),
   );

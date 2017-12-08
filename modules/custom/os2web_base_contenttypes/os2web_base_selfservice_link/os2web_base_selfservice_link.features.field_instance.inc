@@ -10,7 +10,7 @@
 function os2web_base_selfservice_link_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-os2web_base_iframe-body'
+  // Exported field_instance: 'node-os2web_base_iframe-body'.
   $field_instances['node-os2web_base_iframe-body'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => array(
@@ -29,6 +29,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -73,7 +85,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_edi_tags'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_edi_tags'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_edi_tags'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -87,6 +100,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 6,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -127,7 +152,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_iframe'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_iframe'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_iframe'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -143,6 +169,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         ),
         'type' => 'text_default',
         'weight' => 2,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -182,7 +220,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_kle_ref'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_kle_ref'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_kle_ref'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -196,6 +235,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 5,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -236,7 +287,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_loca_ref'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_loca_ref'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_loca_ref'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -251,6 +303,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 3,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -291,7 +355,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_organiz'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_organiz'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_organiz'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -305,6 +370,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 7,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -345,7 +422,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_politics'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_politics'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_politics'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -359,6 +437,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 4,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -399,7 +489,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_sourceid'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_sourceid'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_sourceid'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -411,6 +502,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 8,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -451,7 +554,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_iframe-field_os2web_base_field_text'
+  // Exported field_instance:
+  // 'node-os2web_base_iframe-field_os2web_base_field_text'.
   $field_instances['node-os2web_base_iframe-field_os2web_base_field_text'] = array(
     'bundle' => 'os2web_base_iframe',
     'default_value' => NULL,
@@ -463,6 +567,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
+        'weight' => 0,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'related_block' => array(
@@ -503,62 +619,8 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_list_as_selvservice'
-  $field_instances['node-os2web_base_selfservice_link-field_list_as_selvservice'] = array(
-    'bundle' => 'os2web_base_selfservice_link',
-    'default_value' => array(
-      0 => array(
-        'value' => 1,
-      ),
-    ),
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'list',
-        'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 9,
-      ),
-      'spotboks' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 1,
-      ),
-      'spotbox' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_list_as_selvservice',
-    'label' => 'TIlgængelig som selvbetjeningslink',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 8,
-    ),
-  );
-
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_direct'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_direct'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_direct'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -571,6 +633,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 5,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -606,11 +680,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 4,
+      'weight' => 5,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_grp_id'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_grp_id'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_grp_id'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -623,6 +698,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 8,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -657,11 +744,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 10,
+      'weight' => 13,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_kle_ref'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_kle_ref'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_kle_ref'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -673,6 +761,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'module' => 'taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
+        'weight' => 0,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'related_block' => array(
@@ -710,11 +810,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 6,
+      'weight' => 8,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_ref_node'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_ref_node'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_ref_node'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -727,6 +828,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'node_reference_default',
         'weight' => 2,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -763,11 +876,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'node_reference_autocomplete',
-      'weight' => 3,
+      'weight' => 6,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_source'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_source'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_source'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -780,6 +894,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 7,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -819,11 +945,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 9,
+      'weight' => 11,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_struct'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_struct'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_struct'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -836,6 +963,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 1,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -871,11 +1010,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'use_select2' => FALSE,
       ),
       'type' => 'options_select',
-      'weight' => 5,
+      'weight' => 9,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_os2web_base_field_type'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_os2web_base_field_type'.
   $field_instances['node-os2web_base_selfservice_link-field_os2web_base_field_type'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => array(
@@ -892,6 +1032,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'list_default',
         'weight' => 4,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -927,11 +1079,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'use_select2' => FALSE,
       ),
       'type' => 'options_select',
-      'weight' => 1,
+      'weight' => 10,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_spot_link'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_spot_link'.
   $field_instances['node-os2web_base_selfservice_link-field_spot_link'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -944,6 +1097,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'link_default',
         'weight' => 10,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotboks' => array(
         'label' => 'above',
@@ -969,8 +1134,10 @@ function os2web_base_selfservice_link_field_default_field_instances() {
     'label' => 'Side link',
     'required' => 0,
     'settings' => array(
+      'absolute_url' => 1,
       'attributes' => array(
         'class' => '',
+        'configurable_class' => 0,
         'configurable_title' => 0,
         'rel' => '',
         'target' => 'default',
@@ -983,10 +1150,11 @@ function os2web_base_selfservice_link_field_default_field_instances() {
       'linkit' => array(
         'button_text' => 'Søg',
         'enable' => 1,
-        'profile' => 'spotbokse',
+        'profile' => 'internt_link',
       ),
       'rel_remove' => 'default',
       'title' => 'optional',
+      'title_label_use_field_label' => 0,
       'title_maxlength' => 128,
       'title_value' => '',
       'url' => 0,
@@ -998,11 +1166,12 @@ function os2web_base_selfservice_link_field_default_field_instances() {
       'module' => 'link',
       'settings' => array(),
       'type' => 'link_field',
-      'weight' => 1,
+      'weight' => 2,
     ),
   );
 
-  // Exported field_instance: 'node-os2web_base_selfservice_link-field_vist_navn'
+  // Exported field_instance:
+  // 'node-os2web_base_selfservice_link-field_vist_navn'.
   $field_instances['node-os2web_base_selfservice_link-field_vist_navn'] = array(
     'bundle' => 'os2web_base_selfservice_link',
     'default_value' => NULL,
@@ -1015,6 +1184,18 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 11,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotboks' => array(
         'label' => 'hidden',
@@ -1094,7 +1275,7 @@ function os2web_base_selfservice_link_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 9,
+      'weight' => 1,
     ),
   );
 
@@ -1130,7 +1311,6 @@ function os2web_base_selfservice_link_field_default_field_instances() {
   t('Skal være inkl. <i>http://</i> hvis det er sider uden for sitet. Skal kun bruges til sider ser ikke kan indlejres som indhold via iframe.');
   t('Source ID');
   t('Stikord');
-  t('TIlgængelig som selvbetjeningslink');
   t('Type');
   t('Vises før indholdet af iframe');
   t('Vist navn');

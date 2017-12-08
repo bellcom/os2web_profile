@@ -15,8 +15,7 @@ function os2web_spotbox_user_default_permissions() {
     'name' => 'create os2web_spotbox_box content',
     'roles' => array(
       'Administrator' => 'Administrator',
-      'Editor' => 'Editor',
-      'Kommunikation' => 'Kommunikation',
+      'Redaktør' => 'Redaktør',
       'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
@@ -38,8 +37,7 @@ function os2web_spotbox_user_default_permissions() {
     'name' => 'delete own os2web_spotbox_box content',
     'roles' => array(
       'Administrator' => 'Administrator',
-      'Editor' => 'Editor',
-      'Kommunikation' => 'Kommunikation',
+      'Redaktør' => 'Redaktør',
       'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
@@ -50,8 +48,7 @@ function os2web_spotbox_user_default_permissions() {
     'name' => 'edit any os2web_spotbox_box content',
     'roles' => array(
       'Administrator' => 'Administrator',
-      'Editor' => 'Editor',
-      'Kommunikation' => 'Kommunikation',
+      'Redaktør' => 'Redaktør',
       'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',
@@ -62,8 +59,7 @@ function os2web_spotbox_user_default_permissions() {
     'name' => 'edit own os2web_spotbox_box content',
     'roles' => array(
       'Administrator' => 'Administrator',
-      'Editor' => 'Editor',
-      'Kommunikation' => 'Kommunikation',
+      'Redaktør' => 'Redaktør',
       'Webmaster' => 'Webmaster',
     ),
     'module' => 'node',

@@ -10,14 +10,13 @@
 function os2web_postlister_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_os2web_post_ingen_post'
+  // Exported field_base: 'field_os2web_post_ingen_post'.
   $field_bases['field_os2web_post_ingen_post'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_post_ingen_post',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -36,21 +35,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_os2web_postlist_afs_id'
+  // Exported field_base: 'field_os2web_postlist_afs_id'.
   $field_bases['field_os2web_postlist_afs_id'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlist_afs_id',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -65,21 +56,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_postlist_afs_name'
+  // Exported field_base: 'field_os2web_postlist_afs_name'.
   $field_bases['field_os2web_postlist_afs_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlist_afs_name',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -94,21 +77,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_postlist_dept'
+  // Exported field_base: 'field_os2web_postlist_dept'.
   $field_bases['field_os2web_postlist_dept'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlist_dept',
-    'foreign keys' => array(
-      'tid' => array(
-        'columns' => array(
-          'tid' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
@@ -130,21 +105,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'taxonomy_term_reference',
   );
 
-  // Exported field_base: 'field_os2web_postlist_id'
+  // Exported field_base: 'field_os2web_postlist_id'.
   $field_bases['field_os2web_postlist_id'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlist_id',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -159,21 +126,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_postlist_resp'
+  // Exported field_base: 'field_os2web_postlist_resp'.
   $field_bases['field_os2web_postlist_resp'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlist_resp',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -188,14 +147,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_os2web_postlistedato'
+  // Exported field_base: 'field_os2web_postlistedato'.
   $field_bases['field_os2web_postlistedato'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_os2web_postlistedato',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'date',
@@ -218,14 +176,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'datetime',
   );
 
-  // Exported field_base: 'field_s2web_postlist_docdate_uni'
+  // Exported field_base: 'field_s2web_postlist_docdate_uni'.
   $field_bases['field_s2web_postlist_docdate_uni'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_s2web_postlist_docdate_uni',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'date',
@@ -248,14 +205,13 @@ function os2web_postlister_field_default_field_bases() {
     'type' => 'datestamp',
   );
 
-  // Exported field_base: 'field_s2web_postlist_journda_uni'
+  // Exported field_base: 'field_s2web_postlist_journda_uni'.
   $field_bases['field_s2web_postlist_journda_uni'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_s2web_postlist_journda_uni',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'date',

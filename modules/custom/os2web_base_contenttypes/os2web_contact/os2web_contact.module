@@ -30,10 +30,12 @@ function os2web_contact_get_block() {
       if (isset($path[1]) && is_numeric($path[1])) {
         $ent = node_load($path[1]);
         $field = field_get_items('node', $ent, 'field_os2web_base_field_contact');
-
-        if ($ent->field_svendborg_hide_contact['und'][0]['value']) {
+        if ($field_hide = field_get_items('node', $ent, 'field_os2web_base_hide_contact')) {
+          if ($field_hide[0]['value']) {
             $hide_contact = TRUE;
+          }
         }
+        
       }
     }
     else {
@@ -84,16 +86,6 @@ function os2web_contact_block_view($delta = '') {
 
   return $block;
 }
-
-function os2web_contact_node_view($node, $view_mode, $langcode) {
-  if ($node->type == 'os2web_contact_contact') {
-    $node->content['field_os2web_contact_field_dept'] = field_view_field('node', $node, 'field_os2web_contact_field_dept', array(
-      'label'=>'hidden'));
-    $node->content['field_os2web_contact_field_info'] = field_view_field('node', $node, 'field_os2web_contact_field_info', array(
-      'label'=>'hidden'));
-  }
-}
-
 
 /**
  * Implements hook_os2web_help().

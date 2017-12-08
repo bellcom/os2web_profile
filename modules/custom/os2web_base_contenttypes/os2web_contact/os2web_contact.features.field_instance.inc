@@ -10,7 +10,8 @@
 function os2web_contact_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-os2web_contact_contact-field_os2web_contact_field_dept'
+  // Exported field_instance:
+  // 'node-os2web_contact_contact-field_os2web_contact_field_dept'.
   $field_instances['node-os2web_contact_contact-field_os2web_contact_field_dept'] = array(
     'bundle' => 'os2web_contact_contact',
     'default_value' => NULL,
@@ -22,7 +23,7 @@ function os2web_contact_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 23,
+        'weight' => 0,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -105,15 +106,11 @@ function os2web_contact_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_contact_contact-field_os2web_contact_field_info'
+  // Exported field_instance:
+  // 'node-os2web_contact_contact-field_os2web_contact_field_info'.
   $field_instances['node-os2web_contact_contact-field_os2web_contact_field_info'] = array(
     'bundle' => 'os2web_contact_contact',
-    'default_value' => array(
-      0 => array(
-        'value' => '',
-        'format' => 'full_html',
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -122,7 +119,7 @@ function os2web_contact_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 7,
+        'weight' => 1,
       ),
       'related_block' => array(
         'label' => 'above',
@@ -145,12 +142,43 @@ function os2web_contact_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_os2web_contact_field_info',
-    'label' => 'Eget indhold',
+    'label' => 'Indhold',
     'required' => 0,
     'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'blokindhold' => 'blokindhold',
+          'email' => 'email',
+          'filtered_html' => 'filtered_html',
+          'full_html' => 'full_html',
+          'plain_text' => 'plain_text',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'blokindhold' => array(
+              'weight' => -7,
+            ),
+            'email' => array(
+              'weight' => 0,
+            ),
+            'filtered_html' => array(
+              'weight' => -10,
+            ),
+            'full_html' => array(
+              'weight' => -9,
+            ),
+            'plain_text' => array(
+              'weight' => -8,
+            ),
+          ),
+        ),
+      ),
       'linkit' => array(
+        'button_text' => 'Search',
         'enable' => 0,
-        'insert_plugin' => '',
+        'profile' => '',
       ),
       'text_processing' => 1,
       'user_register_form' => FALSE,
@@ -168,7 +196,7 @@ function os2web_contact_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Eget indhold');
+  t('Indhold');
   t('Overskrift på kontaktblok');
 
   return $field_instances;

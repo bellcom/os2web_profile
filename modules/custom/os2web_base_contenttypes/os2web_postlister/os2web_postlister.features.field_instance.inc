@@ -10,7 +10,8 @@
 function os2web_postlister_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_base_field_organiz'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_base_field_organiz'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_base_field_organiz'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -23,6 +24,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 14,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -55,7 +68,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_afs_id'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_afs_id'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_afs_id'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -68,6 +82,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 4,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -144,7 +170,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_afs_name'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_afs_name'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_afs_name'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -157,6 +184,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 3,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -233,7 +272,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_id'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_id'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_id'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -246,6 +286,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 8,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -322,7 +374,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_resp'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_resp'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_resp'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -335,6 +388,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 11,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -411,7 +476,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'.
   $field_instances['node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'deleted' => 0,
@@ -426,9 +492,22 @@ function os2web_postlister_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
         'weight' => 12,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -470,7 +549,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'.
   $field_instances['node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'deleted' => 0,
@@ -485,9 +565,22 @@ function os2web_postlister_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
         'weight' => 13,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -529,7 +622,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_post_ingen_post'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_post_ingen_post'.
   $field_instances['node-postliste_import-field_os2web_post_ingen_post'] = array(
     'bundle' => 'postliste_import',
     'default_value' => array(
@@ -546,6 +640,18 @@ function os2web_postlister_field_default_field_instances() {
         'settings' => array(),
         'type' => 'list_default',
         'weight' => 2,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -578,7 +684,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_postlist_dept'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_postlist_dept'.
   $field_instances['node-postliste_import-field_os2web_postlist_dept'] = array(
     'bundle' => 'postliste_import',
     'default_value' => NULL,
@@ -590,6 +697,18 @@ function os2web_postlister_field_default_field_instances() {
         'module' => 'taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
+        'weight' => 0,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'spotbox' => array(
@@ -617,13 +736,15 @@ function os2web_postlister_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(
         'content_taxonomy_opt_groups' => 0,
+        'use_select2' => FALSE,
       ),
       'type' => 'options_select',
       'weight' => 1,
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_postlistedato'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_postlistedato'.
   $field_instances['node-postliste_import-field_os2web_postlistedato'] = array(
     'bundle' => 'postliste_import',
     'deleted' => 0,
@@ -638,9 +759,22 @@ function os2web_postlister_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
         'weight' => 1,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',

@@ -82,24 +82,64 @@ function os2web_news_page_permission() {
 
 function os2web_news_page_menu() {
   $items['aktulet_news/ajax/view/%/%'] = array(
-    'page callback' => 'os2web_news_page_ajax_view',
+    'page callback' => 'os2web_news_page_ajax_view_print',
     'access arguments' => array('access content'),
     'page arguments' => array(3, 4),
   );
   return $items;
 }
 
+function os2web_news_page_ajax_view_print($term_id, $item = 20) {
+  $output = os2web_news_page_ajax_view($term_id, 20);
+  print $output;
+}
+
 function os2web_news_page_ajax_view($term_id, $item = 5) {
-  print '
+  $output = '
       <div class="row ' . $term_id. '">';
 
-  $view = views_get_view('svendborg_news_view');
-  $view->set_display('block');
-  $view->set_arguments(array('nyhed', $term_id));
-  if ($item) {
-    $view->set_items_per_page($item);
+  $view = views_get_view('fredericia_news_view');
+  if (isset($view)) {
+
+    $view->set_display('block');
+    $view->set_arguments(array('Nyheder', $term_id));
+    if ($item) {
+      $view->set_items_per_page($item);
+    }
+    $view->execute();
+    $output .= $view->render('block');
   }
-  $view->execute();
-  print $view->render('block');
-  print '</div>';
+  $output .= '</div>';
+  return $output;
+
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function os2web_news_page_block_info() {
+  $blocks = array();
+
+  $blocks['news_view_block_with_filter'] = array(
+    'info' => t('OS2web news view block with isotoper'),
+  );
+
+  return $blocks;
+}
+/**
+ * Implements hook_block_view().
+ */
+function os2web_news_page_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+
+    case 'news_view_block_with_filter':
+      $block['subject'] = t('');
+      $output = '<div class="news-content" id="news-content-isotoper">';
+      $block['content'] = $output . os2web_news_page_ajax_view('all', 10) . '</div>';
+      break;
+
+  }
+  return $block;
+
 }

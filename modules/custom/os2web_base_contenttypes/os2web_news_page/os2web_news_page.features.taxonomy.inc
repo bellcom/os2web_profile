@@ -13,7 +13,7 @@ function os2web_news_page_taxonomy_default_vocabularies() {
       'name' => 'Nyhedstyper',
       'machine_name' => 'os2web_news_page_newstypes',
       'description' => 'Nyhedstyper til Nyheder',
-      'hierarchy' => 1,
+      'hierarchy' => 0,
       'module' => 'taxonomy',
       'weight' => 0,
     ),

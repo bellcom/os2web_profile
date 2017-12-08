@@ -34,9 +34,10 @@ function os2web_base_selfservice_link_node_info() {
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
-      'title_label' => t('Overskrift'),
+      'title_label' => t('Kaldenavn'),
       'help' => '',
     ),
   );
+  drupal_alter('node_info', $items);
   return $items;
 }
