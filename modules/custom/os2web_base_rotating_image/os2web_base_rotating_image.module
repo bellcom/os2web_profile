@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the OS2web Billedekarrusel feature.
- */
-
-include_once 'os2web_base_rotating_image.features.inc';
