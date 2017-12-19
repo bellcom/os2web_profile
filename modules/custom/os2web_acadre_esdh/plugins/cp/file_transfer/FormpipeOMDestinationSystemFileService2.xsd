@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://formpipe.com/ip/om" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Formpipe.IP.OM.DestinationSystemFileTransfer" />
+  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Net" />
+  <xs:element name="ReturnFileTransferRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="batchGUID" type="ser:guid" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReturnFileTransferRequestResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://formpipe.com/ip/om" minOccurs="0" name="ReturnFileTransferRequestResult" nillable="true" type="q1:FileTransferRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="FileTransferRequest">
+    <xs:sequence>
+      <xs:element xmlns:q2="http://formpipe.com/ip/om" name="FileFormat" type="q2:FileFormat" />
+      <xs:element name="FileID" type="ser:guid" />
+      <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element xmlns:q3="http://formpipe.com/ip/om" name="FileTransferRequest" nillable="true" type="q3:FileTransferRequest" />
+  <xs:simpleType name="FileFormat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Original" />
+      <xs:enumeration value="Published" />
+      <xs:enumeration value="Available" />
+      <xs:enumeration value="Text" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element xmlns:q4="http://formpipe.com/ip/om" name="FileFormat" nillable="true" type="q4:FileFormat" />
+  <xs:element name="FileTransferEnd">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://formpipe.com/ip/om" minOccurs="0" name="result" nillable="true" type="q5:FileTransferResult" />
+        <xs:element minOccurs="0" name="batchGUID" type="ser:guid" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="FileTransferResult">
+    <xs:sequence>
+      <xs:element xmlns:q6="http://formpipe.com/ip/om" minOccurs="0" name="DownloadResponse" nillable="true" type="q6:HttpReponseInformation" />
+      <xs:element name="FileID" type="ser:guid" />
+      <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
+      <xs:element name="TransferCompletedWithoutErrors" type="xs:boolean" />
+      <xs:element xmlns:q7="http://formpipe.com/ip/om" minOccurs="0" name="UploadResponse" nillable="true" type="q7:HttpReponseInformation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element xmlns:q8="http://formpipe.com/ip/om" name="FileTransferResult" nillable="true" type="q8:FileTransferResult" />
+  <xs:complexType name="HttpReponseInformation">
+    <xs:sequence>
+      <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Formpipe.IP.OM.DestinationSystemFileTransfer" minOccurs="0" name="Headers" nillable="true" type="q9:Headers" />
+      <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/System.Net" name="StatusCode" type="q10:HttpStatusCode" />
+      <xs:element minOccurs="0" name="StatusDescription" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element xmlns:q11="http://formpipe.com/ip/om" name="HttpReponseInformation" nillable="true" type="q11:HttpReponseInformation" />
+  <xs:element name="FileTransferEndResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
