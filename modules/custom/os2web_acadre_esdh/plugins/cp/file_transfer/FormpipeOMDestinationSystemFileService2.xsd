@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://formpipe.com/ip/om" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Formpipe.IP.OM.DestinationSystemFileTransfer" />
-  <xs:import schemaLocation="http://localhost:55193/FormpipeOMDestinationSystemFileService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Net" />
+  <xs:import schemaLocation="!endpointurl?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="!endpointurl?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Formpipe.IP.OM.DestinationSystemFileTransfer" />
+  <xs:import schemaLocation="!endpointurl?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Net" />
   <xs:element name="ReturnFileTransferRequest">
     <xs:complexType>
       <xs:sequence>
