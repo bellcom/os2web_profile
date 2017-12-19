@@ -1,20 +1,28 @@
 <?php
 /**
  * @file
- * This file describes the Content pushing plugin as implemented by Acadre
+ * This file describes the Content pushing plugin as implemented by Acadre.
  */
+
 /**
- * Plugin definition with callbacks
+ * Plugin definition with callbacks.
  */
 $plugin = array(
   'description' => t('Acadre ESDH Case Pushing backend'),
   'version' => 1,
   'handle_request' => 'os2web_acadre_esdh_cp_handle_request',
 );
+
 /**
  * This functions handles a request on the webservice API.
+ *
+ * @param string $ws_type
+ *   The type of requested webservice.
+ *
+ * @return mixed
+ *   Depends on request url and arguments return different data or actions.
  */
-function os2web_acadre_esdh_cp_handle_request() {
+function os2web_acadre_esdh_cp_handle_request($ws_type = 'metadata') {
   if (!isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['SERVER_ADDR'] != '192.168.2.52') {
     header('WWW-Authenticate: Basic realm="Fredericia.dk"');
     header('HTTP/1.0 401 Unauthorized');
@@ -30,31 +38,31 @@ function os2web_acadre_esdh_cp_handle_request() {
 #    die('You are not allowed to access.');
 #  }
 
-  module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/ArpService.class');
+  // Load ARP Service Class based on $ws_type argument.
+  module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/' . $ws_type . '/ArpService.class');
+
   if (isset($_GET['wsdl'])) {
-    TraenPublishingDestinationSystemService::getWSDL($_GET['wsdl']);
-    #error_log(' Her 1 ');
+    ArpService::getWSDL($_GET['wsdl']);
   }
   if (isset($_GET['xsd'])) {
-    TraenPublishingDestinationSystemService::getXSD($_GET['xsd']);
-    #error_log(' Her 2 ');
+    ArpService::getXSD($_GET['xsd']);
   }
   if (!lock_acquire(__FUNCTION__, 5)) {
     lock_wait(__FUNCTION__);
-    #error_log(' Her 3 ');
     return os2web_acadre_esdh_cp_handle_request();
   }
+
   global $HTTP_RAW_POST_DATA;
+
   // Remove illegal XML characters.
   $data = preg_replace('/\&\#..F/', '', $HTTP_RAW_POST_DATA);
   if (variable_get('os2web_esdh_cp_provider_save_request', FALSE)) {
     file_unmanaged_save_data($data, 'public://soap/request-' . time() . '-' . uniqid() . '.xml', FILE_EXISTS_REPLACE);
   }
-    #error_log(' Her 4 ');
+
   ini_set("soap.wsdl_cache_enabled", "1");
   $server = new SoapServer('http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? '' : '') . '://' . $_SERVER['SERVER_NAME'] . '/' . request_path() . '/?wsdl', array());
-  $server->setObject(new TraenPublishingDestinationSystemService());
+  $server->setObject(new ArpService());
   $server->handle($data);
-    #error_log(' Her 5 ');
   lock_release(__FUNCTION__);
 }

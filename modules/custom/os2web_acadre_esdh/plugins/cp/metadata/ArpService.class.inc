@@ -10,19 +10,21 @@
 
 /**
  * Class that holds the service.
+ *
+ * @TODO This object need should be refactored to interface and
+ * implementation structure.
  */
-class TraenPublishingDestinationSystemService {
-
+class ArpService {
   /**
    * Dumps the wsdl for the serivce.
    */
   public static function getWSDL($wsdl = FALSE) {
     if ($wsdl) {
       $wsdl = str_replace('wsdl', '', $wsdl);
-      $filename = 'plugins/cp/TraenPublishingDestinationSystemService' . check_plain($wsdl + 1) . '.wsdl';
+      $filename = 'TraenPublishingDestinationSystemService' . check_plain($wsdl + 1) . '.wsdl';
     }
     else {
-      $filename = 'plugins/cp/TraenPublishingDestinationSystemService.wsdl';
+      $filename = 'TraenPublishingDestinationSystemService.wsdl';
     }
     self::echoFile($filename);
   }
@@ -33,10 +35,10 @@ class TraenPublishingDestinationSystemService {
   public static function getXSD($xsd = FALSE) {
     if ($xsd) {
       $xsd = str_replace('xsd', '', $xsd);
-      $filename = 'plugins/cp/TraenPublishingDestinationSystemService' . check_plain($xsd + 1) . '.xsd';
+      $filename = 'TraenPublishingDestinationSystemService' . check_plain($xsd + 1) . '.xsd';
     }
     else {
-      $filename = 'plugins/cp/TraenPublishingDestinationSystemService.xsd';
+      $filename = 'TraenPublishingDestinationSystemService.xsd';
     }
     self::echoFile($filename);
   }
@@ -45,7 +47,7 @@ class TraenPublishingDestinationSystemService {
    * Echoes specified file.
    */
   private static function echoFile($filename) {
-    $filename = drupal_get_path('module', 'os2web_acadre_esdh') . '/' . $filename;
+    $filename = dirname(__FILE__) . DIRECTORY_SEPARATOR . $filename;
     if (!file_exists($filename)) {
       drupal_not_found();
     }
