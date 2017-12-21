@@ -511,7 +511,7 @@
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="FormpipeOMDestinationSystemFileService">
-    <wsdl:port name="BasicHttpBinding_IFormpipeOMDestinationSystemFileService" binding="tns:BasicHttpBinding_IFormpipeOMDestinationSystemFileService">
+    <wsdl:port name="BasicHttpBinding_IFormpipeOMDestinationSystemFileServicePort" binding="tns:BasicHttpBinding_IFormpipeOMDestinationSystemFileService">
       <soap:address location="!endpointurl"/>
     </wsdl:port>
   </wsdl:service>
