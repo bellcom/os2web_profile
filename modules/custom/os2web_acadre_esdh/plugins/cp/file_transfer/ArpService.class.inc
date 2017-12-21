@@ -65,6 +65,31 @@ class ArpService {
 
   /************ PUBLIC API ***************/
 
+  /**
+   * File Transfer request method.
+   *
+   * @return array
+   *   Response for file transfer method.
+   */
+  public function ReturnFileTransferRequest() {
+    $function = 'os2web_cp_service_transfer_request';
+    $response = FALSE;
+    if (function_exists($function)) {
+      $response = call_user_func($function);
+    }
+    return array('ReturnFileTransferRequestResult' => $response);
+  }
+
+  /**
+   * File Transfer request method.
+   */
+  public function FileTransferEnd($data) {
+    $function = 'os2web_cp_service_transfer_update';
+    if (function_exists($function)) {
+      call_user_func($function, $data->result);
+    }
+  }
+
   public function __call($name, $arguments) {
     watchdog('os2web_acadre_esdh', 'Unsupported request recieved: %req', array('%req' => $name), WATCHDOG_NOTICE);
   }
