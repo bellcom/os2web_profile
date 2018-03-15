@@ -157,7 +157,6 @@ function bellcom_elasticsearch_phrase_catcher_settings_page() {
       $until_date = date(DATE_FORMAT, date_timestamp_get($until_date));
     }
     $exclusive = $row->exclusive ? 'checked' : '';
-
     $data = array();
     $data[] = '<span class="display-field display-phrase">' . $row->phrase . '</span><input type="text" value="' . $row->phrase . '" class="form-text edit-field phrase" style="display: none;">';
     $data[] = '<input type="checkbox" class="display-input exclusive" disabled ' . $exclusive . '>';
@@ -165,7 +164,9 @@ function bellcom_elasticsearch_phrase_catcher_settings_page() {
     $data[] = '<span class="display-field display-from">' . $from_date . '</span><input type="text" value="' . $from_date . '" class="form-text edit-field from datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-until">' . $until_date . '</span><input type="text" value="' . $until_date . '" class="form-text edit-field until datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-weight">' . $row->weight . '</span><input type="text" value="' . $row->weight . '" class="form-text edit-field weight" style="display: none;">';
-    $data[] .= '<a href="#" class="edit-link">Edit</a><a class="submit-link" style="display: none;" href="#">Submit</a><span class="submitted" style="display: none;">OK</span>';
+    $data[] .= '<a href="#" class="edit-link">Edit</a><a class="submit-link" style="display: none;" href="#">Submit</a>&nbsp;<span class="submitted" style="display: none;">OK</span>'
+        .'<a class="delete-link" style="display: none;" href="#">Delete</a>';
+
     $rows[] = array('data' => $data, 'class' => array('row_phrase'), 'data-id' => array($row->id));
   }
 
@@ -355,4 +356,14 @@ function bellcom_elasticsearch_content_type_weight_settings_page($form, $form_st
   }
 
   return system_settings_form($form);
+}
+/**
+ * Delete callback for a single phrase
+ *
+ * @param $id
+ */
+function bellcom_elasticsearch_delete_phrase($id) {
+  db_delete('bellcom_elasticsearch_phrase_catcher')
+    ->condition('id', $id)
+    ->execute();
 }
