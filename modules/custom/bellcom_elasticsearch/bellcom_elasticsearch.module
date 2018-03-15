@@ -54,6 +54,13 @@ function bellcom_elasticsearch_menu() {
     'page arguments' => array(1),
     'file' => 'bellcom_elasticsearch.admin.inc',
   );
+   $items['phrase/%/delete'] = array(
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('administer search_api'),
+    'page callback' => 'bellcom_elasticsearch_delete_phrase',
+    'page arguments' => array(1),
+    'file' => 'bellcom_elasticsearch.admin.inc',
+  );
 
   $items['admin/config/search/synonyms_indices'] = array(
     'title' => 'Synonyms set up',
