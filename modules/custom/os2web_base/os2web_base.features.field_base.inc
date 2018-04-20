@@ -294,27 +294,6 @@ function os2web_base_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_os2web_base_field_iframe'.
-  $field_bases['field_os2web_base_field_iframe'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_os2web_base_field_iframe',
-    'indexes' => array(
-      'format' => array(
-        0 => 'format',
-      ),
-    ),
-    'locked' => 0,
-    'module' => 'text',
-    'settings' => array(
-      'max_length' => 255,
-    ),
-    'translatable' => 0,
-    'type' => 'text',
-  );
-
   // Exported field_base: 'field_os2web_base_field_image'.
   $field_bases['field_os2web_base_field_image'] = array(
     'active' => 1,
@@ -475,8 +454,8 @@ function os2web_base_field_default_field_bases() {
     'locked' => 0,
     'module' => 'file',
     'settings' => array(
-      'display_default' => 0,
-      'display_field' => 0,
+      'display_default' => 1,
+      'display_field' => 1,
       'uri_scheme' => 'public',
     ),
     'translatable' => 0,
