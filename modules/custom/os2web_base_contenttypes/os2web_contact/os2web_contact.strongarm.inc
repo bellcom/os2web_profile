@@ -65,19 +65,19 @@ function os2web_contact_strongarm() {
     'extra_fields' => array(
       'form' => array(
         'title' => array(
-          'weight' => '0',
+          'weight' => '2',
         ),
         'path' => array(
-          'weight' => '9',
+          'weight' => '5',
         ),
         'workbench_access' => array(
           'weight' => '8',
         ),
         'metatags' => array(
-          'weight' => '40',
+          'weight' => '7',
         ),
         'redirect' => array(
-          'weight' => '30',
+          'weight' => '6',
         ),
       ),
       'display' => array(),
