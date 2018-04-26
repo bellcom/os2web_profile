@@ -1,0 +1,13 @@
+name = SMTP tests
+description = Contains helper logic for the SMTP tests.
+package = Mail
+core = 7.x
+hidden = TRUE
+
+
+; Information added by drush on 2016-06-20
+version = "7.x-1.4"
+core = "7.x"
+project = "smtp"
+datestamp = "1466415124"
+

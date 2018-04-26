@@ -82,7 +82,6 @@ function os2web_base_user_default_permissions() {
   $permissions['use text format filtered_html'] = array(
     'name' => 'use text format filtered_html',
     'roles' => array(
-      'Editor' => 'Editor',
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'filter',
@@ -93,7 +92,6 @@ function os2web_base_user_default_permissions() {
     'name' => 'use text format full_html',
     'roles' => array(
       'Administrator' => 'Administrator',
-      'Editor' => 'Editor',
       'Webmaster' => 'Webmaster',
     ),
     'module' => 'filter',
