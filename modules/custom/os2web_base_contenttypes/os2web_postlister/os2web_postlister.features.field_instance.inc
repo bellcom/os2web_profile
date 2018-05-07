@@ -10,7 +10,8 @@
 function os2web_postlister_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_base_field_organiz'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_base_field_organiz'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_base_field_organiz'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -55,7 +56,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_afs_id'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_afs_id'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_afs_id'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -144,7 +146,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_afs_name'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_afs_name'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_afs_name'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -233,7 +236,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_id'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_id'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_id'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -322,7 +326,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_os2web_postlist_resp'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_os2web_postlist_resp'.
   $field_instances['node-os2web_acadre_postlists-field_os2web_postlist_resp'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'default_value' => NULL,
@@ -411,7 +416,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'.
   $field_instances['node-os2web_acadre_postlists-field_s2web_postlist_docdate_uni'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'deleted' => 0,
@@ -470,7 +476,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'
+  // Exported field_instance:
+  // 'node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'.
   $field_instances['node-os2web_acadre_postlists-field_s2web_postlist_journda_uni'] = array(
     'bundle' => 'os2web_acadre_postlists',
     'deleted' => 0,
@@ -529,12 +536,13 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_post_ingen_post'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_post_ingen_post'.
   $field_instances['node-postliste_import-field_os2web_post_ingen_post'] = array(
     'bundle' => 'postliste_import',
     'default_value' => array(
       0 => array(
-        'value' => 0,
+        'value' => 1,
       ),
     ),
     'deleted' => 0,
@@ -578,7 +586,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_postlist_dept'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_postlist_dept'.
   $field_instances['node-postliste_import-field_os2web_postlist_dept'] = array(
     'bundle' => 'postliste_import',
     'default_value' => NULL,
@@ -623,7 +632,8 @@ function os2web_postlister_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-postliste_import-field_os2web_postlistedato'
+  // Exported field_instance:
+  // 'node-postliste_import-field_os2web_postlistedato'.
   $field_instances['node-postliste_import-field_os2web_postlistedato'] = array(
     'bundle' => 'postliste_import',
     'deleted' => 0,
