@@ -62,8 +62,12 @@ class FeedsFileFetcher extends FeedsFetcher {
       $state->progress($state->total, $state->total - count($state->files));
       return new FeedsFileFetcherResult($file);
     }
-
-    throw new Exception(t('Resource is not a file or it is an empty directory: %source', array('%source' => $source_config['source'])));
+    if (!empty($source_config['source'])) {
+      throw new Exception(t('Resource is not a file or it is an empty directory: %source', array('%source' => $source_config['source'])));
+    }
+    else {
+      throw new Exception(t('No resource is used.'));
+    }
   }
 
   /**
@@ -150,7 +154,7 @@ class FeedsFileFetcher extends FeedsFetcher {
         $values['file'] = $file;
       }
       elseif (empty($values['source'])) {
-        form_set_error('feeds][FeedsFileFetcher][source', t('Please upload a file.'));
+        // Allow to save nodes with feeds field without file upload. Nothing to validate.
       }
       else {
         // File present from previous upload. Nothing to validate.
