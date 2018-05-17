@@ -1,0 +1,128 @@
+<?php
+/**
+ * @file
+ * Code for the OS2Web Meetings feature.
+ */
+
+include_once 'os2web_meetings.features.inc';
+
+/**
+ * Implements hook_cron().
+ *
+ * Used to update search data on updated meetings.
+ */
+function os2web_meetings_cron() {
+  $current_time = time();
+  $last_run_time = variable_get('os2web_meetings_last_search_index_time', 0);
+
+  if ($last_run_time < $current_time) {
+    // Fetching meetings changed after the last cron run.
+    $query = new EntityFieldQuery();
+    $result = $query->entityCondition('entity_type', 'node')
+      ->propertyCondition('type', 'os2web_meetings_meeting')
+      ->propertyCondition('changed', $last_run_time, '>')
+      ->execute();
+    if (isset($result['node'])) {
+      $nids = array_keys($result['node']);
+      $meetings = entity_load('node', $nids);
+
+      // If queue is empty are we adding the changed meetings to it.
+      $queue = DrupalQueue::get('os2web_meetings_search_index');
+      if ($queue->numberOfItems() == 0) {
+        foreach ($meetings as $meeting) {
+          $queue->createItem(array('meeting' => $meeting));
+        }
+      }
+    }
+
+    variable_set('os2web_meetings_last_search_index_time', $current_time);
+  }
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function os2web_meetings_cron_queue_info() {
+  $queues['os2web_meetings_search_index'] = array(
+    'worker callback' => 'os2web_meetings_cron_queue_worker',
+  );
+  return $queues;
+}
+
+/**
+ * Cron queue worker callback.
+ */
+function os2web_meetings_cron_queue_worker($args) {
+  if (isset($args['meeting'])) {
+    os2web_meetings_update_search_index($args['meeting']);
+  }
+}
+
+/**
+ * Creating the search data for a specific meeting and updating on the meeting.
+ *
+ * @param object $meeting
+ *   The full meeting entity object.
+ */
+function os2web_meetings_update_search_index($meeting) {
+  $entity_type = 'node';
+
+  // Fetching data from each bullet point attached to the meeting,
+  // and merging bullet titles and bullet point attachment bodys
+  // into one searchable text string.
+  $bullet_point_data = '';
+  $bullet_points = field_get_items($entity_type, $meeting, 'field_os2web_meetings_bullets');
+  if (is_array($bullet_points)) {
+    foreach ($bullet_points as $bullet_point) {
+      $bullet_point_node = node_load($bullet_point['target_id']);
+      if ($bullet_point_node) {
+        $text = strip_tags(check_markup($bullet_point_node->title, 'plain_text'));
+        $bullet_point_data .= ' ' . $text;
+
+        $attachments = field_get_items($entity_type, $bullet_point_node, 'field_os2web_meetings_attach');
+        if (is_array($attachments)) {
+          foreach ($attachments as $attachment) {
+            $attachment_node = node_load($attachment['target_id']);
+            $body = field_get_items($entity_type, $attachment_node, 'field_os2web_meetings_bpa_body');
+            $body = $body[0]['value'];
+            $text = strip_tags(check_markup($body, 'filtered_html'));
+            $text = trim(preg_replace('/[\",;:.\'\(\)]/', ' ', $text));
+            $text = trim(preg_replace('/\s\s+/', ' ', $text));
+            $bullet_point_data .= ' ' . $text;
+          }
+        }
+      }
+    }
+  }
+
+  // Extract keywords so only relevant words are stored.
+  $text = mb_split('\s+', $bullet_point_data);
+  $text = array_keys(array_flip($text));
+  $text = array_filter($text, 'os2web_meetings_strip_words');
+  $bullet_point_data = implode(' ', $text);
+
+  // Updating node with the updated search data.
+  $node = node_load($meeting->nid);
+  $node->field_os2web_meetings_searchdata['und'][0]['value'] = $bullet_point_data;
+  node_save($node);
+}
+
+/**
+ * Helper function which removes common and small (<2 chars) words.
+ *
+ * @param string $text
+ *   The text which should be processed.
+ *
+ * @return bool
+ *   Returns TRUE if the processed text is longer than 3 chars.
+ */
+function os2web_meetings_strip_words($text) {
+  $text = preg_replace('/^[^\w|\d|æ|ø|å]+/', '', $text);
+  $text = preg_replace('/[^\w|\d|æ|ø|å]+$/', '', $text);
+  if (strlen($text) > 3) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
