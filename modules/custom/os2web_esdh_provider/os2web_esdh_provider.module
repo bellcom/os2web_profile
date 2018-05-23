@@ -48,6 +48,12 @@ function os2web_esdh_provider_menu() {
     'access callback' => TRUE,
     'file' => 'os2web_esdh_provider.cpapi.inc',
   );
+  $items['os2web/esdh/om/v1'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => '_os2web_esdh_file_transfer_handler',
+    'access callback' => TRUE,
+    'file' => 'os2web_esdh_provider.cpapi.inc',
+  );
 
   return $items;
 }
