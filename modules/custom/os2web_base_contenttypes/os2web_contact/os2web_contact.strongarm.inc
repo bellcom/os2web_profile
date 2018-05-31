@@ -13,6 +13,27 @@ function os2web_contact_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'diff_enable_revisions_page_node_os2web_contact_contact';
+  $strongarm->value = 1;
+  $export['diff_enable_revisions_page_node_os2web_contact_contact'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'diff_show_preview_changes_node_os2web_contact_contact';
+  $strongarm->value = 1;
+  $export['diff_show_preview_changes_node_os2web_contact_contact'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'diff_view_mode_preview_node_os2web_contact_contact';
+  $strongarm->value = 'full';
+  $export['diff_view_mode_preview_node_os2web_contact_contact'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'field_bundle_settings_node__os2web_contact_contact';
   $strongarm->value = array(
     'view_modes' => array(
@@ -44,16 +65,19 @@ function os2web_contact_strongarm() {
     'extra_fields' => array(
       'form' => array(
         'title' => array(
-          'weight' => '0',
+          'weight' => '2',
         ),
         'path' => array(
-          'weight' => '9',
+          'weight' => '5',
         ),
         'workbench_access' => array(
           'weight' => '8',
         ),
         'metatags' => array(
-          'weight' => '40',
+          'weight' => '7',
+        ),
+        'redirect' => array(
+          'weight' => '6',
         ),
       ),
       'display' => array(),
@@ -105,6 +129,13 @@ function os2web_contact_strongarm() {
   $strongarm->name = 'node_submitted_os2web_contact_contact';
   $strongarm->value = 0;
   $export['node_submitted_os2web_contact_contact'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_node_os2web_contact_contact_pattern';
+  $strongarm->value = 'noindex/[node:title]';
+  $export['pathauto_node_os2web_contact_contact_pattern'] = $strongarm;
 
   return $export;
 }
