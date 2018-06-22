@@ -44,35 +44,6 @@ function os2web_pdf_conversion_manager_menu() {
 }
 
 /**
- * Implements hook_FORM_alter().
- */
-function os2web_pdf_conversion_manager_form_os2web_settings_settings_form_alter(&$form, &$form_state) {
-  // OS2Web PDf Conversion configuration.
-  $form['os2web_pdf_conversion'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => FALSE,
-    '#title' => t('* > PDF converting configuration'),
-  );
-  $form['os2web_pdf_conversion']['os2web_copied_filetype'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Type of files to be converted when importing:'),
-    '#maxlength' => 200,
-    '#description' => t('Comma-separated list of file types. Example: xls,doc,docx,xlsx'),
-    '#default_value' => variable_get('os2web_copied_filetype', OS2WEB_PDF_CONVERSION_MANAGER_COPIED_FILETYPE),
-  );
-  $form['os2web_pdf_conversion']['os2web_convertion_dir'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Directory to send the files for converting:'),
-    '#maxlength' => 200,
-    '#description' => t('This is the path where files copy for converting'),
-    '#default_value' => variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR),
-    '#element_validate' => array('_os2web_pdf_conversion_manager_convertion_dir_validate'),
-  );
-}
-
-
-/**
  * Callback to call PDF conversion manager cron.
  */
 function os2web_pdf_conversion_manager_file_manager() {
@@ -834,25 +805,5 @@ function _os2web_pdf_conversion_manager_delete_lock_files($convertion_dir_path) 
       unlink($lock_file);
       watchdog('os2web pdf conversion manager:', 'Locked file %uri was deleted', array('%uri' => $lock_file), WATCHDOG_INFO);
     }
-  }
-}
-
-/**
- * Validates that the os2web conversion path is present and writable.
- *
- * @param mixed $element
- *   The form element.
- * @param mixed $form_state
- *   The state of form.
- */
-function _os2web_pdf_conversion_manager_convertion_dir_validate($element, &$form_state) {
-  $value = $element['#value'];
-  if (file_exists($value)) {
-    if (!is_writable($value)) {
-      form_error($element, t("Could not writte to directory. Please check permissions"));
-    }
-  }
-  else {
-    form_error($element, t("Directory !value does nor exist", array('!value' => $value)));
   }
 }
