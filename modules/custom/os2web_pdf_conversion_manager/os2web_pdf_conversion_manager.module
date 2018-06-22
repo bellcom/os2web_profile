@@ -1,0 +1,858 @@
+<?php
+
+/**
+ * @file
+ * Os2web_pdf_conversion_manager.
+ *
+ * PHP version 5
+ *
+ * @category OS2Web
+ * @package OS2Web
+ * @author Juulia Devadze <juulia@bellcom.ee>
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2
+ * @link http://bellcom.dk
+ */
+
+define('OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR', 'public://os2convert');
+define('OS2WEB_PDF_CONVERSION_MANAGER_COPIED_FILETYPE', 'doc,docx,xls,xlsx');
+define('OS2WEB_PDF_CONVERSION_MANAGER_MIN_SOFFICE_VERSION', '4.3.3.2');
+
+/**
+ * Implements hook_menu().
+ */
+function os2web_pdf_conversion_manager_menu() {
+  $items = array();
+  $items['os2web/run_file_manager'] = array(
+    'page callback' => 'os2web_pdf_conversion_manager_file_manager',
+    'access arguments' => array('administer os2web'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['os2web/pdf_conversion_manager/remove_outdated'] = array(
+    'page callback' => 'os2web_pdf_conversion_manager_remove_outdated',
+    'access arguments' => array('administer os2web'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/config/os2web/pdf_converter'] = array(
+    'title' => 'OS2Web PDF Converter',
+    'access arguments' => array('administer os2web'),
+    'page callback' => 'os2web_pdf_convertion_manager_setting_page',
+    'type' => MENU_LOCAL_TASK,
+    'position' => 'left',
+    'weight' => -150,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_FORM_alter().
+ */
+function os2web_pdf_conversion_manager_form_os2web_settings_settings_form_alter(&$form, &$form_state) {
+  // OS2Web PDf Conversion configuration.
+  $form['os2web_pdf_conversion'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#title' => t('* > PDF converting configuration'),
+  );
+  $form['os2web_pdf_conversion']['os2web_copied_filetype'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Type of files to be converted when importing:'),
+    '#maxlength' => 200,
+    '#description' => t('Comma-separated list of file types. Example: xls,doc,docx,xlsx'),
+    '#default_value' => variable_get('os2web_copied_filetype', OS2WEB_PDF_CONVERSION_MANAGER_COPIED_FILETYPE),
+  );
+  $form['os2web_pdf_conversion']['os2web_convertion_dir'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Directory to send the files for converting:'),
+    '#maxlength' => 200,
+    '#description' => t('This is the path where files copy for converting'),
+    '#default_value' => variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR),
+    '#element_validate' => array('_os2web_pdf_conversion_manager_convertion_dir_validate'),
+  );
+}
+
+
+/**
+ * Callback to call PDF conversion manager cron.
+ */
+function os2web_pdf_conversion_manager_file_manager() {
+  global $_os2web_pdf_conversion_managerdebug_info;
+
+  os2web_pdf_conversion_manager_cron();
+  drupal_goto('admin/config/os2web/pdf_converter');
+}
+
+/**
+ * Callback function.
+ *
+ * Removes outdated entries from os2web_pdf_conversion_manager_files.
+ */
+function os2web_pdf_conversion_manager_remove_outdated() {
+  $result = db_select('os2web_pdf_conversion_manager_files', 'c')
+    ->fields('c')
+    ->condition('status', 'Outdated')
+    ->execute();
+
+  while ($record = $result->fetchAssoc()) {
+    drupal_set_message(print_r(variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR) . '/' . $record['tmp_filename'], 1));
+    unlink(variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR) . '/' . $record['tmp_filename']);
+  }
+
+  db_delete('os2web_pdf_conversion_manager_files')
+    ->condition('status', 'Outdated')
+    ->execute();
+
+  drupal_set_message('OS2Web PDF converter has successfully removed outdated items');
+
+  drupal_goto('admin/config/os2web/pdf_converter');
+}
+
+/**
+ * Callback to the settings page.
+ */
+function os2web_pdf_convertion_manager_setting_page() {
+  if (isset($_GET['reset'])) {
+    if (is_numeric($_GET['reset'])) {
+      db_update('os2web_pdf_conversion_manager_files')
+        ->fields(array(
+          'attempt' => 0,
+          'status' => 'Scheduled',
+        ))
+        ->condition('fid', $_GET['reset'])
+        ->execute();
+    }
+    drupal_goto('admin/config/os2web/pdf_converter');
+  }
+
+  // Table output.
+  $result = db_select('os2web_pdf_conversion_manager_files', 'o')
+    ->fields('o')
+    ->execute()
+    ->fetchAllAssoc('fid');
+
+  $headers = array(
+    'FID',
+    'Filename',
+    'Temp filename',
+    'Status',
+    'Message',
+    'Attempts',
+    'Actions',
+  );
+  $rows = array();
+
+  foreach ($result as $row) {
+    $row->actions = l(t('reset'), 'admin/config/os2web/pdf_converter', array('query' => array('reset' => $row->fid)));
+    $rows[] = array_values((array) $row);
+  }
+
+  $content[] = array(
+    '#theme' => 'table',
+    '#header' => $headers,
+    '#rows' => $rows,
+  );
+
+  return render(drupal_get_form('os2web_pdf_conversion_manager_pdf_converter_form')) . render($content);
+}
+
+/**
+ * PDF conversion manager settings form.
+ *
+ * @param mixed $form
+ *   Settings form.
+ * @param mixed $form_state
+ *   Form state.
+ *
+ * @return mixed
+ *   Generated system settings forms.
+ */
+function os2web_pdf_conversion_manager_pdf_converter_form($form, $form_state) {
+  // Avoiding duplication of settings. If os2dagsorden_settings module is
+  // present and enabled - the settings will be presented there.
+  $form['os2dagsorden_file_import'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#title' => t('* > PDF converting configuration'),
+  );
+  if (!module_exists('os2dagsorden_settings')) {
+    $form['os2dagsorden_file_import'] = array(
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#title' => t('* > PDF converting configuration'),
+    );
+    $form['os2dagsorden_file_import']['os2web_copied_filetype'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Type of files to be converted when importing:'),
+      '#maxlength' => 200,
+      '#description' => t('Comma-separated list of file types. Example: xls,doc,docx,xlsx'),
+      '#default_value' => variable_get('os2web_copied_filetype', OS2WEB_PDF_CONVERSION_MANAGER_COPIED_FILETYPE),
+    );
+    $form['os2dagsorden_file_import']['os2web_convertion_dir'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Directory to send the files for converting:'),
+      '#maxlength' => 200,
+      '#description' => t('This is the path where files copy for converting'),
+      '#default_value' => variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR),
+    );
+  }
+  $form['os2dagsorden_file_import'][] = array(
+    '#markup' => '<div><a href="/os2web/run_file_manager">Run PDF converter</a></div>',
+  );
+  $form['os2dagsorden_file_import'][] = array(
+    '#markup' => '<div><a href="/os2web/pdf_conversion_manager/remove_outdated">Remove all outdated</a></div>',
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_cronapi().
+ */
+function os2web_pdf_conversion_manager_cronapi($op, $job = NULL) {
+  switch ($op) {
+    case 'list':
+      return array('os2web_pdf_conversion_manager_cron' => t('Moves converted PDF files into a meeting folder'));
+  }
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Additionally, there should also be a cron job, which checks the mentioned
+ * directory to see if some of the files there have been conveted to pdf.
+ * For example, if there is file "name1.doc" and "name1.pdf", it means that the
+ * file is converted to pdf.
+ *
+ * In this case: pdf file should be copied into the initial directory, where the
+ * original .doc file is.
+ * Reference to the file in file_managed table is updated from .doc version to
+ * .pdf version.
+ *
+ * both files (.doc and .pdf) are deleted from the convertion directory.
+ * Also calls function to update meeting status.
+ */
+function os2web_pdf_conversion_manager_cron() {
+  $convertion_dir_path = drupal_realpath(variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR));
+  if (file_exists($convertion_dir_path) === FALSE) {
+    watchdog('file convertion management:', 'Folder %uri is not created', array('%uri' => variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR)), WATCHDOG_WARNING);
+    return;
+  }
+  _os2web_pdf_conversion_manager_manage_msg($convertion_dir_path);
+  _os2web_pdf_conversion_manager_manage_pdf($convertion_dir_path);
+  _os2web_pdf_conversion_manager_delete_msg_attachments_folder($convertion_dir_path);
+  _os2web_pdf_conversion_manager_delete_lock_files($convertion_dir_path);
+
+  drupal_flush_all_caches();
+
+  drupal_set_message('OS2Web PDF converter has been successfully run');
+}
+
+/**
+ * Manages MSG conversion.
+ *
+ * @param string $convertion_dir_path
+ *   Path to folder with converted files.
+ */
+function _os2web_pdf_conversion_manager_manage_msg($convertion_dir_path) {
+  $converted_files = array();
+  if ($msg_files = glob($convertion_dir_path . '/*.msg_attachments')) {
+    foreach ($msg_files as $file) {
+      $msg_path_parts = pathinfo($file);
+      if ($original_file = _os2web_pdf_conversion_manager_similar_file_exists($convertion_dir_path . '/' . $msg_path_parts['filename'] . '.MSG')) {
+        $original_file_parts = pathinfo($original_file);
+        $converted_files[] = array('attachments_folder' => $file, 'msg_file' => $original_file_parts['basename']);
+      }
+    }
+  }
+  foreach ($converted_files as $file_arr) {
+    $original_filename = $file_arr['msg_file'];
+    $attacmnents_folder = $file_arr['attachments_folder'];
+    $query = db_select('os2web_pdf_conversion_manager_files', "f");
+    $query->innerJoin('file_managed', 'fm', 'fm.fid = f.fid');
+    $result = $query->fields('fm', array('fid', 'uri'))
+      ->condition('tmp_filename', $original_filename)
+      ->execute();
+    while ($d_file = $result->fetchAssoc()) {
+      $msg_files = glob($attacmnents_folder . '/*.pdf');
+      if (!$msg_files) {
+        continue;
+      }
+      foreach ($msg_files as $file) {
+        $file_parts = pathinfo($file);
+        // Detete  part1 file.
+        if (strpos($file_parts['basename'], 'eml.part1')) {
+          unlink($file);
+          unlink($file_parts['dirname'] . '/' . $file_parts['filename'] . '.html');
+          // Import  part2 file.
+        }
+        elseif (strpos($file_parts['basename'], 'eml.part2')) {
+          if (_os2web_pdf_conversion_manager_update_managed_file($d_file['fid'], $d_file['uri'], $file)) {
+            if (!_os2web_pdf_conversion_manager_update_msg_bpa($d_file['fid'], $d_file['uri'], $file_parts['dirname'] . '/' . $file_parts['filename'] . '.html')) {
+              if (module_exists('os2dagsorden_pdf2htmlex')) {
+                os2dagsorden_pdf2htmlex_schedule_if_bpa($d_file['fid']);
+              }
+            }
+            db_delete('os2web_pdf_conversion_manager_files')
+              ->condition('fid', $d_file['fid'])
+              ->execute();
+            if (!db_query('SELECT f.fid FROM {os2web_pdf_conversion_manager_files} f WHERE f.tmp_filename = :tmp_filename',
+              array(':tmp_filename' => $original_filename))
+              ->fetchField()
+            ) {
+              unlink($file);
+              unlink($file_parts['dirname'] . '/' . $file_parts['filename'] . '.html');
+            }
+          }
+        }
+        else {
+          if (_os2web_pdf_conversion_manager_import_attachments_file($d_file['fid'], $d_file['uri'], $file)) {
+            foreach (glob($attacmnents_folder . '/' . $file_parts['filename'] . '.*') as $attacment_file) {
+              unlink($attacment_file);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Manages PDF convertsion.
+ *
+ * @param string $convertion_dir_path
+ *   Path to folder with converted files.
+ */
+function _os2web_pdf_conversion_manager_manage_pdf($convertion_dir_path) {
+  $converted_files = array();
+  if ($pdf_files = glob($convertion_dir_path . '/*.{pdf, PDF}', GLOB_BRACE)) {
+    foreach ($pdf_files as $file) {
+      $pdf_path_parts = pathinfo($file);
+      foreach (glob($convertion_dir_path . '/' . $pdf_path_parts['filename'] . '.*') as $original_file) {
+        if ($original_file == $file) {
+          continue;
+        }
+        $original_file_parts = pathinfo($original_file);
+        $converted_files[] = array(
+          'pdf' => $pdf_path_parts['basename'],
+          'original' => $original_file_parts['basename'],
+        );
+      }
+    }
+  }
+  foreach ($converted_files as $file_arr) {
+    $original_filename = $file_arr['original'];
+    $pdf_filename = $file_arr['pdf'];
+
+    $query = db_select('os2web_pdf_conversion_manager_files', "f");
+    $query->innerJoin('file_managed', 'fm', 'fm.fid = f.fid');
+    $result = $query->fields('fm', array('fid', 'uri'))
+      ->condition('tmp_filename', $original_filename)
+      ->execute();
+    while ($d_file = $result->fetchAssoc()) {
+      if (_os2web_pdf_conversion_manager_update_managed_file($d_file['fid'], $d_file['uri'], $convertion_dir_path . "/" . $file_arr['pdf'])) {
+        if (module_exists('os2dagsorden_pdf2htmlex')) {
+          os2dagsorden_pdf2htmlex_schedule_if_bpa($d_file['fid']);
+        }
+        db_delete('os2web_pdf_conversion_manager_files')
+          ->condition('fid', $d_file['fid'])
+          ->execute();
+        if (!db_query('SELECT f.fid FROM {os2web_pdf_conversion_manager_files} f
+                  WHERE f.tmp_filename = :tmp_filename', array(':tmp_filename' => $original_filename))
+          ->fetchField()
+        ) {
+          unlink(drupal_realpath(variable_get('os2web_convertion_dir')) . "/" . $file_arr['pdf']);
+          unlink(drupal_realpath(variable_get('os2web_convertion_dir')) . "/" . $file_arr['original']);
+        }
+      }
+      else {
+        db_update('os2web_pdf_conversion_manager_files')
+          ->fields(array(
+            'status' => 'Outdated',
+            'message' => 'Could not copy file to destination directory',
+          ))
+          ->condition('fid', $d_file['fid'])
+          ->execute();
+      }
+    }
+  }
+}
+
+/**
+ * Copies the file to conversion directory.
+ *
+ * Also schedules the file conversion by adding entry into
+ * os2web_pdf_conversion_manager_files table.
+ *
+ * @param int $fid
+ *   File ID.
+ */
+function _os2web_pdf_conversion_manager_copy_file_to_convertion_dir($fid) {
+  $convertion_dir_path = drupal_realpath(variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR));
+  if (file_exists($convertion_dir_path) === FALSE) {
+    watchdog('os2web pdf conversion manager:', 'Folder %uri is not created', array('%uri' => variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR)), WATCHDOG_WARNING);
+    return;
+  }
+  $file = file_load($fid);
+  $filename = $file->uri;
+  $filename_parts = pathinfo($filename);
+  // Tmp_file name is needed to avoid rewriting the files from different
+  // meetings, which might have the same name.
+  $tmp_filename = md5(md5_file(drupal_realpath($filename)) . $filename_parts['basename']) . '.' . $filename_parts['extension'];
+  $type_arr = explode(',', variable_get('os2web_copied_filetype', OS2WEB_PDF_CONVERSION_MANAGER_COPIED_FILETYPE));
+  $pdf_path = $filename_parts['dirname'] . '/' . $filename_parts['filename'] . '.PDF';
+
+  if (_os2web_pdf_conversion_manager_similar_file_exists(drupal_realpath($pdf_path))) {
+    return;
+  }
+
+  if (in_array(strtolower($filename_parts['extension']), array_map('strtolower', $type_arr))) {
+    copy(drupal_realpath($filename), $convertion_dir_path . '/' . $tmp_filename);
+    $file_exists = db_query('SELECT f.fid
+      FROM {os2web_pdf_conversion_manager_files} f
+      WHERE f.fid = :fid', array(':fid' => $fid))
+      ->fetchField();
+    if ($file_exists) {
+      db_update('os2web_pdf_conversion_manager_files')
+        ->fields(array(
+          'filename' => $filename_parts['basename'],
+          'tmp_filename' => $tmp_filename,
+        ))
+        ->condition('fid', $fid)
+        ->execute();
+    }
+    else {
+      db_insert('os2web_pdf_conversion_manager_files')
+        ->fields(array(
+          'fid' => $fid,
+          'filename' => $filename_parts['basename'],
+          'tmp_filename' => $tmp_filename,
+          'status' => 'Scheduled',
+          'attempt' => 0,
+        ))
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Check if the file with similar name exists in the provided location.
+ *
+ * Search is case insensitive.
+ *
+ * @param string $filename
+ *   Name of file.
+ *
+ * @return bool
+ *   TRUE if file is exists, otherwise - FALSE.
+ */
+function _os2web_pdf_conversion_manager_similar_file_exists($filename) {
+  if (file_exists($filename)) {
+    return $filename;
+  }
+  $lcase_filename = strtolower($filename);
+  if (!empty($lcase_filename)) {
+    foreach (glob(dirname($filename) . '/*') as $file) {
+      if (strtolower($file) === $lcase_filename) {
+        return $file;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Update bullet point attachment with converted files.
+ *
+ * @param int $fid
+ *   File ID.
+ * @param string $original_file
+ *   Path to original file.
+ * @param string $html_file
+ *   Path to HTML file.
+ */
+function _os2web_pdf_conversion_manager_update_msg_bpa($fid, $original_file, $html_file) {
+  if (!file_exists($html_file)) {
+    return FALSE;
+  }
+  $original_path_parts = pathinfo($original_file);
+  $dest = drupal_realpath($original_path_parts['dirname']) . '/' . $original_path_parts['filename'] . '.html';
+  $uri = $original_path_parts['dirname'] . '/' . $original_path_parts['filename'] . '.html';
+
+  if ($file_path = file_unmanaged_copy($html_file, $dest, FILE_EXISTS_RENAME)) {
+    if ($file_path != $dest) {
+      $uri = $original_path_parts['dirname'] . '/' . basename($file_path);
+    }
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->fieldCondition('field_os2web_meetings_bpa_file', 'fid', $fid, '=');
+    $res = $query->execute();
+
+    if (empty($res['node'])) {
+      return;
+    }
+    foreach (array_keys($res['node']) as $nid) {
+      $bullet_point_attachment = node_load($nid);
+      $html_file_id = db_select('file_managed', 'fm')
+        ->fields('fm', array('fid'))
+        ->condition('uri', $uri)
+        ->execute()->fetchField();
+
+      if ($html_file_id) {
+        $file = file_load($html_file_id);
+        $file->display = 1;
+      }
+      else {
+        $file = new stdClass();
+        $file->uri = $uri;
+        $file->display = 1;
+        $file->filename = basename($uri);
+        $file->filemime = file_get_mimetype(drupal_realpath($uri));
+        $file->uid = 1;
+        $file->status = FILE_STATUS_PERMANENT;
+
+        $file = file_save($file);
+      }
+
+      $bullet_point_attachment->field_os2web_meetings_bpa_html[LANGUAGE_NONE][0] = (array) $file;
+      $bullet_point_attachment->field_os2web_meetings_bpa_pages[LANGUAGE_NONE][0]['value'] = 1;
+      node_save($bullet_point_attachment);
+
+      // Update the meeting, if needed.
+      _os2web_pdf_conversion_manager_set_status_published_plus($bullet_point_attachment);
+    }
+    return TRUE;
+  }
+  watchdog('os2web pdf conversion_manager:', 'Can\'t copy  to %uri.', array('%uri' => $dest), WATCHDOG_WARNING);
+  return FALSE;
+}
+
+/**
+ * Function that updated the managed file entry in the database.
+ *
+ * @param int $fid
+ *   File ID.
+ * @param string $original_file
+ *   Path to original file.
+ * @param string $pdf_file
+ *   Path to pdf file.
+ *
+ * @return bool
+ *   TRUE  if updated successfully, otherwise - FALSE.
+ */
+function _os2web_pdf_conversion_manager_update_managed_file($fid, $original_file, $pdf_file) {
+  $original_path_parts = pathinfo($original_file);
+  $dest = drupal_realpath($original_path_parts['dirname']) . '/' . $original_path_parts['filename'] . '.pdf';
+  $uri = $original_path_parts['dirname'] . '/' . $original_path_parts['filename'] . '.pdf';
+  // Copy PDF file.
+  if ($file_path = file_unmanaged_copy($pdf_file, $dest, FILE_EXISTS_RENAME)) {
+    if ($file_path != $dest) {
+      $uri = $original_path_parts['dirname'] . '/' . basename($file_path);
+    }
+    $uri_exists = db_query('SELECT count(*)
+             FROM {file_managed} f
+              WHERE f.uri = :uri AND fid!=:fid
+              ', array(':uri' => $uri, ':fid' => $fid))
+      ->fetchField();
+    if ($uri_exists) {
+      watchdog('file convertion management:', 'Ignore file %file. Url exists %uri.', array(
+        '%file' => $original_path_parts['filename'] . '.pdf',
+        '%uri' => $dest,
+      ), WATCHDOG_WARNING);
+      return FALSE;
+    }
+    db_update('file_managed')
+      ->fields(array(
+        'uri' => $uri,
+        'filename' => basename($uri),
+        'timestamp' => time(),
+        'filesize' => filesize($dest),
+        'filemime' => mime_content_type($dest),
+      ))
+      ->condition('fid', $fid)
+      ->execute();
+    return TRUE;
+  }
+  watchdog('os2web pdf conversion_manager:', 'Can\'t copy  to %uri.', array('%uri' => $dest), WATCHDOG_WARNING);
+  return FALSE;
+}
+
+/**
+ * Function that uploads the converted file to drupal.
+ *
+ * And updates the corresponding fields to use the new file.
+ *
+ * @param int $fid
+ *   File ID.
+ * @param string $msg_file_uri
+ *   MSG file uri.
+ * @param string $pdf_file
+ *   Path to pdf file.
+ *
+ * @return bool
+ *   True if bpa updated successfully, otherwise - FALSE.
+ */
+function _os2web_pdf_conversion_manager_import_attachments_file($fid, $msg_file_uri, $pdf_file) {
+  $original_path_parts = pathinfo($msg_file_uri);
+  $dest = drupal_realpath($original_path_parts['dirname'] . '/' . basename($pdf_file));
+  $uri = $original_path_parts['dirname'] . '/' . basename($pdf_file);
+  if ($file_path = file_unmanaged_copy($pdf_file, $dest, FILE_EXISTS_RENAME)) {
+    if ($file_path != $dest) {
+      $uri = $original_path_parts['dirname'] . '/' . basename($file_path);
+    }
+    $query = new EntityFieldQuery();
+
+    // Is attachment connected with bullet point attachment?
+    $query->entityCondition('entity_type', 'node')
+      ->fieldCondition('field_os2web_meetings_bpa_file', 'fid', $fid, '=');
+    $res = $query->execute();
+    if (!empty($res['node'])) {
+      foreach (array_keys($res['node']) as $nid) {
+        $bullet_point_attachment = node_load($nid);
+        $meta_file = array(
+          'uri' => $uri,
+          'title' => 'Email: ' . basename($pdf_file),
+          'filetype' => '.PDF',
+          'type' => $bullet_point_attachment->field_os2web_meetings_bpa_type[LANGUAGE_NONE][0]['value'],
+          'access' => (bool) !$bullet_point_attachment->field_os2web_meetings_bpa_closed[LANGUAGE_NONE][0]['value'],
+        );
+
+        // Load bullet_point.
+        $query = new EntityFieldQuery();
+        $query->entityCondition('entity_type', 'node')
+          ->fieldCondition('field_os2web_meetings_attach', 'target_id', $nid, '=');
+        $result = $query->execute();
+        $bullet_point_attachment = node_load($nid);
+        if (isset($result['node'])) {
+          $nids = array_keys($result['node']);
+          $bullet_point_id = reset($nids);
+          $bullet_point = node_load($bullet_point_id);
+          // var_dump($bullet_point) ;.
+          if ($file = _os2web_pdf_conversion_manager_import_file($meta_file)) {
+            $bullet_point->field_os2web_meetings_enclosures[LANGUAGE_NONE][] = (array) $file;
+            if (module_exists('os2dagsorden_esdh_provider')) {
+              $bullet_point->field_os2web_meetings_attach[LANGUAGE_NONE][]['target_id'] = os2dagsorden_esdh_provider_process_enclosure($meta_file, $file);
+            }
+          }
+          $bullet_point = node_submit($bullet_point);
+          node_save($bullet_point);
+        }
+      }
+      return TRUE;
+    }
+
+    // Is attachment connected with bullet point?
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->fieldCondition('field_os2web_meetings_enclosures', 'fid', $fid, '=');
+    $res = $query->execute();
+    if (!empty($res['node'])) {
+      $node = array_pop($res['node']);
+      $bullet_point = node_load($node->nid);
+      $meta_file = array(
+        'uri' => $uri,
+        'title' => 'Email: ' . basename($pdf_file),
+        'filetype' => '.PDF',
+      );
+      if ($file = _os2web_pdf_conversion_manager_import_file($meta_file)) {
+        $bullet_point->field_os2web_meetings_enclosures[LANGUAGE_NONE][] = (array) $file;
+      }
+      $bullet_point = node_submit($bullet_point);
+      node_save($bullet_point);
+      return TRUE;
+    }
+    return FALSE;
+  }
+  watchdog('os2web pdf conversion_manager:', 'Can\'t copy  to %uri.', array('%uri' => $dest), WATCHDOG_WARNING);
+  return FALSE;
+}
+
+/**
+ * Delets the MSG files from a provided directory.
+ *
+ * @param string $convertion_dir_path
+ *   Path to directory.
+ *
+ * @return bool
+ *   TRUE if file deleted successfully, otherwise - FALSE.
+ */
+function _os2web_pdf_conversion_manager_delete_msg_attachments_folder($convertion_dir_path) {
+  $msg_files = glob($convertion_dir_path . '/*.{msg, MSG}', GLOB_BRACE);
+  if (!$msg_files) {
+    return FALSE;
+  }
+  foreach ($msg_files as $msg_file) {
+    $msg_file_parts = pathinfo($msg_file);
+    if (!db_query('SELECT f.fid
+             FROM {os2web_pdf_conversion_manager_files} f
+             WHERE f.tmp_filename = :tmp_filename', array(':tmp_filename' => $msg_file_parts['basename']))
+      ->fetchField()
+    ) {
+      $attachments_files = glob($convertion_dir_path . '/' . $msg_file_parts['filename'] . '.*');
+      if (!$attachments_files) {
+        continue;
+      }
+      foreach ($attachments_files as $file) {
+        file_unmanaged_delete_recursive($file);
+
+      }
+    }
+  }
+  return TRUE;
+}
+
+/**
+ * Imports a file metadata into a managed drupal file.
+ *
+ * @param mixed $file_meta
+ *   File metadata.
+ *
+ * @access protected
+ *
+ * @return object
+ *   Drupal standard file object.
+ */
+function _os2web_pdf_conversion_manager_import_file($file_meta) {
+
+  $fid = db_select('file_managed', 'fm')
+    ->fields('fm', array('fid'))
+    ->condition('uri', $file_meta['uri'])
+    ->execute()->fetchField();
+
+  $file = new stdClass();
+  if ($fid) {
+    $file->fid = $fid;
+  }
+  $file->uri = $file_meta['uri'];
+  $file->display = 1;
+  $file->field_titel[LANGUAGE_NONE][]['value'] = $file_meta['title'];
+  $file->filename = drupal_basename($file->uri);
+  $file->filemime = file_get_mimetype($file->uri);
+  $file->uid = 1;
+  $file->status = FILE_STATUS_PERMANENT;
+  $file = file_save($file);
+
+  return $file;
+}
+
+/**
+ * Callback to check if the meeting type must be changes to dagsorden+/referat+.
+ *
+ * @param object $node
+ *   Meeting node.
+ */
+function _os2web_pdf_conversion_manager_set_status_published_plus($node) {
+  // Getting corresponding bullet point.
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->fieldCondition('field_os2web_meetings_attach', 'target_id', $node->nid, '=');
+  $result = $query->execute();
+
+  // If success.
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $bullet_point = reset(entity_load('node', $nids));
+    // Getting corresponding meeting.
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->fieldCondition('field_os2web_meetings_bullets', 'target_id', $bullet_point->nid, '=');
+
+    $result = $query->execute();
+
+    // If success.
+    if (isset($result['node'])) {
+      $nids = array_keys($result['node']);
+      $meeting = reset(entity_load('node', $nids));
+
+      if (os2dagsorden_access_helper_meeting_fully_converted($meeting)) {
+        if (strcmp($meeting->field_os2web_meetings_type['und'][0]['value'], OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_PREMEETING) == 0) {
+          $meeting->field_os2web_meetings_type['und'][0]['value'] = OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_PREMEETING_PLUS;
+        }
+        elseif (strcmp($meeting->field_os2web_meetings_type['und'][0]['value'], OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_DAGSORDEN) == 0) {
+          $meeting->field_os2web_meetings_type['und'][0]['value'] = OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_DAGSORDEN_PLUS;
+        }
+        elseif (strcmp($meeting->field_os2web_meetings_type['und'][0]['value'], OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_REFERAT) === 0) {
+          $meeting->field_os2web_meetings_type['und'][0]['value'] = OS2WEB_MEETINGS_CONTENT_TYPES_MEETING_REFERAT_PLUS;
+        }
+        node_submit($node);
+        node_save($node);
+      }
+    }
+  }
+}
+
+/**
+ * Hook to file delete.
+ *
+ * Deletes the temporary file scheduled for the conversion and deletes
+ * corresponding entry in the table.
+ */
+function os2web_pdf_conversion_manager_file_delete($file) {
+  $result = db_select('os2web_pdf_conversion_manager_files', 'o')
+    ->fields('o', array('tmp_filename'))
+    ->condition('fid', $file->fid)
+    ->execute()
+    ->fetchField();
+  file_unmanaged_delete(variable_get('os2web_convertion_dir', OS2WEB_PDF_CONVERSION_MANAGER_CONVERSION_DIR) . '/' . $result);
+
+  db_delete('os2web_pdf_conversion_manager_files')
+    ->condition('fid', $file->fid)
+    ->execute();
+}
+
+/**
+ * Implements hook_watchdog().
+ */
+function os2web_pdf_conversion_manager_watchdog($log_entry) {
+  if ($log_entry['severity'] == 1) {
+    // Set up the mail body.
+    $from = variable_get('site_mail', '');
+    $message = array(
+      'id' => 'os2web_pdf_conversion_manager',
+      'to' => variable_get('site_mail', ''),
+      'from' => $from,
+      'subject' => t('OS2Web PDF Conversion error'),
+      'body' => $log_entry['message'],
+      'headers' => array(
+        'From' => $from,
+        'Sender' => $from,
+        'Return-Path' => $from,
+      ),
+    );
+    $mail_system = drupal_mail_system($my_module, $my_mail_token);
+    return $mail_system->mail($message);
+  }
+}
+
+/**
+ * Delete all the .lock files what are older than 1 hour.
+ */
+function _os2web_pdf_conversion_manager_delete_lock_files($convertion_dir_path) {
+  foreach (glob($convertion_dir_path . '/.~lock*.{pdf#, PDF#}', GLOB_BRACE) as $lock_file) {
+    if (filemtime($lock_file) <= time() - 3600) {
+      unlink($lock_file);
+      watchdog('os2web pdf conversion manager:', 'Locked file %uri was deleted', array('%uri' => $lock_file), WATCHDOG_INFO);
+    }
+  }
+}
+
+/**
+ * Validates that the os2web conversion path is present and writable.
+ *
+ * @param mixed $element
+ *   The form element.
+ * @param mixed $form_state
+ *   The state of form.
+ */
+function _os2web_pdf_conversion_manager_convertion_dir_validate($element, &$form_state) {
+  $value = $element['#value'];
+  if (file_exists($value)) {
+    if (!is_writable($value)) {
+      form_error($element, t("Could not writte to directory. Please check permissions"));
+    }
+  }
+  else {
+    form_error($element, t("Directory !value does nor exist", array('!value' => $value)));
+  }
+}
