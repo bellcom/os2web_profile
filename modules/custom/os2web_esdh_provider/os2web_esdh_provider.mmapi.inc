@@ -924,7 +924,7 @@ function os2web_esdh_provider_filter_html_tags($data) {
     //remove all img tags that link missing files
     $data =  _os2web_esdh_provider_remove_img_tags($data);
     //replace all <p></p> and <p>&nbsp;</p> tags with <br />
-    $data = preg_replace('#(<p>((<span>)*?)(|&nbsp;)((<\/span>)*?)<\/p>\s*)+#i', '<br />', $data);
+    $data = preg_replace('#(<p( )*?>((<span>)*?)(|&nbsp;)((<\/span>)*?)<\/p>\s*)+#i', '<br />', $data);
     //replace multiple &nbsp; tags with...
     $data = preg_replace('/(\x{00A0}|&nbsp;){2,}/u', variable_get('os2web_esdh_provider_tab_tag', '&nbsp;'), $data);
     return $data;
@@ -952,6 +952,9 @@ function _os2web_esdh_provider_strip_only($str, $tags, $stripContent = false) {
         if(end($tags) == '') array_pop($tags);
     }
     foreach($tags as $tag) {
+      if (empty($tag)) {
+        continue;
+      }
         if ($stripContent)
              $content = '(.+</'.$tag.'[^>]*>|)';
          $str = preg_replace('#</?'.$tag.'[^>]*>'.$content.'#is', '', $str);
