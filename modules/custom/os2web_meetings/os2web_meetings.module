@@ -196,7 +196,6 @@ function _os2web_meetings_os2web_subscription_add($node) {
     $date = array_shift($dates);
     $date = new DateTime($date['value']);
     // Only add to subscription queue if meeting date is younger than xx days from now.
-    dpm($date->diff(new DateTime('now'))->days);
     if ($date->diff(new DateTime('now'))->days < variable_get('os2web_meetings_subscription_max_age', 10)) {
       // Add it to the master meeting type queue.
       $enabled_node_types = os2web_subscription_get_node_types();
