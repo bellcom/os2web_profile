@@ -40,7 +40,7 @@ function os2web_subscription_menu() {
   $items['your-subscriptions'] = array(
     'title' => t('Get notifications to your email.'),
     'type' => MENU_CALLBACK,
-    'page callback' => 'os2web_subscription_list_subscriptions',
+    'page callback' => 'bbbbbbbbbb',
     'access arguments' => array('access content'),
   );
 
@@ -271,7 +271,7 @@ function os2web_subscription_confirm_subscription($code) {
   $category = variable_get('os2web_subscription_title_' . $subscription['category'], '');
 
   return array(
-    '#markup' => t('<h2>You are now subscribing to the category "!category".</h2>', array('!category' => $category)) . $list,
+    '#markup' => "<h2>" . t('You are now subscribing to the category "!category".', array('!category' => $category)) . '</h2>' . $list,
   );
 }
 
@@ -291,6 +291,10 @@ function os2web_subscription_block_info() {
     'info' => t('OS2web Subscriptions - Add subscription form'),
     'cache' => DRUPAL_NO_CACHE,
   );
+  $blocks['os2web_subscription_form'] = array(
+    'info' => t('OS2web Subscription form'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
 
   return $blocks;
 }
@@ -305,8 +309,11 @@ function os2web_subscription_block_view($delta = '') {
     case 'os2web_subscription_add':
       $block['content'] = os2web_subscription_block_add_subscription_form();
       break;
+    case 'os2web_subscription_form':
+      $block['content'] = os2web_subscription_block_subscription_form();
+      break;
   }
-
+  
   return $block;
 }
 
@@ -911,3 +918,22 @@ function os2web_subscription_node_insert($node) {
 function os2web_subscription_node_delete($node) {
   os2web_subscription_delete_from_queue($node->nid);
 }
+
+function os2web_subscription_block_subscription_form () {
+    $subscription_types = array();
+
+    // Add the default meeting node type to the form.
+    $subscription_types[] = 'os2web_meetings_meeting';
+
+    // Add all types of meetings (committees).
+    $vocabulary = taxonomy_vocabulary_machine_name_load('os2web_meetings_tax_committee');
+    $subscription_type_array = array();
+    $types = taxonomy_get_tree($vocabulary->vid);
+    foreach ($types as $type) {
+      $subscription_types[] = 'os2web_meetings_meeting-type_' . $type->tid;
+    }
+
+    if (!empty($subscription_types)) {
+      return drupal_get_form('os2web_subscription_add_subscription_form', $subscription_types, t('Subscribe to meetings'));
+    }
+}  

@@ -245,44 +245,6 @@ function os2web_meetings_os2web_subscription_categories() {
 }
 
 /**
- * Implements hook_page_alter().
- *
- * Add a subscription form to the overview page at /dagsorden-og-referat.
- * See module os2web_subscription.
- */
-function os2web_meetings_page_alter(&$page) {
-  // Only add subscription form, if meeting settings are set.
-  if (!variable_get('os2web_meetings_subscription_first_dagsorden', FALSE) &&
-      !variable_get('os2web_meetings_subscription_new_dagsorden', FALSE) &&
-      !variable_get('os2web_meetings_subscription_first_referat', FALSE) &&
-      !variable_get('os2web_meetings_subscription_new_referat', FALSE)) {
-    return;
-  }
-
-  // If the OS2web Subscription module are enabled, add a subscribe form.
-  if (module_exists('os2web_subscription') &&
-      request_path() === 'dagsorden-og-referat') {
-
-    $subscription_types = array();
-
-    // Add the default meeting node type to the form.
-    $subscription_types[] = 'os2web_meetings_meeting';
-
-    // Add all types of meetings (committees).
-    $vocabulary = taxonomy_vocabulary_machine_name_load('os2web_meetings_tax_committee');
-    $subscription_type_array = array();
-    $types = taxonomy_get_tree($vocabulary->vid);
-    foreach ($types as $type) {
-      $subscription_types[] = 'os2web_meetings_meeting-type_' . $type->tid;
-    }
-
-    if (!empty($subscription_types)) {
-      $page['content'][] = drupal_get_form('os2web_subscription_add_subscription_form', $subscription_types, t('Subscribe to meetings'));
-    }
-  }
-}
-
-/**
  * Implements hook_FORM_alter();
  */
 function os2web_meetings_form_alter(&$form, &$form_state) {
