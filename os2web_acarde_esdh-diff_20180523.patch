@@ -1,0 +1,205 @@
+diff --git a/modules/custom/bellcom_borgerdk b/modules/custom/bellcom_borgerdk
+index 9715ed6..dacb36b 160000
+--- a/modules/custom/bellcom_borgerdk
++++ b/modules/custom/bellcom_borgerdk
+@@ -1 +1 @@
+-Subproject commit 9715ed6aab0054dd2645a4997d9be96d8c33e807
++Subproject commit dacb36b6196c53d9dc0c8ef55a367170ece8a33e
+diff --git a/modules/custom/os2web_acadre_esdh/AcadrePWS.class.inc b/modules/custom/os2web_acadre_esdh/AcadrePWS.class.inc
+index 9137583..9af0c4e 100644
+--- a/modules/custom/os2web_acadre_esdh/AcadrePWS.class.inc
++++ b/modules/custom/os2web_acadre_esdh/AcadrePWS.class.inc
+@@ -181,7 +181,7 @@ class AcadrePWS {
+         }
+         catch (SoapFault $sf) {
+           $trace = $this->clientSearch->__getLastRequest();
+-          os2web_acadre_esdh_log(basename(__FILE__) . ':' . __LINE__ . ' Var: $trace = ' . print_r($trace, 1));
++          error_log(basename(__FILE__) . ':' . __LINE__ . ' Var: $trace = ' . print_r($trace, 1));
+           $result = $sf;
+         }
+       }
+diff --git a/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.drush.inc b/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.drush.inc
+index 95493ff..906f197 100644
+--- a/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.drush.inc
++++ b/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.drush.inc
+@@ -63,7 +63,7 @@ function drush_os2web_acadre_esdh_acadre_doc($docid = NULL) {
+     }
+     else {
+       drush_log('Document lookup..', 'ok');
+-      error_log(print_r($data, 1));
++      //error_log(print_r($data, 1));
+     }
+   }
+   else {
+@@ -83,7 +83,7 @@ function drush_os2web_acadre_esdh_acadre_case($caseid = NULL) {
+     }
+     else {
+       drush_log('Case lookup..', 'ok');
+-      error_log(print_r($data, 1));
++      //error_log(print_r($data, 1));
+     }
+   }
+   else {
+@@ -103,7 +103,7 @@ function drush_os2web_acadre_esdh_acadre_case_docs($caseid = NULL) {
+     }
+     else {
+       drush_log('Case lookup..', 'ok');
+-      error_log(print_r($data, 1));
++      //error_log(print_r($data, 1));
+     }
+   }
+   else {
+@@ -127,7 +127,7 @@ function drush_os2web_acadre_esdh_acadre_case_docs_load($caseid = NULL) {
+       foreach ($data as $doc) {
+         $docs[] = os2web_esdh_provider_invoke('cm', 'get_document', $doc);
+       }
+-      error_log(print_r($docs, 1));
++      //error_log(print_r($docs, 1));
+     }
+   }
+   else {
+diff --git a/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.module b/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.module
+index 6d3066c..2a5f6df 100644
+--- a/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.module
++++ b/modules/custom/os2web_acadre_esdh/os2web_acadre_esdh.module
+@@ -163,4 +163,7 @@ function os2web_acadre_esdh_log($message) {
+       error_log($message);
+     }
+   }
++  else {
++    error_log($message);
++  }
+ }
+diff --git a/modules/custom/os2web_acadre_esdh/plugins/cp/ArpService.class.inc b/modules/custom/os2web_acadre_esdh/plugins/cp/ArpService.class.inc
+index f783789..ba14472 100644
+--- a/modules/custom/os2web_acadre_esdh/plugins/cp/ArpService.class.inc
++++ b/modules/custom/os2web_acadre_esdh/plugins/cp/ArpService.class.inc
+@@ -143,12 +143,15 @@ class TraenPublishingDestinationSystemService {
+           }
+         }
+       }
++      os2web_acadre_esdh_log('Sags type: ' . $publication['rules'][$rule->ID]['name']);
+       $publication['type'] = $type;
+       $publication['status'] = $data->entityItem->Status;
+-
++      os2web_acadre_esdh_log('Function: ' . print_r($funktion,TRUE));
++      os2web_acadre_esdh_log('Publication: ' . print_r($publication,TRUE));
+       return array('RecievedItemPublishedResult' => (bool) call_user_func($function, $publication));
+     }
+     else {
++      error_log('Failed to import: ' . print_r($data,TRUE));
+       return array('RecievedItemPublishedResult' => FALSE);
+     }
+   }
+diff --git a/modules/custom/os2web_acadre_esdh/plugins/cp/acadre.inc b/modules/custom/os2web_acadre_esdh/plugins/cp/acadre.inc
+index e4e0523..da2a47b 100644
+--- a/modules/custom/os2web_acadre_esdh/plugins/cp/acadre.inc
++++ b/modules/custom/os2web_acadre_esdh/plugins/cp/acadre.inc
+@@ -14,16 +14,28 @@ $plugin = array(
+ /**
+  * This functions handles a request on the webservice API.
+  */
++# Skifter
++# This is incomplete and needs to be rewriten upon ending of test/ implementation
++# Needs reimplementation of using the user set in admin. 
+ function os2web_acadre_esdh_cp_handle_request() {
++    //error_log(print_r($_SERVER,true));
+   if (!isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['SERVER_ADDR'] != '192.168.2.52') {
+     header('WWW-Authenticate: Basic realm="Fredericia.dk"');
+     header('HTTP/1.0 401 Unauthorized');
+-    error_log(print_r($_SERVER,true));
++    //error_log(print_r($_SERVER,true));
+     echo 'You are not allowed to access';
+     exit;
+   }
+-    #error_log(print_r($_SERVER,true));
+ 
++    # Skifter - debug of content delivered to the service from Acadre OM
++    # Uncomment for debugging and look in the php.log
++    # A simple browser request should give debug output - although the service is SOAP based
++    # [yoursitename]/os2web/service/cp/v1
++    # Access restrictions are set in admin - although rirght now any user password combination is accepted
++    //error_log(print_r($_SERVER,true));
++
++# Skifter
++# Incomplete code uncommented. Needs to be rewritten into the above function. 
+ #  if (!(isset($_SERVER['PHP_AUTH_PW']) && isset($_SERVER['PHP_AUTH_USER'])
+ #    && $_SERVER['PHP_AUTH_PW']==variable_get('os2web_cp_basic_auth_psw') &&  $_SERVER['PHP_AUTH_USER']==variable_get('os2web_cp_basic_auth_username'))) {
+ #    header('HTTP/1.0 403 Forbidden');
+@@ -33,28 +45,23 @@ function os2web_acadre_esdh_cp_handle_request() {
+   module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/ArpService.class');
+   if (isset($_GET['wsdl'])) {
+     TraenPublishingDestinationSystemService::getWSDL($_GET['wsdl']);
+-    #error_log(' Her 1 ');
+   }
+   if (isset($_GET['xsd'])) {
+     TraenPublishingDestinationSystemService::getXSD($_GET['xsd']);
+-    #error_log(' Her 2 ');
+   }
+   if (!lock_acquire(__FUNCTION__, 5)) {
+     lock_wait(__FUNCTION__);
+-    #error_log(' Her 3 ');
+     return os2web_acadre_esdh_cp_handle_request();
+   }
+   global $HTTP_RAW_POST_DATA;
+   // Remove illegal XML characters.
+   $data = preg_replace('/\&\#..F/', '', $HTTP_RAW_POST_DATA);
+   if (variable_get('os2web_esdh_cp_provider_save_request', FALSE)) {
+-    file_unmanaged_save_data($data, 'public://soap/request-' . time() . '-' . uniqid() . '.xml', FILE_EXISTS_REPLACE);
++    #file_unmanaged_save_data($data, 'public://soap/unmanaged-request-' . time() . '-' . uniqid() . '.xml', FILE_EXISTS_REPLACE);
+   }
+-    #error_log(' Her 4 ');
+   ini_set("soap.wsdl_cache_enabled", "1");
+   $server = new SoapServer('http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? '' : '') . '://' . $_SERVER['SERVER_NAME'] . '/' . request_path() . '/?wsdl', array());
+   $server->setObject(new TraenPublishingDestinationSystemService());
+   $server->handle($data);
+-    #error_log(' Her 5 ');
+   lock_release(__FUNCTION__);
+ }
+diff --git a/modules/custom/os2web_acadre_esdh/plugins/mm/acadre.inc b/modules/custom/os2web_acadre_esdh/plugins/mm/acadre.inc
+index 8d2875e..04e3fd6 100644
+--- a/modules/custom/os2web_acadre_esdh/plugins/mm/acadre.inc
++++ b/modules/custom/os2web_acadre_esdh/plugins/mm/acadre.inc
+@@ -98,6 +98,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
+       }
+       foreach ($items_xml as $xml_item) {
+         $debug && error_log('MM Import - Found meeting ' . $meeting['uri'] . ' - '. timer_read('mm_import') . 'ms');
++
+         $agendainfo = array(
+           // 'sysid' => (int) array_shift($xml_item->xpath('field/@sysid')),
+           'sysid' => $agenda_id,
+@@ -108,7 +109,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
+           'docfilename' => (string) array_shift($xml_item->xpath('field/@docfilename')),
+           'type' => (int) array_shift($xml_item->xpath('field/@type')),
+         );
+-       
++
+         if ($agendainfo['publish'] === 1 &&
+             $agendainfo['access'] !== 'Lukket' &&
+             $agendainfo['filesfolder'] != '') {
+@@ -118,14 +119,14 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
+             $agendainfo['xmlfilename']));
+           $agendainfo['agenda_uri'] = $agenda_uri;
+           $imported = _os2web_acadre_esdh_import_meeting($agendainfo);
+-         
++
+           if (is_array($imported)) {
+             $imported['publish'] = TRUE;
+             $imported['meeting_sub_id'] = (int) array_shift($xml_item->xpath('field/@sysid'));
+             $imported['agenda_xmlid'] = (int) array_shift($xml_item->xpath('field/@xmlFusionID'));
+             $meetings[] = $imported;
+           }
+-           
++
+         }
+         else {
+           $message = 'Meeting !id, agenda !sub_id, wasnt allowed to be published from xml !file. [publish]=!publish, [access]=!access, [filesfolder]=!filesfolder';
+@@ -172,7 +173,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
+   // Debug bit set in os2web_esdh_provider settings.
+   $debug = variable_get('os2web_esdh_provider_debug_info');
+   $debug && error_log('MM Import - import meeting from XML - sysid=' . $info['sysid'] . ' - ' . timer_read('mm_import') . 'ms');
+-  
++
+   if (($real_path = _os2web_acadre_esdh_similar_file_exists(drupal_realpath($info['agenda_uri']))) !== FALSE) {
+     $xml = simplexml_load_file($real_path);
+     $meeting = array(
