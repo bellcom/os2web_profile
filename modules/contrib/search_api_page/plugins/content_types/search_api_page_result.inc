@@ -1,39 +1,35 @@
 <?php
 
-if (module_exists('search_api_page')) {
-  /**
-   * Plugins are described by creating a $plugin array which will be used
-   * by the system that includes this file.
-   */
-  $plugin = array(
-    'single' => TRUE,
-    'title' => t('Search API page results'),
-    'icon' => 'icon_search.png',
-    'description' => t('The results of a Search API page search using keywords.'),
-    'required context' => new ctools_context_required(t('Keywords'), 'string'),
-    'category' => t('Widgets'),
-    'edit form' => 'search_api_page_result_content_type_edit_form',
-    'render callback' => 'search_api_page_result_content_type_render',
-    'admin title' => 'search_api_page_result_content_type_admin_title',
-    'defaults' => array(
-      'page' => '',
-      'per_page' => '',
-      'result_page_search_form'  => '',
-      'get_per_page' => '',
-      'view_mode' => '',
-    ),
-  );
-}
+/*
+ * Plugins are described by creating a $plugin array which will be used by the
+ * system that includes this file.
+ */
+$plugin = array(
+  'single' => TRUE,
+  'title' => t('Search API page results'),
+  'icon' => 'icon_search.png',
+  'description' => t('The results of a Search API page search using keywords.'),
+  'required context' => new ctools_context_required(t('Keywords'), 'string'),
+  'category' => t('Widgets'),
+  'edit form' => 'search_api_page_result_content_type_edit_form',
+  'render callback' => 'search_api_page_result_content_type_render',
+  'admin title' => 'search_api_page_result_content_type_admin_title',
+  'defaults' => array(
+    'page' => '',
+    'per_page' => '',
+    'result_page_search_form'  => '',
+    'get_per_page' => '',
+    'view_mode' => '',
+  ),
+);
 
 /**
- * Render the custom content type.
+ * Renders the custom content type.
  */
 function search_api_page_result_content_type_render($subtype, $conf, $panel_args, $context) {
-  $search_info = search_api_page_load($conf['page']);
-  if (!$search_info) {
-    return;
+  if (!search_api_page_load($conf['page'])) {
+    return NULL;
   }
-  $info = $search_info;
 
   $keys = NULL;
   if (!empty($context) && isset($context->data)) {
@@ -54,7 +50,7 @@ function search_api_page_result_content_type_render($subtype, $conf, $panel_args
     'view_mode' => $conf['view_mode'],
   );
 
-  $block->content = search_api_page_panels_view($conf['page'], $keys, $override_options);
+  $block->content = search_api_page_view($conf['page'], $keys, $override_options);
 
   return $block;
 }
@@ -66,12 +62,12 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
   $conf = $form_state['conf'];
 
   $pages = array();
-  foreach (search_api_page_load_multiple(FALSE) as $page => $info) {
+  foreach (search_api_page_load_multiple(FALSE, array('enabled' => TRUE)) as $info) {
     $pages[$info->machine_name] = $info->name;
   }
 
-  if(isset($conf['page'])) {
-    $info = search_api_page_load($page);
+  if (!empty($conf['page'])) {
+    $info = search_api_page_load($conf['page']);
     $index = search_api_index_load($info->index_id);
   }
 
@@ -80,6 +76,7 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
     '#title' => t('Search API Page'),
     '#options' => $pages,
     '#default_value' => $conf['page'],
+    '#required' => TRUE,
   );
 
   $form['per_page'] = array(
@@ -88,6 +85,7 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
     '#description' => t('Select how many items will be displayed on one page of the search result.'),
     '#options' => drupal_map_assoc(array(5, 10, 20, 30, 40, 50, 60, 80, 100)),
     '#default_value' => $conf['per_page'],
+    '#required' => TRUE,
   );
 
   $form['result_page_search_form'] = array(
@@ -109,7 +107,8 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
     'search_api_page_result' => t('Themed as search results'),
   );
   // For entities, we also add all entity view modes.
-  if ($entity_info = entity_get_info($index->item_type)) {
+  if (isset($index) && $index->getEntityType()) {
+    $entity_info = entity_get_info($index->getEntityType());
     foreach ($entity_info['view modes'] as $mode => $mode_info) {
       $view_modes[$mode] = $mode_info['label'];
     }
@@ -122,6 +121,7 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
       '#description' => t('Select how search results will be displayed.'),
       '#size' => 1,
       '#default_value' => isset($conf['view_mode']) ? $conf['view_mode'] : 'search_api_page_result',
+      '#required' => TRUE,
     );
   }
   else {
@@ -135,7 +135,7 @@ function search_api_page_result_content_type_edit_form($form, &$form_state) {
 }
 
 /**
- * Submit handler for search form.
+ * Submit handler for the search form.
  */
 function search_api_page_result_content_type_edit_form_submit($form, &$form_state) {
   // Copy everything from our defaults.
