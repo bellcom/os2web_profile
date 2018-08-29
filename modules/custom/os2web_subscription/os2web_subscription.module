@@ -40,7 +40,7 @@ function os2web_subscription_menu() {
   $items['your-subscriptions'] = array(
     'title' => t('Get notifications to your email.'),
     'type' => MENU_CALLBACK,
-    'page callback' => 'bbbbbbbbbb',
+    'page callback' => 'os2web_subscription_list_subscriptions',
     'access arguments' => array('access content'),
   );
 
@@ -313,7 +313,6 @@ function os2web_subscription_block_view($delta = '') {
       $block['content'] = os2web_subscription_block_subscription_form();
       break;
   }
-  
   return $block;
 }
 
@@ -524,8 +523,14 @@ function os2web_subscription_add_subscription_form_ajax_submit($form, $form_stat
         }
       }
     }
+    $form['os2web_subscription_group'] = array(
+      '#type' => 'fieldset',
+      '#prefix' => '<div id="edit-os2web-subscription-group">',
+      '#suffix' => '</div >',
+      '#description' => t('You are now registered. You will soon recieve and email with a link to confirm your registration.')
+    );
 
-    return t('You are now registered. You will soon recieve and email with a link to confirm your registration.');
+    return $form;
   }
   // If any errors we return the complete form including any errors.
   return $form;
@@ -936,4 +941,11 @@ function os2web_subscription_block_subscription_form () {
     if (!empty($subscription_types)) {
       return drupal_get_form('os2web_subscription_add_subscription_form', $subscription_types, t('Subscribe to meetings'));
     }
-}  
+}
+
+function os2web_subscription_taxonomy_term_insert($term) {
+  if ($term->vocabulary_machine_name == 'os2web_meetings_tax_committee') {
+    variable_set('os2web_subscription_active_os2web_meetings_meeting-type_' . $term->tid, 1);
+    variable_set('os2web_subscription_title_os2web_meetings_meeting-type_' . $term->tid, $term->name);
+  }
+}
