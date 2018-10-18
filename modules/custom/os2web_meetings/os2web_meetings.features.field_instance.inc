@@ -832,6 +832,77 @@ function os2web_meetings_field_default_field_instances() {
       'weight' => 12,
     ),
   );
+  // Exported field_instance:
+  // 'node-os2web_meetings_meeting-field_os2web_meetings_dags_date'.
+  $field_instances['node-os2web_meetings_meeting-field_os2web_meetings_dags_date'] = array(
+    'bundle' => 'os2web_meetings_meeting',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 10,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_meetings_dags_date',
+    'label' => 'Dagsorden publishing date',
+    'required' => 0,
+    'settings' => array(
+      'default_value' => 'now',
+      'default_value2' => 'same',
+      'default_value_code' => '',
+      'default_value_code2' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'date',
+      'settings' => array(
+        'increment' => 15,
+        'input_format' => 'd.m.Y - H:i:s',
+        'input_format_custom' => '',
+        'label_position' => 'above',
+        'no_fieldset' => 0,
+        'text_parts' => array(),
+        'year_range' => '-3:+3',
+      ),
+      'type' => 'date_popup',
+      'weight' => 41,
+    ),
+  );
 
   // Exported field_instance:
   // 'node-os2web_meetings_meeting-field_os2web_meetings_date'.
@@ -1261,6 +1332,78 @@ function os2web_meetings_field_default_field_instances() {
       ),
       'type' => 'taxonomy_autocomplete',
       'weight' => 13,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'node-os2web_meetings_meeting-field_os2web_meetings_ref_date'.
+  $field_instances['node-os2web_meetings_meeting-field_os2web_meetings_ref_date'] = array(
+    'bundle' => 'os2web_meetings_meeting',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 11,
+      ),
+      'includeable' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_meetings_ref_date',
+    'label' => 'Referat publishing date',
+    'required' => 0,
+    'settings' => array(
+      'default_value' => 'now',
+      'default_value2' => 'same',
+      'default_value_code' => '',
+      'default_value_code2' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'date',
+      'settings' => array(
+        'increment' => 15,
+        'input_format' => 'd.m.Y - H:i:s',
+        'input_format_custom' => '',
+        'label_position' => 'above',
+        'no_fieldset' => 0,
+        'text_parts' => array(),
+        'year_range' => '-3:+3',
+      ),
+      'type' => 'date_popup',
+      'weight' => 42,
     ),
   );
 
@@ -1792,6 +1935,7 @@ function os2web_meetings_field_default_field_instances() {
   t('Check if this bullet should be closed.');
   t('Closed');
   t('Committee');
+  t('Dagsorden publishing date');
   t('Date');
   t('Date valid');
   t('Enclosures');
@@ -1803,6 +1947,7 @@ function os2web_meetings_field_default_field_instances() {
   t('Meeting sub ID');
   t('Ref attachment');
   t('Ref bullet points');
+  t('Referat publishing date');
   t('Regular');
   t('Search data');
   t('Status');

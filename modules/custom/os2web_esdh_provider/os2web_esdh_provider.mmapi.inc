@@ -144,7 +144,6 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     if ($nid) {
       $node = node_load($nid);
       $republish = FALSE;
-
       // Republish by Force.
       if ($force) {
         $republish = TRUE;
@@ -166,6 +165,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
         // This means that the one already exist is a Dagsorden.
         $republish = TRUE;
         $reason = 'DAGSORDEN -> REFERAT';
+        $referat_publishing_time =  time();
       } elseif (filemtime($meeting['path']) > $node->changed){
           $republish = TRUE;
           $reason = 'NEW REFERAT VERSION';
@@ -174,6 +174,11 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
       // Republish.
       if ($republish) {
         watchdog('acadre MM', '[XML_ID: !id] Republishing into !nid. Reason: !reason', array('!id' => $PROCESSING_MEETING_ID, '!nid' => $nid, '!reason' => $reason), WATCHDOG_INFO);
+        if ($meeting['type'] === 'Referat' &&
+          ($node->field_os2web_meetings_type[LANGUAGE_NONE][0]['value'] === 'Dagsorden' ||
+           $node->field_os2web_meetings_type[LANGUAGE_NONE][0]['value'] === 'Dagsorden_plus')) {
+          $referat_publishing_time =  time();
+        }
       }
       else {
         watchdog('acadre MM', '[XML_ID: !id] Meeting already imported in !nid. No republish. Skipping.', array('!id' => $PROCESSING_MEETING_ID, '!nid' => $nid), WATCHDOG_NOTICE);
@@ -194,6 +199,12 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     if (!$node){
       watchdog('acadre MM', '[XML_ID: !id] No node was found, creating a new node', array('!id' => $PROCESSING_MEETING_ID), WATCHDOG_DEBUG);
       $node = new stdClass();
+      if ($meeting['type'] === 'Dagsorden') {
+        $dagsorden_publishing_time =  time();
+      }
+      else {
+        $referat_publishing_time = time();
+      }
     }
 
     // Or any other content type you want.
@@ -248,6 +259,12 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['value2'] = $meeting['meeting_date_finish'];
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['timezone'] = 'Europe/Berlin';
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['date_type'] = 'datetime';
+    if (isset($dagsorden_publishing_time)) {
+      $node->field_os2web_meetings_dags_date[LANGUAGE_NONE][0]['value'] = $dagsorden_publishing_time;
+    }
+    if (isset($referat_publishing_time)) {
+      $node->field_os2web_meetings_ref_date[LANGUAGE_NONE][0]['value'] = $referat_publishing_time;
+    }
     // Proper id tagging.
     $node->field_os2web_meetings_id[LANGUAGE_NONE][0]['value'] = $meeting['meeting_id'];
     $node->field_os2web_meetings_sub_id[LANGUAGE_NONE][0]['value'] = $meeting['meeting_sub_id'];
