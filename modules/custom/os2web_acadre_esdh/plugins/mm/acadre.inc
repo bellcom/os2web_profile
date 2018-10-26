@@ -195,6 +195,11 @@ function _os2web_acadre_esdh_import_meeting($info) {
       watchdog('acadre MM', 'Ignored agenda from %committee .', array('%committee' => $meeting['committee']));
       return FALSE;
     }
+    // Participants.
+    $participants = $xml->xpath("//table[@name='committee']/table[@name='commember']/table[@name='member']");
+    foreach ($participants as $participant) {
+      $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
+    }
 
     // Fix dates:
     $date_obj = date_create($meeting['meeting_date_start']);

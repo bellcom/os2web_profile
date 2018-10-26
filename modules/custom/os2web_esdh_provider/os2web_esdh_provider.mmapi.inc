@@ -257,7 +257,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     //Adding default meeting category
     $node->field_os2web_meetings_category[LANGUAGE_NONE][0]['value']=variable_get('os2dagsorden_default_meeting_cateroty','pol');
     //Adding participants
-    if (isset($meeting['participants'])){
+    if (isset($meeting['participants']) && field_info_instance('node', 'field_os2web_meetings_partic', 'os2web_meetings_meeting')) {
       $node->field_os2web_meetings_partic[LANGUAGE_NONE][0]['value'] = implode(variable_get('os2dagsorden_participants_delimeter', ', '), $meeting['participants']);
       $node->field_os2web_meetings_partic[LANGUAGE_NONE][0]['format'] ='filtered_html';
     }
@@ -905,6 +905,7 @@ function _os2web_esdh_provider_bpa_body_format() {
 }
 
 function os2web_esdh_provider_filter_html_tags($data) {
+  dpm($data);
     $tags = explode(',', variable_get('os2web_esdh_provider_filtered_tags', ''));
     foreach ($tags as $tag) {
         preg_match_all('#<' . $tag . '(.*?)>(.*?)</' . $tag . '>#is', $data, $matches);
@@ -913,7 +914,6 @@ function os2web_esdh_provider_filter_html_tags($data) {
             $data = str_replace($match, $filtred_data, $data);
         }
     }
-
     while(preg_match('/(<a name=Acadre(.*?)>((.*?\\s*?))+<\\/a>\\s*)+/',$data, $aTags)>0){
        $str = _os2web_esdh_provider_strip_only($aTags[0],  'a');
        $data = str_replace($aTags[0],$str, $data);
@@ -922,7 +922,7 @@ function os2web_esdh_provider_filter_html_tags($data) {
     $data = _os2web_esdh_provider_strip_only($data,  $stripped_tags);
 
     //remove all img tags that link missing files
-    $data =  _os2web_esdh_provider_remove_img_tags($data);
+    $data =  _os2web_esdh_provider_remove_img_tags($data);    
     //replace all <p></p> and <p>&nbsp;</p> tags with <br />
     $data = preg_replace('#(<p( )*?>((<span>)*?)(|&nbsp;)((<\/span>)*?)<\/p>\s*)+#i', '<br />', $data);
     //replace multiple &nbsp; tags with...
