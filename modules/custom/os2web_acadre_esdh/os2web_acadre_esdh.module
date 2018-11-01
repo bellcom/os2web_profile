@@ -44,7 +44,6 @@ function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$f
   $form['meetings']['os2web_meetings_approved_committee'] = array(
     '#type' => 'textfield',
     '#title' => 'Godkendte Udvalg',
-    '#maxlength' => 200,
     '#description' => 'Komma sepereret liste over udvalgs-id der er godkendt til publisering.',
     '#default_value' => variable_get('os2web_meetings_approved_committee', ACADRE_MM_DEFAULT_APPROVED),
   );
