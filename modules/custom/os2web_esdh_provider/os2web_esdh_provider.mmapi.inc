@@ -259,10 +259,10 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['value2'] = $meeting['meeting_date_finish'];
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['timezone'] = 'Europe/Berlin';
     $node->field_os2web_meetings_date[LANGUAGE_NONE][0]['date_type'] = 'datetime';
-    if (isset($dagsorden_publishing_time)) {
+    if (isset($dagsorden_publishing_time) && field_info_instance('node', 'field_os2web_meetings_dags_date', 'os2web_meetings_meeting')) {
       $node->field_os2web_meetings_dags_date[LANGUAGE_NONE][0]['value'] = $dagsorden_publishing_time;
     }
-    if (isset($referat_publishing_time)) {
+    if (isset($referat_publishing_time) && field_info_instance('node', 'field_os2web_meetings_ref_date', 'os2web_meetings_meeting')) {
       $node->field_os2web_meetings_ref_date[LANGUAGE_NONE][0]['value'] = $referat_publishing_time;
     }
     // Proper id tagging.
