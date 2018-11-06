@@ -223,7 +223,7 @@ function os2web_meetings_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_os2web_meetings_enclosures',
-    'label' => 'Enclosures',
+    'label' => 'Bilag',
     'required' => 0,
     'settings' => array(
       'description_field' => 0,
