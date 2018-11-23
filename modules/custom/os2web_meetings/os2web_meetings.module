@@ -263,6 +263,11 @@ function os2web_meetings_form_alter(&$form, &$form_state) {
       '#default_value' => variable_get('os2web_meetings_subscription_max_age', 10),
       '#element_validate' => array('element_validate_integer_positive'),
     );
+    $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_sender_email'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Notification sender email'),
+      '#default_value' => variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk')
+    );
     $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_first_dagsorden'] = array(
       '#type' => 'checkbox',
       '#title' => t('Adviser ved første import af en dagsorden.'),
