@@ -569,6 +569,7 @@ function os2web_subscription_cron() {
             'os2web_subscription',
             'subscription',
             $user['email'],
+          
             language_default('language'),
             array(
               'nodes' => $nodes,
@@ -603,6 +604,9 @@ function os2web_subscription_mail($key, &$message, $params) {
   switch ($key) {
     case 'subscription':
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
+      $message['headers']['From'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Sender'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Return-Path'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
       $message['subject'] = t('New "!category" notification for !email from !sitename', array(
         '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
         '!email' => $email,
@@ -614,7 +618,6 @@ function os2web_subscription_mail($key, &$message, $params) {
       ));
 
       $message['body'][] = t('Links below leads you to the original content.');
-
       foreach ($params['nodes'] as $nid => $link) {
         $message['body'][] = ' - ' . $link;
       }
@@ -637,6 +640,9 @@ function os2web_subscription_mail($key, &$message, $params) {
 
     case 'confirm':
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
+      $message['headers']['From'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Sender'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Return-Path'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
       $message['subject'] = t('Confirm your !category registration on !sitename', array(
         '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
         '!sitename' => $sitename,
