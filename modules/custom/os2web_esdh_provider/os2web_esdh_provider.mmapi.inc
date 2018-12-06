@@ -75,11 +75,10 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
   watchdog('acadre MM', '[XML_ID: !id] Initialized meeting import', array('!id' => $PROCESSING_MEETING_ID), WATCHDOG_NOTICE);
 
   $meetings = os2web_esdh_provider_invoke('mm', 'import_meeting', $meeting_id);
-
   $nids = array();
 
   // Do an initially check on if there are any approved meetings.
-  if (count($meetings) === 0) {
+  if (!is_array($meetings) || count($meetings) === 0) {
     watchdog('acadre MM', '[XML_ID: !id]  There was no meetings to import. See if all manifests are OK? ', array('!id' => $PROCESSING_MEETING_ID), WATCHDOG_WARNING);
     _os2web_esdh_provider_send_statusmail(t('There was no meetings to import for meeting !id. See if all manifests are OK?', array('!id' => $meeting_id['id'])), TRUE);
     lock_release(__FUNCTION__ . $meeting_id['id']);
@@ -433,6 +432,9 @@ function _os2web_esdh_provider_import_items($items) {
       foreach ($item['enclosures'] as $enclosure) {
         if ($enclosure['access']) {
           if ($file = _os2web_esdh_provider_import_file($enclosure)) {
+            if (module_exists('os2web_sbsys_bilag_files_mapping')) {
+               os2web_sbsys_bilag_files_mapping_create_mapping($enclosure['uri'], $file->fid);
+            }
             $node->field_os2web_meetings_enclosures[LANGUAGE_NONE][] = (array) $file;
             if (module_exists('os2dagsorden_esdh_provider'))
               $node->field_os2web_meetings_attach[LANGUAGE_NONE][]['target_id'] = os2dagsorden_esdh_provider_process_enclosure($enclosure, $file);
@@ -553,7 +555,6 @@ function _os2web_esdh_provider_import_file($file_meta) {
     // Completely unprocessed file.
     $uri_old = $uri_in;
     $uri_in = _os2web_esdh_provider_similar_file_exists(drupal_realpath($uri_in));
-
     if ($uri_in === FALSE || FALSE === file_unmanaged_copy($uri_in, $uri_out, FILE_EXISTS_REPLACE)) {
       // Bummed out on copy.
       watchdog('acadre MM', 'File copy failed for %infile -> %outfile. Check folder permissions.', array(
@@ -571,7 +572,6 @@ function _os2web_esdh_provider_import_file($file_meta) {
       '%infile', $uri_in), WATCHDOG_WARNING);
     return FALSE;
   }
-
   if (file_uri_scheme($uri) != 'public') {
     watchdog('acadre MM', 'Invalid scheme for uri %uri, Possibly absolut path ? ' . $uri, array(
       '%uri', $uri), WATCHDOG_ERROR);
