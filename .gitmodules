@@ -1,3 +1,7 @@
 [submodule "modules/custom/bellcom_borgerdk"]
 	path = modules/custom/bellcom_borgerdk
 	url = https://github.com/bellcom/bellcom_borgerdk.git
+[submodule "modules/custom/os2forms"]
+	path = modules/custom/os2forms
+	url = https://github.com/OS2Forms/os2forms_frontend
+	
