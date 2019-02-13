@@ -271,3 +271,29 @@ function nemid_populate_fields_recursive(array &$tree, array $message) {
     }
   }
 }
+
+/**
+ * Returns UNIX timestamp from a NTP server (RFC 5905).
+ *
+ * @param  string  $host
+ *   Server host (default is pool.ntp.org).
+ * @param  integer $timeout
+ *   Timeout  in seconds (default is 10 seconds.
+ * @return integer
+ *   Number of seconds since January 1st 1970.
+ */
+function nemid_query_time_server($host = 'pool.ntp.org', $timeout = 10)	{
+	$socket = stream_socket_client('udp://' . $host . ':123', $errno, $errstr, (int)$timeout);
+
+	$msg = "\010" . str_repeat("\0", 47);
+	fwrite($socket, $msg);
+
+	$response = fread($socket, 48);
+	fclose($socket);
+
+	$data = unpack('N12', $response);
+	$timestamp = sprintf('%u', $data[9]);
+	$timestamp -= 2208988800;
+
+	return $timestamp;
+}
