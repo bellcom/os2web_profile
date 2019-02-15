@@ -359,7 +359,12 @@ function nemid_login_form_alter(&$form, &$form_state, $form_id) {
       $form['#submit'][] = 'nemid_login_webform_configure_save';
       break;
 
-    case strstr($form_id, 'webform_client_form'):   
+    case strstr($form_id, 'webform_client_form'):  
+      // Check if server time is correct.
+      $ntp_server_time = nemid_login_query_time_server();
+      if ($ntp_server_time && abs(nemid_login_query_time_server() - time() > 1 )) {
+        watchdog("Drupal Nemid Login", 'Server time is not correct.', array(), WATCHDOG_WARNING);
+      }
       // Destroy the session if there is an error, get login block again.
       if (isset($_SESSION['nemid_login']['errors'])) {
         unset($_SESSION['nemid_login']['message']);
@@ -426,11 +431,6 @@ function nemid_login_webform_view($variables) {
  */
 function nemid_login_preprocess_nemid_login_block(&$vars) {
   $vars['errors'] = FALSE;
-  // Check if server time is correct.
-  $ntp_server_time = nemid_login_query_time_server();
-  if ($ntp_server_time && abs(nemid_login_query_time_server() - time() > 1 )) {
-    watchdog("Drupal Nemid Login", 'Server time is not correct.', array(), WATCHDOG_WARNING);
-  }
   if (isset($_SESSION['nemid_login']['errors'])) {
     $vars['errors'] = TRUE;
     watchdog("Drupal Nemid Login", $_SESSION['nemid_login']['errors']['description'], array(), WATCHDOG_ERROR);
