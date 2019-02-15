@@ -359,10 +359,16 @@ function nemid_login_form_alter(&$form, &$form_state, $form_id) {
       $form['#submit'][] = 'nemid_login_webform_configure_save';
       break;
 
-    case strstr($form_id, 'webform_client_form'):
+    case strstr($form_id, 'webform_client_form'):  
+      // Check if server time is correct.
+      $ntp_server_time = nemid_login_query_time_server();
+      if ($ntp_server_time && abs(nemid_login_query_time_server() - time() > 1 )) {
+        watchdog("Drupal Nemid Login", 'Server time is not correct.', array(), WATCHDOG_WARNING);
+      }
       // Destroy the session if there is an error, get login block again.
       if (isset($_SESSION['nemid_login']['errors'])) {
         unset($_SESSION['nemid_login']['message']);
+        watchdog("Drupal Nemid Login", $_SESSION['nemid_login']['errors']['description'], array(), WATCHDOG_ERROR);
       }
 
       if (isset($_POST['response'])) {
@@ -412,7 +418,7 @@ function nemid_login_webform_view($variables) {
     else {
       // Unsetting the message after it has been used once
       // for multipage forms.
-      if ($page_num == ($page_count - 1)) {
+      if (isset($_SESSION['nemid_login']) && ($page_num == ($page_count - 1))) {
         unset($_SESSION['nemid_login']['message']);
       }
     }
@@ -427,6 +433,7 @@ function nemid_login_preprocess_nemid_login_block(&$vars) {
   $vars['errors'] = FALSE;
   if (isset($_SESSION['nemid_login']['errors'])) {
     $vars['errors'] = TRUE;
+    watchdog("Drupal Nemid Login", $_SESSION['nemid_login']['errors']['description'], array(), WATCHDOG_ERROR);
   }
 
   $post_back_form_action = 'nemid/verify';
@@ -455,4 +462,30 @@ function nemid_login_preprocess_nemid_login_block(&$vars) {
   $vars['settings'] = $settings;
   drupal_add_js(array('nemidLogin' => $settings), array('type' => 'setting'));
   drupal_add_js(drupal_get_path('module', 'nemid_login') . '/nemid_login.js');
+}
+
+/**
+ * Returns UNIX timestamp from a NTP server (RFC 5905).
+ *
+ * @param  string  $host
+ *   Server host (default is pool.ntp.org).
+ * @param  integer $timeout
+ *   Timeout  in seconds (default is 10 seconds.
+ * @return integer
+ *   Number of seconds since January 1st 1970.
+ */
+function nemid_login_query_time_server($host = 'pool.ntp.org', $timeout = 10)	{
+  if ($socket = stream_socket_client('udp://' . $host . ':123', $errno, $errstr, (int)$timeout)) {
+    $msg = "\010" . str_repeat("\0", 47);
+    fwrite($socket, $msg);
+    $response = fread($socket, 48);
+    fclose($socket);
+    $data = unpack('N12', $response);
+
+    $timestamp = sprintf('%u', $data[9]);
+    $timestamp -= 2208988800;
+    return $timestamp;
+  }
+  watchdog("Drupal Nemid Login", 'Connection with NTP server fails %errno: %errstr', array('%errno' => $errno, '%errstr' => $errstr), WATCHDOG_ERROR);
+  return FALSE;
 }

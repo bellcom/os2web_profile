@@ -172,3 +172,4 @@ function nemlogin_webform_configure_save($form, &$form_state) {
   $login_block_enable = $form_state['values']['nemlogin_link_enable_' . $form['nid']['#value']];
   variable_set('nemlogin_link_enable_' . $form['nid']['#value'], $login_block_enable);
 }
+
