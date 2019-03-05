@@ -62,7 +62,7 @@ function _os2web_esdh_provider_import_meeting($meeting_id, $force = FALSE, &$con
   }
 
   if (!os2web_esdh_provider_index_meeting_is_manifest_outdated($meeting_id['id'], filemtime(drupal_realpath($meeting_id['uri']))) &&
-    !os2web_esdh_provider_index_meeting_has_deleted_agendas($meeting_id['id'])) {
+    !os2web_esdh_provider_index_meeting_has_deleted_agendas($meeting_id['id']) && !os2web_esdh_provider_index_meeting_has_ignored_agendas($meeting_id['id'])) {
     if ($nid) {
       watchdog('acadre MM', '[XML_ID: !id] Latest meeting version is already imported into nid: !nid. Skipping manifest', array('!id' => $PROCESSING_MEETING_ID, '!nid' => $nid), WATCHDOG_INFO);
     } else {

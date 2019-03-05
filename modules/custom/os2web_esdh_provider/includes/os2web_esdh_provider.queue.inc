@@ -148,3 +148,13 @@ function os2web_esdh_provider_index_meeting_update_committee_tid($meeting_xmlid,
     ->condition('agenda_sysid', $agenda_sysid, '=')
     ->execute();
 }
+
+function os2web_esdh_provider_index_meeting_has_ignored_agendas($meeting_xmlid) {
+  $rowCount = db_select('os2web_esdh_provider_import', 'o')
+    ->fields('o')
+    ->condition('meeting_xmlid', $meeting_xmlid, '=')
+    ->condition('import_status', IMPORT_STATUS_IGNORED, '=')
+    ->execute()
+    ->rowCount();
+  return $rowCount > 0;
+}
