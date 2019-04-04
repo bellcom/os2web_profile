@@ -187,10 +187,7 @@ function feeds_xls_feeds_processor_targets_alter(&$targets, $entity_type, $bundl
 /**
  * Callback for setting date fields
  */
-function feeds_xls_feeds_set_target_date($source, $entity, $target, $value){
-  $info = field_info_field($target);
-  $mapping['language'] = entity_metadata_field_get_language($entity->type, $entity, $info['field_name']);
-  
+function feeds_xls_feeds_set_target_date(FeedsSource $source, $entity, $target, array $value, array $mapping){
   if(strpos(get_class($source->importer->parser), 'FeedsExcelParser') !== FALSE && is_numeric($value)){
     $userDate = PHPExcel_Shared_Date::ExcelToPHPObject($value);
     $date = new DateTime($userDate->format('Y-m-d H:i:s'), new DateTimeZone(drupal_get_user_timezone()));
@@ -206,7 +203,7 @@ function feeds_xls_feeds_set_target_date($source, $entity, $target, $value){
  * Maps from a value to a key.
  * 
  */
-function feeds_xls_feeds_set_target_list_text($source, $entity, $target, $value){
+function feeds_xls_feeds_set_target_list_text(FeedsSource $source, $entity, $target, array $value, array $mapping){
   if(!is_array($value)){
     $value = array(
       $value
@@ -228,7 +225,7 @@ function feeds_xls_feeds_set_target_list_text($source, $entity, $target, $value)
       unset($value[$k]);
     }
   }
-  text_feeds_set_target($source, $entity, $target, $value, TRUE);
+  text_feeds_set_target($source, $entity, $target, $value, $mapping);
 }
 
 /**
@@ -237,7 +234,7 @@ function feeds_xls_feeds_set_target_list_text($source, $entity, $target, $value)
  * Ensure that $value is a numeric to avoid database errors.  This will also map
  * from a value to a key for list fields.
  */
-function feeds_xls_feeds_set_target_numeric($source, $entity, $target, $value){
+function feeds_xls_feeds_set_target_numeric(FeedsSource $source, $entity, $target, array $value, array $mapping){
   if(!is_array($value)){
     $value = array(
       $value
@@ -257,7 +254,7 @@ function feeds_xls_feeds_set_target_numeric($source, $entity, $target, $value){
       }
     }
   }
-  number_feeds_set_target($source, $entity, $target, $value, FALSE);
+  number_feeds_set_target($source, $entity, $target, $value, $mapping);
 }
 
 /**
