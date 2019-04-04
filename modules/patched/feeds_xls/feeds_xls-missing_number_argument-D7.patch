@@ -1,10 +1,3 @@
-diff --git a/modules/custom/bellcom_borgerdk b/modules/custom/bellcom_borgerdk
-index 5a11d5d..9715ed6 160000
---- a/modules/custom/bellcom_borgerdk
-+++ b/modules/custom/bellcom_borgerdk
-@@ -1 +1 @@
--Subproject commit 5a11d5d0c99dc06124d69ddbb8e7bc5024ba2bb4
-+Subproject commit 9715ed6aab0054dd2645a4997d9be96d8c33e807-dirty
 diff --git a/modules/patched/feeds_xls/feeds_xls.module b/modules/patched/feeds_xls/feeds_xls.module
 index a7bf99e..1526b93 100644
 --- a/modules/patched/feeds_xls/feeds_xls.module
