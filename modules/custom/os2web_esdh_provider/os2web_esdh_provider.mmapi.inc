@@ -604,7 +604,7 @@ function _os2web_esdh_provider_import_file($file_meta) {
 
   // Schedule for PDF conversion
   // $convert = FALSE; // DEBUG.
-  if ($convert) {
+  if ($convert  && module_exists('os2web_adlib_api')) {
     drupal_load('module', 'os2web_adlib_api');
     os2web_adlib_api_convert_to_pdf($file->fid, $file->filename);
     watchdog('os2web_adlib_api', 'File %filename (fid: %fid) queued for PDF conversion.', array(
