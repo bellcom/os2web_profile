@@ -761,7 +761,7 @@ function _os2web_esdh_provider_similar_file_exists($filename) {
     return $filename;
   }
   $dir = dirname($filename);
-  $file = _os2web_esdh_provider_glob($dir, $filename);
+  
   if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
     return $file;
   }
