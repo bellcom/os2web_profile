@@ -229,25 +229,8 @@ function os2web_esdh_provider_cron() {
   if (variable_get('os2web_esdh_provider_queue_enabled', FALSE)) {
     return;
   }
-  if (os2web_esdh_provider_has_api('mm')) {
-    $meetings = os2web_esdh_provider_invoke('mm', 'get_import_list');
 
-    $queue = DrupalQueue::get('acadre_mm_import');
-    //if ($queue->numberOfItems() == 0) {
-
-      $current_timestamp = time();
-      $last_mm_import_time = variable_get('os2web_esdh_provider_last_mm_import', FALSE);
-
-      foreach ($meetings as $meeting) {
-        // Only import files newer than last cron job.
-        //if (!$last_mm_import_time || filemtime($meeting['uri']) > $last_mm_import_time) {
-          $queue->createItem(array('meeting' => $meeting, 'force' => FALSE));
-        //}
-      }
-      $queue->createItem(array('post_import_process' => TRUE));
-      variable_set('os2web_esdh_provider_last_mm_import', $current_timestamp);
-    //}
-  }
+  os2web_esdh_provider_queue_meetings();
 }
 
 /**
@@ -255,27 +238,22 @@ function os2web_esdh_provider_cron() {
  */
 function os2web_esdh_provider_queue_meetings() {
   if (os2web_esdh_provider_has_api('mm')) {
-    $meetings = os2web_esdh_provider_invoke('mm', 'get_import_list');
-
-    $last_mm_import_time = variable_get('os2web_esdh_provider_last_mm_import', FALSE);
-
     $queue = DrupalQueue::get('acadre_mm_import');
+    if ($queue->numberOfItems() == 0) {
+      $meetings = os2web_esdh_provider_invoke('mm', 'get_import_list');
+      $current_timestamp = time();
 
-    foreach ($meetings as $meeting) {
-      // Only import files newer than last cron job.
-    //  if (!$last_mm_import_time || filemtime($meeting['uri']) > $last_mm_import_time) {
+      // Do the magic in a queue.
+      foreach ($meetings as $meeting) {
         $queue->createItem(array('meeting' => $meeting, 'force' => FALSE));
-      //}
+      }
+      $queue->createItem(array('post_import_process' => TRUE));
+
+      if (variable_get('os2web_meetings_unpublish_without_manifest', FALSE)) {
+        $queue->createItem(array('unpublish_without_manifest' => TRUE, 'meetings' => $meetings));
+      }
+      variable_set('os2web_esdh_provider_last_mm_import', $current_timestamp);
     }
-    $queue->createItem(array('post_import_process' => TRUE));
-
-    if (variable_get('os2web_meetings_unpublish_without_manifest', FALSE)) {
-      $queue->createItem(array('unpublish_without_manifest' => TRUE, 'meetings' => $meetings));
-    }
-
-   // variable_set('os2web_esdh_provider_last_mm_import', $current_timestamp);
-
-    variable_set('os2web_esdh_provider_last_mm_import', time());
   }
 }
 
