@@ -47,6 +47,12 @@ function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$f
     '#description' => 'Komma sepereret liste over udvalgs-id der er godkendt til publisering.',
     '#default_value' => variable_get('os2web_meetings_approved_committee', ACADRE_MM_DEFAULT_APPROVED),
   );
+   $form['os2web_settings_not_attach_addtional_agenda'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('os2web_settings_not_attach_addtional_agenda', FALSE),
+    '#title' => t("Don't attach tillægsdagsordener to meeting"),
+    '#description' => ('This decides whether a additional agenda will be attached to the meeting')
+  );
 
   // CM Configuration.
   $form['os2web_pws_config_group'] = array(
