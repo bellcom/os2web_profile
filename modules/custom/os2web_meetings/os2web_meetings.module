@@ -54,7 +54,10 @@ function os2web_meetings_cron_queue_info() {
  */
 function os2web_meetings_cron_queue_worker($args) {
   if (isset($args['meeting'])) {
-    os2web_meetings_update_search_index($args['meeting']);
+    $nid = db_select('node', 'n')->fields('n', array('nid'))->condition('nid', $args['meeting']->nid)->execute()->fetchField();
+    if ($nid) {
+      os2web_meetings_update_search_index($args['meeting']);
+    }
   }
 }
 
