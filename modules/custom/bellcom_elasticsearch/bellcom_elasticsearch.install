@@ -167,3 +167,16 @@ function bellcom_elasticsearch_update_7102() {
   db_add_field('bellcom_elasticsearch_synonyms_indices', 'duplicate_plain_list', $spec);
 }
 
+/**
+ * Adding option to add TID to phrase catcher.
+ */
+function bellcom_elasticsearch_update_7103() {
+  $spec = array(
+    'description' => t('Whether the ID is term ID (tid)'),
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'default' => 0
+  );
+  db_add_field('bellcom_elasticsearch_phrase_catcher', 'is_term', $spec);
+}
+
