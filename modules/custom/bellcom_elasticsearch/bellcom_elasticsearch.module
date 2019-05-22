@@ -198,27 +198,45 @@ function _bellcom_elasticsearch_get_boosting($query_string = NULL, $is_multi_typ
 			AND nid IS NOT NULL AND (i.from_date IS NULL or i.from_date <= :now)
 			AND  (i.until_date IS NULL or i.until_date >= :now) order by i.weight DESC',
     array(':phrase' => $query_string, ':now' => $now))->fetchAll();
-
   foreach ($results as $phrase) {
     if ($is_multi_type_index) {
-      $boosting[] = array(
-        'weight' => intval($phrase->weight) * 100,
-        'filter' => array(
-          'term' => array('node:nid' => $phrase->nid)
-        ),
-      );
+      if ($phrase->is_term) {
+        $boosting[] = array(
+          'weight' => intval($phrase->weight) * 100,
+          'filter' => array(
+            'term' => array('taxonomy_term:tid' => $phrase->nid)
+          ),
+        );
+      }
+      else {
+        $boosting[] = array(
+          'weight' => intval($phrase->weight) * 100,
+          'filter' => array(
+            'term' => array('node:nid' => $phrase->nid)
+          ),
+        );
+      }
     }
     else {
-      $boosting[] = array(
-        'weight' => intval($phrase->weight) * 100,
-        'filter' => array(
-          'term' => array('nid' => $phrase->nid)
-        ),
-      );
+      if ($phrase->is_term) {
+       $boosting[] = array(
+          'weight' => intval($phrase->weight) * 100,
+          'filter' => array(
+            'term' => array('tid' => $phrase->nid)
+          ),
+        ); 
+      }
+      else {
+        $boosting[] = array(
+          'weight' => intval($phrase->weight) * 100,
+          'filter' => array(
+            'term' => array('nid' => $phrase->nid)
+          ),
+        );
+      }
     }
 
   }
-
   //adding node custom weight
   foreach (node_type_get_types() as $type) {
     if ($weight = variable_get('bellcom_elasticsearch_content_type_weight_' . $type->type)) {
@@ -265,14 +283,28 @@ function _bellcom_elasticsearch_get_query($query_string, $query_fields, $is_mult
     array(':phrase' => $query_string, ':now' => date('Y-m-d H:i:s', time())))->fetchAll();
   foreach ($results as $phrase) {
     if ($is_multi_type_index) {
-      $query['bool']['should'][] = array(
-        'term' => array('node:nid' => $phrase->nid)
-      );
+      if ($phrase->is_term) {
+        $query['bool']['should'][] = array(
+          'term' => array('taxonomy_term:tid' => $phrase->nid)       
+        );
+      }
+      else {
+        $query['bool']['should'][] = array(
+          'term' => array('node:nid' => $phrase->nid)       
+        );
+      }
     }
     else {
-      $query['bool']['should'][] = array(
-        'term' => array('nid' => $phrase->nid)
-      );
+      if ($phrase->is_term) {
+        $query['bool']['should'][] = array(
+          'term' => array('tid' => $phrase->nid)
+        );
+      }
+      else {
+        $query['bool']['should'][] = array(
+          'term' => array('nid' => $phrase->nid)
+        );
+      }  
     }
   }
 
@@ -287,14 +319,19 @@ function _bellcom_elasticsearch_get_query($query_string, $query_fields, $is_mult
  */
 function _bellcom_elasticsearch_get_size($query_string) {
   // making sure the all found phrase NID are included into the search result
-  $results = db_query('SELECT exclusive, nid FROM {bellcom_elasticsearch_phrase_catcher} i WHERE :phrase LIKE i.phrase
+  $results = db_query('SELECT exclusive, nid, is_term FROM {bellcom_elasticsearch_phrase_catcher} i WHERE :phrase LIKE i.phrase
 	AND nid IS NOT NULL AND (i.from_date IS NULL or i.from_date <= :now)
 	AND  (i.until_date IS NULL or i.until_date >= :now)',
     array(':phrase' => $query_string, ':now' => date('Y-m-d H:i:s', time())))->fetchAll();
 
   foreach ($results as $result) {
     if ($result->exclusive) { //if any of the mathcing phrase are set to be exclusive
-      drupal_goto('node/' . $result->nid);
+      if ($result->is_term) {
+        drupal_goto('taxonomy/term/' . $result->nid);
+      }
+      else {
+        drupal_goto('node/' . $result->nid);
+      }  
       return 1;
     }
   }

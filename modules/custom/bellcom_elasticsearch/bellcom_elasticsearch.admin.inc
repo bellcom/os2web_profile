@@ -166,7 +166,7 @@ function bellcom_elasticsearch_phrase_catcher_settings_page() {
     $data[] = '<span class="display-field display-phrase">' . $row->phrase . '</span><input type="text" value="' . $row->phrase . '" class="form-text edit-field phrase" style="display: none;">';
     $data[] = '<input type="checkbox" class="display-input exclusive" disabled ' . $exclusive . '>';
     $data[] = '<span class="display-field display-nid">' . $row->nid . '</span><input type="text" value="' . $row->nid . '" class="form-text edit-field nid" style="display: none;">';
-    $data[] = '<input type="checkbox" class="display-input exclusive" disabled ' . $is_term . '>';
+    $data[] = '<input type="checkbox" class="display-input is-term" disabled ' . $is_term . '>';
     $data[] = '<span class="display-field display-from">' . $from_date . '</span><input type="text" value="' . $from_date . '" class="form-text edit-field from datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-until">' . $until_date . '</span><input type="text" value="' . $until_date . '" class="form-text edit-field until datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-weight">' . $row->weight . '</span><input type="text" value="' . $row->weight . '" class="form-text edit-field weight" style="display: none;">';
