@@ -195,10 +195,15 @@ function _os2web_acadre_esdh_import_meeting($info) {
       watchdog('acadre MM', 'Ignored agenda from %committee .', array('%committee' => $meeting['committee']));
       return FALSE;
     }
+  
     // Participants.
-    $participants = $xml->xpath("//table[@name='committee']/table[@name='commember']/table[@name='member']");
+    $participants = $xml->xpath("//table[@name='meeting']/table[@name='meetmember']/table[@name='member']");
     foreach ($participants as $participant) {
-      $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
+      // Check if the absent is true, then skip.
+      $absent = (int) array_shift($participant->xpath("fields/field[@name='absent']"));
+      if ($absent == 0) {
+        $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
+      }
     }
 
     // Fix dates:
