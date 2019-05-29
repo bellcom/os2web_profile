@@ -204,6 +204,9 @@ function _os2web_acadre_esdh_import_meeting($info) {
       if ($absent == 0) {
         $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
       }
+      else {
+        $meeting['participants_cancellation'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
+      }
     }
 
     // Fix dates:
