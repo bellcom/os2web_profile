@@ -1,18 +1,19 @@
 name = Iframe
 description = Defines a simple iframe field type.
 package = CCK
-version = 0.0.2
+version = 7.x-1.x
 core = 7.x
 dependencies[] = field
 files[] = iframe.module
 files[] = iframe.install
 files[] = iframe.content_migrate.iframe.inc
+files[] = mappers/iframe.inc
 ;files[] = iframe.test
 required = FALSE
 
 
-; Information added by Drupal.org packaging script on 2018-04-16
-version = "7.x-1.9"
+; Information added by Drupal.org packaging script on 2018-07-27
+version = "7.x-1.12"
 core = "7.x"
 project = "iframe"
-datestamp = "1523920084"
+datestamp = "1532690285"
