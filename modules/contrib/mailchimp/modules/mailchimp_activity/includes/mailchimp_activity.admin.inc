@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Administration pages for mailchimp_campaign module.
+ * Administration pages for mailchimp_activity module.
  */
 
 /**
@@ -46,10 +46,10 @@ function mailchimp_activity_entity_form($form, &$form_state, MailchimpActivityEn
     ),
     '#weight' => -8,
   );
-  //prep the entity type list before creating the form item:
+  // Prep the entity type list before creating the form item:
   $entity_types = array('' => t('-- Select --'));
   foreach (entity_get_info() as $entity_type => $info) {
-    // ignore MailChimp entity types
+    // Ignore MailChimp entity types:
     if (strpos($entity_type, 'mailchimp') === FALSE) {
       $entity_types[$entity_type] = $info['label'];
     }
@@ -64,7 +64,7 @@ function mailchimp_activity_entity_form($form, &$form_state, MailchimpActivityEn
     '#description' => t('Select an entity type to enable mailchimp history on.'),
     '#ajax' => array(
       'callback' => 'mailchimp_activity_mapping_form_callback',
-      'wrapper' => 'mailchimp-activity-drupal-entity'
+      'wrapper' => 'mailchimp-activity-drupal-entity',
     ),
     '#weight' => -8,
   );
@@ -74,7 +74,7 @@ function mailchimp_activity_entity_form($form, &$form_state, MailchimpActivityEn
     $form_entity_type = $mailchimp_activity_entity->entity_type;
   }
   if ($form_entity_type) {
-    //prep the bundle list before creating the form item:
+    // Prep the bundle list before creating the form item:
     $bundles = array('' => t('-- Select --'));
     $info  = entity_get_info($form_entity_type);
     foreach ($info['bundles'] as $key => $bundle) {
@@ -91,7 +91,7 @@ function mailchimp_activity_entity_form($form, &$form_state, MailchimpActivityEn
       '#weight' => -7,
       '#ajax' => array(
         'callback' => 'mailchimp_activity_mapping_form_callback',
-        'wrapper' => 'mailchimp-activity-drupal-entity'
+        'wrapper' => 'mailchimp-activity-drupal-entity',
       ),
     );
 
@@ -100,7 +100,7 @@ function mailchimp_activity_entity_form($form, &$form_state, MailchimpActivityEn
       $form_bundle = $mailchimp_activity_entity->bundle;
     }
     if ($form_bundle) {
-      //prep the field & properties list before creating the form item:
+      // Prep the field & properties list before creating the form item:
       $fields = mailchimp_activity_email_fieldmap_options($form_entity_type, $form_bundle);
       $form['drupal_entity']['email_property'] = array(
         '#title' => t('Email Property'),
@@ -141,21 +141,23 @@ function mailchimp_activity_mapping_form_callback($form, &$form_state) {
  * Validation callback for mailchimp_activity_entity_form().
  */
 function mailchimp_activity_entity_form_validate($form, &$form_state) {
-  $extant_mc_entities = entity_load('mailchimp_activity_entity');
-  $form_id = $form_state['mailchimp_activity_entity']->mailchimp_activity_entity_id;
-  $form_bundle = $form_state['values']['bundle'];
-  $form_entity_id = $form_state['values']['entity_type'];
-  foreach ($extant_mc_entities as $extant_ent) {
-    if ($form_bundle == $extant_ent->bundle &&
-        $form_entity_id == $extant_ent->entity_type &&
-        $form_id != $extant_ent->mailchimp_activity_entity_id) {
-      form_set_error(
-        'bundle',
-        t('A MailChimp Activity Entity already exists for this Bundle. Either select a different Bundle or edit the !link for this bundle.',
-          array(
-            '!link' => l('existing MailChimp Activity Entity', "admin/config/services/mailchimp/activity/manage/{$extant_ent->name}")
-          )
-        ));
+  if ($form_state['submitted']) {
+    $extant_mc_entities = entity_load('mailchimp_activity_entity');
+    $form_id = $form_state['mailchimp_activity_entity']->mailchimp_activity_entity_id;
+    $form_bundle = $form_state['values']['bundle'];
+    $form_entity_id = $form_state['values']['entity_type'];
+    foreach ($extant_mc_entities as $extant_ent) {
+      if ($form_bundle == $extant_ent->bundle &&
+          $form_entity_id == $extant_ent->entity_type &&
+          $form_id != $extant_ent->mailchimp_activity_entity_id) {
+        form_set_error(
+          'bundle',
+          t('A MailChimp Activity Entity already exists for this Bundle. Either select a different Bundle or edit the !link for this bundle.',
+            array(
+              '!link' => l(t('existing MailChimp Activity Entity'), "admin/config/services/mailchimp/activity/manage/{$extant_ent->name}"),
+            )
+          ));
+      }
     }
   }
 }
@@ -164,12 +166,17 @@ function mailchimp_activity_entity_form_validate($form, &$form_state) {
  * Submit handler for mailchimp_activity_entity_form().
  */
 function mailchimp_activity_entity_form_submit($form, &$form_state) {
+  $dummy_entity = entity_create($form_state['values']['entity_type'], array('type' => $form_state['values']['bundle']));
+  $entity_info = entity_get_info($dummy_entity->type);
+  if (!empty($entity_info)) {
+    // Create empty entity ID field so entity_uri doesn't result in an error.
+    $entity_id_field = $entity_info['entity keys']['id'];
+    $dummy_entity->$entity_id_field = NULL;
+  }
+  $uri = entity_uri($form_state['values']['entity_type'], $dummy_entity);
   $values = $form_state['values'];
-  $activity_entity = array();
+  $values['entity_path'] = $uri['path'];
   if ($form_state['op'] == 'add' || $form_state['op'] == 'clone') {
-    $dummy = entity_create($form_state['values']['entity_type'], array('type' => $form_state['values']['bundle']));
-    $uri = entity_uri($form_state['values']['entity_type'], $dummy);
-    $values['entity_path'] = $uri['path'];
     $activity_entity = entity_create('mailchimp_activity_entity', $values);
   }
   else {
@@ -179,7 +186,8 @@ function mailchimp_activity_entity_form_submit($form, &$form_state) {
     }
   }
   $activity_entity->save();
-  menu_rebuild(); //Otherwise user has to clear cache themselves to see newly created activity pages
+  // Make sure the new items appear in the menus:
+  menu_rebuild();
   $form_state['redirect'] = 'admin/config/services/mailchimp/activity';
 }
 
@@ -188,9 +196,8 @@ function mailchimp_activity_entity_form_submit($form, &$form_state) {
  *
  * @param string $entity_type
  *   Name of entity whose properties to list.
- * @param bool $include_entities
- *   Choose whether or not to include properties of the given entity type that
- *   are themselves also entities.
+ * @param string $entity_bundle
+ *   Optional entity bundle to get properties for.
  *
  * @return array
  *   List of entities that can be used as an #options list.
