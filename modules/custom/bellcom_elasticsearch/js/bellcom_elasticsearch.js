@@ -87,6 +87,7 @@
 		    var phraseVal = $(phrase_row).find('.phrase').val();
 		    $(phrase_row).find('.display-phrase').html(phraseVal);
 		    var exclusiveVal = $(phrase_row).find('.exclusive').is(':checked');
+        var isTermVal = $(phrase_row).find('.is-term').is(':checked');
 		    var nidVal = $(phrase_row).find('.nid').val();
 		    $(phrase_row).find('.display-nid').html(nidVal);
 		    var fromVal = $(phrase_row).find('.from').val();
@@ -105,7 +106,7 @@
           $(deleteLink).hide();
 			$.ajax({
 			    url: Drupal.settings.basePath + "phrase/" + id + "/update",
-			    data: { phrase: phraseVal, exclusive: exclusiveVal, nid: nidVal, from: fromVal, until: untilVal, weight: weightVal }
+			    data: { phrase: phraseVal, exclusive: exclusiveVal, nid: nidVal, from: fromVal, until: untilVal, weight: weightVal, is_term: isTermVal }
 			}).done(function() {
 			    $(submitted).fadeIn(function(){
 				$(submitted).fadeOut(function(){

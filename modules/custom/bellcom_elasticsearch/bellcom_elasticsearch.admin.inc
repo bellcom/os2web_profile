@@ -122,8 +122,12 @@ function bellcom_elasticsearch_phrase_catcher_settings_page() {
       'field' => 't.exclusive',
     ),
     array(
-      'data' => t('Nid'),
+      'data' => t('Entity ID (NID or TID)'),
       'field' => 't.nid',
+    ),
+    array(
+      'data' => t('Is term'),
+      'field' => 't.is_term',
     ),
     array(
       'data' => t('From'),
@@ -157,10 +161,12 @@ function bellcom_elasticsearch_phrase_catcher_settings_page() {
       $until_date = date(DATE_FORMAT, date_timestamp_get($until_date));
     }
     $exclusive = $row->exclusive ? 'checked' : '';
+    $is_term= $row->is_term ? 'checked' : '';
     $data = array();
     $data[] = '<span class="display-field display-phrase">' . $row->phrase . '</span><input type="text" value="' . $row->phrase . '" class="form-text edit-field phrase" style="display: none;">';
     $data[] = '<input type="checkbox" class="display-input exclusive" disabled ' . $exclusive . '>';
     $data[] = '<span class="display-field display-nid">' . $row->nid . '</span><input type="text" value="' . $row->nid . '" class="form-text edit-field nid" style="display: none;">';
+    $data[] = '<input type="checkbox" class="display-input is-term" disabled ' . $is_term . '>';
     $data[] = '<span class="display-field display-from">' . $from_date . '</span><input type="text" value="' . $from_date . '" class="form-text edit-field from datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-until">' . $until_date . '</span><input type="text" value="' . $until_date . '" class="form-text edit-field until datepicker" style="display: none;">';
     $data[] = '<span class="display-field display-weight">' . $row->weight . '</span><input type="text" value="' . $row->weight . '" class="form-text edit-field weight" style="display: none;">';
@@ -213,7 +219,8 @@ function bellcom_elasticsearch_update_phrase($id) {
     'phrase' => $_GET['phrase'],
     'exclusive' => ($_GET['exclusive'] === 'true') ? 1 : 0,
     'nid' => $_GET['nid'],
-    'weight' => $_GET['weight']
+    'weight' => $_GET['weight'],
+    'is_term' => ($_GET['is_term'] === 'true') ? 1 : 0,
   );
 
   $from = $_GET['from'];
