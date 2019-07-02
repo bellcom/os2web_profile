@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_spotbox.field_group.inc
@@ -58,6 +59,7 @@ function os2web_spotbox_field_group_info() {
       1 => 'field_os2web_spotbox_url',
       2 => 'field_os2web_base_field_ext_link',
       3 => 'field_os2web_spotbox_display',
+      4 => 'field_os2web_spotbox_file',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
