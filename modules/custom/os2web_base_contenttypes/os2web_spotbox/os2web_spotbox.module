@@ -150,12 +150,15 @@ function os2web_spotbox_render_spotboxes($nids = NULL, $count = 10, $offset = 0,
 
     // Add the spotbox url as an variable to the node. This is used in the
     // template file.
-    if (isset($rendered_spotbox['field_os2web_spotbox_url']['#items'][0]['value'])) {
+    if (isset($rendered_spotbox['field_os2web_spotbox_file']['#items'][0]['fid'])) {
+      $rendered_spotbox['#spotbox_url'] = file_create_url($rendered_spotbox['field_os2web_spotbox_file']['#items'][0]["uri"]);
+     // var_dump('here');
+    }
+    elseif (isset($rendered_spotbox['field_os2web_spotbox_url']['#items'][0]['value'])) {
       $spotbox_url = $rendered_spotbox['field_os2web_spotbox_url']['#items'][0]['value'];
       $rendered_spotbox['#spotbox_url'] = (substr( $spotbox_url, 0, 4 ) !== "http" && substr( $spotbox_url, 0, 1 ) !== "/" && substr( $spotbox_url, 0, 3 ) !== "www") ? '/' . $spotbox_url : $spotbox_url;
     }
   }
-
   return $render_array;
 }
 
