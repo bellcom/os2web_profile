@@ -152,7 +152,7 @@ function os2web_spotbox_render_spotboxes($nids = NULL, $count = 10, $offset = 0,
     // template file.
     if (isset($rendered_spotbox['field_os2web_spotbox_file']['#items'][0]['fid'])) {
       $rendered_spotbox['#spotbox_url'] = file_create_url($rendered_spotbox['field_os2web_spotbox_file']['#items'][0]["uri"]);
-     // var_dump('here');
+      $rendered_spotbox['#spotbox_url_title'] = $rendered_spotbox['field_os2web_spotbox_file']['#items'][0]["description"];
     }
     elseif (isset($rendered_spotbox['field_os2web_spotbox_url']['#items'][0]['value'])) {
       $spotbox_url = $rendered_spotbox['field_os2web_spotbox_url']['#items'][0]['value'];
