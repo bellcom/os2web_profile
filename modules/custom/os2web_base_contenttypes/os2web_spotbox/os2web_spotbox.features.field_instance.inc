@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_spotbox.features.field_instance.inc
@@ -46,7 +47,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 12,
+        'weight' => 14,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -96,7 +97,7 @@ function os2web_spotbox_field_default_field_instances() {
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_default',
-        'weight' => 4,
+        'weight' => 5,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -137,7 +138,7 @@ function os2web_spotbox_field_default_field_instances() {
       'module' => 'link',
       'settings' => array(),
       'type' => 'link_field',
-      'weight' => 15,
+      'weight' => 16,
     ),
     'workbench_access_field' => 0,
   );
@@ -179,7 +180,7 @@ function os2web_spotbox_field_default_field_instances() {
           'image_style' => 'os2web_spotbox_image_300',
         ),
         'type' => 'image',
-        'weight' => 2,
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -214,12 +215,15 @@ function os2web_spotbox_field_default_field_instances() {
       'title_field' => 1,
       'title_field_required' => 0,
       'user_register_form' => FALSE,
+      'wysiwyg_insert' => 0,
     ),
     'widget' => array(
       'active' => 1,
       'module' => 'media',
       'settings' => array(
         'allowed_schemes' => array(
+          'oembed' => 0,
+          'private' => 0,
           'public' => 'public',
           'ustream' => 0,
           'youtube' => 0,
@@ -238,9 +242,7 @@ function os2web_spotbox_field_default_field_instances() {
           'media_default--media_browser_my_files' => 'media_default--media_browser_my_files',
           'media_internet' => 0,
           'upload' => 'upload',
-          'youtube' => 0,
         ),
-        'progress_indicator' => 'throbber',
       ),
       'type' => 'media_generic',
       'weight' => 1,
@@ -270,7 +272,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -293,7 +295,7 @@ function os2web_spotbox_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 14,
+      'weight' => 15,
     ),
     'workbench_access_field' => 0,
   );
@@ -329,7 +331,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 10,
+        'weight' => 12,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -355,6 +357,87 @@ function os2web_spotbox_field_default_field_instances() {
       ),
       'type' => 'taxonomy_autocomplete',
       'weight' => 20,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'node-os2web_spotbox_box-field_os2web_spotbox_file'.
+  $field_instances['node-os2web_spotbox_box-field_os2web_spotbox_file'] = array(
+    'bundle' => 'os2web_spotbox_box',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'media',
+        'settings' => array(
+          'image_style' => '',
+        ),
+        'type' => 'media_large_icon',
+        'weight' => 16,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'module' => 'file',
+        'settings' => array(),
+        'type' => 'file_url_plain',
+        'weight' => 2,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_spotbox_file',
+    'label' => 'Link til file',
+    'required' => 0,
+    'settings' => array(
+      'description_field' => 1,
+      'epsacrop' => array(
+        'styles' => array(
+          'os2web_spotbox_image' => 0,
+          'svendborg_content_image' => 0,
+          'svendborg_spotbox' => 0,
+        ),
+      ),
+      'file_directory' => '',
+      'file_extensions' => 'txt doc docx xls xlsx pdf',
+      'max_filesize' => '',
+      'user_register_form' => FALSE,
+      'wysiwyg_insert' => 0,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'media',
+      'settings' => array(
+        'allowed_schemes' => array(
+          'oembed' => 0,
+          'private' => 0,
+          'public' => 'public',
+          'ustream' => 0,
+          'youtube' => 0,
+        ),
+        'allowed_types' => array(
+          'application' => 0,
+          'audio' => 0,
+          'document' => 'document',
+          'image' => 0,
+          'video' => 0,
+        ),
+        'browser_plugins' => array(
+          'media_browser_plus--media_browser_my_files' => 0,
+          'media_browser_plus--media_browser_thumbnails' => 0,
+          'media_default--media_browser_1' => 0,
+          'media_default--media_browser_my_files' => 0,
+          'media_internet' => 0,
+          'upload' => 0,
+        ),
+      ),
+      'type' => 'media_generic',
+      'weight' => 14,
     ),
   );
 
@@ -389,7 +472,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 11,
+        'weight' => 13,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -449,7 +532,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 9,
+        'weight' => 11,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -509,7 +592,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 8,
+        'weight' => 10,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -565,7 +648,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 6,
+        'weight' => 8,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -625,7 +708,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 5,
+        'weight' => 7,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -685,7 +768,7 @@ function os2web_spotbox_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 7,
+        'weight' => 9,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -706,6 +789,7 @@ function os2web_spotbox_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(
         'content_taxonomy_opt_groups' => FALSE,
+        'use_select2' => FALSE,
       ),
       'type' => 'options_select',
       'weight' => 2,
@@ -910,7 +994,7 @@ function os2web_spotbox_field_default_field_instances() {
           'file_view_mode' => 'default',
         ),
         'type' => 'file_rendered',
-        'weight' => 3,
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -982,6 +1066,7 @@ function os2web_spotbox_field_default_field_instances() {
   t('Forfrem til');
   t('KL Emneord');
   t('Link tekst');
+  t('Link til file');
   t('Organisation');
   t('Politik');
   t('Portalkategori');
