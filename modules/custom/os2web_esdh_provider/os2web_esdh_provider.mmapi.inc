@@ -953,7 +953,7 @@ function _os2web_esdh_provider_remove_img_tags($data){
     // get the source string
     preg_match('/src="([^"]+)/i',$imgTags[0][$i], $imgage);
     $file_url = array_pop($imgage);
-    if (preg_match('/^data:image\/(\w+);base64,/', $file_url, $type) === FALSE) {
+    if (preg_match('/^data:image\/(\w+);base64,/', $file_url) == FALSE) {
       $file_headers = @get_headers($file_url);
       if($file_headers=== FALSE or $file_headers[0] == 'HTTP/1.0 404 Not Found')       {
         $data = str_replace($imgTags[0][$i], "",  $data);
