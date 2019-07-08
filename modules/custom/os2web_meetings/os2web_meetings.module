@@ -32,10 +32,11 @@ function os2web_meetings_cron() {
         foreach ($meetings as $meeting) {
           $queue->createItem(array('meeting' => $meeting));
         }
+
+        // New items were added to the queue. Update last search index time.
+        variable_set('os2web_meetings_last_search_index_time', $current_time);
       }
     }
-
-    variable_set('os2web_meetings_last_search_index_time', $current_time);
   }
 }
 
@@ -104,10 +105,18 @@ function os2web_meetings_update_search_index($meeting) {
   $text = array_filter($text, 'os2web_meetings_strip_words');
   $bullet_point_data = implode(' ', $text);
 
-  // Updating node with the updated search data.
-  $node = node_load($meeting->nid);
+  // Updating node field with the updated search data.
+  $node = new stdClass();
+  $node->nid = $meeting->nid;
+  $node->type = 'os2web_meetings_meeting';
   $node->field_os2web_meetings_searchdata['und'][0]['value'] = $bullet_point_data;
-  node_save($node);
+
+  // Saving the field value without saving the node.
+  field_attach_update('node', $node);
+  field_attach_presave('node', $node);
+
+  // Clear the static loading cache.
+  entity_get_controller('node')->resetCache(array($node->nid));
 }
 
 /**
