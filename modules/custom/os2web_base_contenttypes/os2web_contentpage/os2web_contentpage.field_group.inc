@@ -252,9 +252,10 @@ function os2web_contentpage_field_group_info() {
     'label' => 'Relationer',
     'weight' => '8',
     'children' => array(
-      0 => 'field_os2web_base_field_ext_link',
+      0 => 'field_os2web_base_field_selfserv',
       1 => 'field_os2web_base_field_related',
-      2 => 'field_os2web_base_field_selfserv',
+      2 => 'field_os2web_base_field_ext_link',
+      3 => 'field_os2web_base_field_fil_link'
     ),
     'format_type' => 'htab',
     'format_settings' => array(
