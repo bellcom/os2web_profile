@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_base.features.field_instance.inc
@@ -226,6 +227,47 @@ function os2web_base_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'taxonomy_term-os2web_base_tax_site_structure-field_os2web_base_field_edi_tags'.
+  $field_instances['taxonomy_term-os2web_base_tax_site_structure-field_os2web_base_field_edi_tags'] = array(
+    'bundle' => 'os2web_base_tax_site_structure',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 3,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_os2web_base_field_edi_tags',
+    'label' => 'Stikord',
+    'required' => 0,
+    'settings' => array(
+      'select2_integration' => array(
+        'styling' => array(
+          'dropdownAutoWidth' => 0,
+          'placeholder' => '',
+        ),
+        'use_select2' => 0,
+      ),
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'taxonomy',
+      'settings' => array(
+        'autocomplete_path' => 'taxonomy/autocomplete',
+        'size' => 60,
+      ),
+      'type' => 'taxonomy_autocomplete',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance:
   // 'taxonomy_term-os2web_base_tax_site_structure-field_os2web_base_field_ext_link'.
   $field_instances['taxonomy_term-os2web_base_tax_site_structure-field_os2web_base_field_ext_link'] = array(
     'bundle' => 'os2web_base_tax_site_structure',
@@ -353,7 +395,7 @@ function os2web_base_field_default_field_instances() {
         'module' => 'image',
         'settings' => array(
           'image_link' => '',
-          'image_style' => 'fredericia_content_image',
+          'image_style' => 'svendborg_content_image',
         ),
         'type' => 'image',
         'weight' => 0,
@@ -381,9 +423,9 @@ function os2web_base_field_default_field_instances() {
       'default_image' => 0,
       'epsacrop' => array(
         'styles' => array(
-          'fredericia_content_image' => 'fredericia_content_image',
-          'fredericia_spotbox' => 0,
           'os2web_spotbox_image' => 0,
+          'svendborg_content_image' => 'svendborg_content_image',
+          'svendborg_spotbox' => 0,
         ),
       ),
       'file_directory' => '',
@@ -397,12 +439,15 @@ function os2web_base_field_default_field_instances() {
       'title_field' => 0,
       'title_field_required' => 0,
       'user_register_form' => FALSE,
+      'wysiwyg_insert' => 0,
     ),
     'widget' => array(
       'active' => 1,
       'module' => 'media',
       'settings' => array(
         'allowed_schemes' => array(
+          'oembed' => 0,
+          'private' => 0,
           'public' => 'public',
           'ustream' => 0,
           'youtube' => 0,
@@ -421,9 +466,7 @@ function os2web_base_field_default_field_instances() {
           'media_default--media_browser_my_files' => 'media_default--media_browser_my_files',
           'media_internet' => 'media_internet',
           'upload' => 'upload',
-          'youtube' => 0,
         ),
-        'progress_indicator' => 'throbber',
       ),
       'type' => 'media_generic',
       'weight' => 16,
@@ -791,10 +834,9 @@ function os2web_base_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'list',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 9,
+        'type' => 'hidden',
+        'weight' => 4,
       ),
       'list' => array(
         'label' => 'above',
@@ -841,10 +883,9 @@ function os2web_base_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'list',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 8,
+        'type' => 'hidden',
+        'weight' => 7,
       ),
       'list' => array(
         'label' => 'above',
@@ -877,6 +918,43 @@ function os2web_base_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance:
+  // 'taxonomy_term-os2web_base_tax_site_structure-field_svendborg_hide_sidebar'.
+  $field_instances['taxonomy_term-os2web_base_tax_site_structure-field_svendborg_hide_sidebar'] = array(
+    'bundle' => 'os2web_base_tax_site_structure',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 9,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_svendborg_hide_sidebar',
+    'label' => 'Skjul højre sidebar',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 7,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Alternativ visning');
@@ -891,6 +969,7 @@ function os2web_base_field_default_field_instances() {
   t('Skjul højre sidebar');
   t('Skjul kontaktblok');
   t('Spotboxe');
+  t('Stikord');
   t('Unikke eksterne links	');
   t('Unikke relaterede links');
   t('Vis på portalside');

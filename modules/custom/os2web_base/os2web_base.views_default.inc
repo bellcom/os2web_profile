@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_base.views_default.inc
@@ -56,7 +57,7 @@ function os2web_base_views_default_views() {
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Filterkriterie: Indhold: Udgivet */
+  /* Filterkriterie: Indhold: Publiceringsstatus */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';

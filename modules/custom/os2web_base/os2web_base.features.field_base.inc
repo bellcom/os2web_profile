@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_base.features.field_base.inc
@@ -144,10 +145,14 @@ function os2web_base_field_default_field_bases() {
     'module' => 'node_reference',
     'settings' => array(
       'referenceable_types' => array(
-        'kontaktblok' => 0,
+        'borger_dk_article' => 0,
+        'interne_sider' => 0,
+        'keyboard_shortcut' => 0,
         'kulturkalender' => 0,
         'media' => 0,
         'os2bootstrap_carousel' => 0,
+        'os2search_dokument' => 0,
+        'os2web_acadre_postlists' => 0,
         'os2web_base_contentpage' => 0,
         'os2web_base_gallery' => 0,
         'os2web_base_iframe' => 0,
@@ -156,9 +161,13 @@ function os2web_base_field_default_field_bases() {
         'os2web_base_selfservice_link' => 0,
         'os2web_borger_dk_article' => 0,
         'os2web_contact_contact' => 'os2web_contact_contact',
+        'os2web_meetings_bullet' => 0,
+        'os2web_meetings_bullet_attach' => 0,
+        'os2web_meetings_meeting' => 0,
+        'os2web_ofir_job' => 0,
         'os2web_spotbox_box' => 0,
         'panel' => 0,
-        'spotbokse2' => 0,
+        'postliste_import' => 0,
         'webform' => 0,
       ),
       'view' => array(
@@ -246,6 +255,29 @@ function os2web_base_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'link_field',
+  );
+
+  // Exported field_base: 'field_os2web_base_field_fil_link'.
+  $field_bases['field_os2web_base_field_fil_link'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_os2web_base_field_fil_link',
+    'indexes' => array(
+      'fid' => array(
+        0 => 'fid',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'file',
+    'settings' => array(
+      'display_default' => 0,
+      'display_field' => 0,
+      'uri_scheme' => 'public',
+    ),
+    'translatable' => 0,
+    'type' => 'file',
   );
 
   // Exported field_base: 'field_os2web_base_field_grp_id'.

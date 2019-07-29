@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_contentpage.field_group.inc
@@ -8,7 +9,7 @@
  * Implements hook_field_group_info().
  */
 function os2web_contentpage_field_group_info() {
-  $export = array();
+  $field_groups = array();
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -36,7 +37,37 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_afsnit|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_afsnit|node|os2web_base_contentpage|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_banner|node|os2web_base_contentpage|form';
+  $field_group->group_name = 'group_banner';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'os2web_base_contentpage';
+  $field_group->mode = 'form';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'Banner',
+    'weight' => '12',
+    'children' => array(
+      0 => 'field_section_banner',
+      1 => 'field_banner_title',
+      2 => 'field_banner_text',
+    ),
+    'format_type' => 'fieldset',
+    'format_settings' => array(
+      'formatter' => 'collapsible',
+      'instance_settings' => array(
+        'description' => '',
+        'classes' => '',
+        'required_fields' => 1,
+        'id' => '',
+      ),
+    ),
+  );
+  $field_groups['group_banner|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -54,8 +85,8 @@ function os2web_contentpage_field_group_info() {
       0 => 'field_os2web_base_field_contact',
       1 => 'field_os2web_base_field_hidlinks',
       2 => 'field_os2web_base_field_sympage',
-      3 => 'field_os2web_base_hide_sidebar',
-      4 => 'field_os2web_base_hide_contact',
+      3 => 'field_os2web_base_hide_contact',
+      4 => 'field_os2web_base_hide_sidebar',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -67,7 +98,7 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_os2web_base_group_3|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_3|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -98,10 +129,10 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_os2web_base_group_content|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_content|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
   $field_group->identifier = 'group_os2web_base_group_esdh|node|os2web_base_contentpage|form';
   $field_group->group_name = 'group_os2web_base_group_esdh';
@@ -124,7 +155,7 @@ function os2web_contentpage_field_group_info() {
       'formatter' => 'closed',
     ),
   );
-  $export['group_os2web_base_group_esdh|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_esdh|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -154,7 +185,7 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_os2web_base_group_extras|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_extras|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -183,10 +214,10 @@ function os2web_contentpage_field_group_info() {
       'formatter' => 'closed',
     ),
   );
-  $export['group_os2web_base_group_general|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_general|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
   $field_group->identifier = 'group_os2web_base_group_hidden|node|os2web_base_contentpage|form';
   $field_group->group_name = 'group_os2web_base_group_hidden';
@@ -208,7 +239,7 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_os2web_base_group_hidden|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_hidden|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -237,7 +268,7 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_os2web_base_group_images|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_os2web_base_group_images|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -255,7 +286,7 @@ function os2web_contentpage_field_group_info() {
       0 => 'field_os2web_base_field_selfserv',
       1 => 'field_os2web_base_field_related',
       2 => 'field_os2web_base_field_ext_link',
-      3 => 'field_os2web_base_field_fil_link'
+      3 => 'field_os2web_base_field_fil_link',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -268,7 +299,7 @@ function os2web_contentpage_field_group_info() {
       ),
     ),
   );
-  $export['group_relationer|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_relationer|node|os2web_base_contentpage|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -298,7 +329,21 @@ function os2web_contentpage_field_group_info() {
       'formatter' => 'closed',
     ),
   );
-  $export['group_spotbokse|node|os2web_base_contentpage|form'] = $field_group;
+  $field_groups['group_spotbokse|node|os2web_base_contentpage|form'] = $field_group;
 
-  return $export;
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Afsnit');
+  t('Banner');
+  t('Billeder og filer');
+  t('Emneord');
+  t('Indholdsside');
+  t('Indstillinger');
+  t('Relationer');
+  t('Sager og dokumenter');
+  t('Skjult');
+  t('Spotbokse / Webform');
+  t('Tekst');
+
+  return $field_groups;
 }
