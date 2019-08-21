@@ -554,7 +554,14 @@ function os2web_subscription_cron() {
   foreach ($new_nodes as $node) {
     if (isset($categories[$node['category']])) {
       $url = url('node/' . $node['nid'], array('absolute' => TRUE));
-      $categories_nodes[$node['category']][$node['nid']] = l($node['title'], $url) . ' (' . l($url, $url) . ')';
+      if (($node['type'] === 'os2web_meetings_meeting') && variable_get('os2web_meetings_subscription_include_meeting_type', FALSE)) {
+        $node_obj = node_load($node['nid']);
+        $meeting_type = field_get_items('node', $node_obj, 'field_os2web_meetings_type');
+        $categories_nodes[$node['category']][$node['nid']] = l($meeting_type[0]['value'] . ': ' . $node['title'], $url) . ' (' . l($url, $url) . ')';
+      }
+      else {
+        $categories_nodes[$node['category']][$node['nid']] = l($node['title'], $url) . ' (' . l($url, $url) . ')';
+      }
     }
   }
 
@@ -569,7 +576,7 @@ function os2web_subscription_cron() {
             'os2web_subscription',
             'subscription',
             $user['email'],
-          
+
             language_default('language'),
             array(
               'nodes' => $nodes,
