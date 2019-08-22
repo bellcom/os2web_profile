@@ -280,11 +280,7 @@ function os2web_meetings_form_alter(&$form, &$form_state) {
       '#title' => t('Notification sender email'),
       '#default_value' => variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk')
     );
-    $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_include_meeting_type'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Include meeting type to email message.'),
-      '#default_value' => variable_get('os2web_meetings_subscription_include_meeting_type', FALSE),
-    );
+
     $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_first_dagsorden'] = array(
       '#type' => 'checkbox',
       '#title' => t('Adviser ved første import af en dagsorden.'),
@@ -305,6 +301,47 @@ function os2web_meetings_form_alter(&$form, &$form_state) {
       '#title' => t('Adviser ved alle nye versioner af et referat.'),
       '#default_value' => variable_get('os2web_meetings_subscription_new_referat', FALSE),
     );
+
+  $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_email_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Meeting notification email text'),
+    '#description' => t('The email subject, which would be send to users subscribed to commitee'),
+    '#default_value' => variable_get('os2web_meetings_subscription_email_subjectt', 'Ny !committee besked til !email fra !sitename'),
+  );
+  $defaults = array(
+    'value' => '<p>Hej !email, der er oprettet nyt indhold på !sitename.</p>
+          <p>Se det nye indhold ved at følge linksne herunder.</p>
+          <p> !meeting_type: !meeting_name(!meeting_link)</p>
+          <p>-- </p>
+          <p>Dette er en automatisk e-mail !sitename.</p>
+          <p>To stop receiving notifications for "!committee", click the opt-out link: !commitee_unsubscribe_link <br/>
+          Stop all emails from the subscription service by clicking: !unsubscribe_link)',
+          'format' => filter_default_format(),
+  );
+  $body_text =  variable_get('os2web_meetings_subscription_email_body.value', $defaults);
+  $form['os2web_subscription_os2web_meetings_settings']['os2web_meetings_subscription_email_body'] = array(
+    '#type' => 'text_format',
+    '#title' => t('Meeting notification email text'),
+    '#format' => 'filtered_html',
+    '#description' => t('The email body, which would be send to users subscribed to commitee'),
+    '#default_value' => $body_text['value']
+  );
+  $form['os2web_subscription_os2web_meetings_settings']['os2web_subscription_available_variables'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#value' => t('Can be used both in subject and body:') . '<br/>
+    <b>!committee</b> - ' . t('name of the committee') . '<br/>
+    <b>!meeting_name</b> - ' . t('title of the meeting') . '<br/>
+    <b>!meeting_date</b> - ' . t('date of the meeting') . '<br/>
+    <b>!meeting_type</b> - ' . t('type of the meeting with acticle: <i>et referat</i> or <i>en dagsorden</i>') . '<br/>
+    <b>!meeting_link</b> - ' . t('link to the meeting') . '<br/>
+    <b>!email</b> - ' . t('the email where that message is sent to') . '<br/>
+    <b>!commitee_unsubscribe_link</b> - ' . t('link to stop receiving notifications for current committe') . '<br/>
+    <b>!unsubscribe_link</b> - ' . t('link to stop all emails from the subscription service') . '<br/>
+    <b>!sitename</b> - ' . t('Site name') . '<br/>',
+    '#title' => t('Available variables'),
+  );
 
     // Unset the default meeting node type from the os2web_subscription module.
     // We add it directly from hook_os2web_subscription_categories hook.

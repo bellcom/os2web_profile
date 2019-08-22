@@ -80,6 +80,12 @@ function os2web_subscription_menu() {
     'page arguments' => array('os2web_subscription_manage_subscription_form', 4),
     'access arguments' => array('administer site configuration'),
   );
+  $items['admin/config/os2web_subscription/testcron'] = array(
+    'page callback' => 'os2web_subscription_cron',
+    'type' => MENU_LOCAL_TASK,
+    'access arguments' => array('administer site configuration'),
+
+  );
 
   return $items;
 }
@@ -550,14 +556,22 @@ function os2web_subscription_cron() {
   // Get enabled categories from all modules.
   $categories = module_invoke_all('os2web_subscription_categories');
   $categories_nodes = array();
+  $meetings_nodes =  array();
   // Create the links to new content.
   foreach ($new_nodes as $node) {
     if (isset($categories[$node['category']])) {
       $url = url('node/' . $node['nid'], array('absolute' => TRUE));
-      if (($node['type'] === 'os2web_meetings_meeting') && variable_get('os2web_meetings_subscription_include_meeting_type', FALSE)) {
+      if (($node['type'] === 'os2web_meetings_meeting')) {
         $node_obj = node_load($node['nid']);
         $meeting_type = field_get_items('node', $node_obj, 'field_os2web_meetings_type');
-        $categories_nodes[$node['category']][$node['nid']] = l($meeting_type[0]['value'] . ': ' . $node['title'], $url) . ' (' . l($url, $url) . ')';
+        $meeting_type = $meeting_type[0]['value'];
+        $meetings_nodes[$node['category']][$node['nid']] = array (
+          'meeting_type' => $meeting_type,
+          'meeting_title' =>  $node['title'],
+          'meeting_link' => '<a href = "'. $url . '">' . $url . '</a>',
+          'meeting_date' =>  format_date(strtotime($node_obj->field_os2web_meetings_date['und'][0]['value'] . 'UTC'), 'short'),
+        );
+
       }
       else {
         $categories_nodes[$node['category']][$node['nid']] = l($node['title'], $url) . ' (' . l($url, $url) . ')';
@@ -597,6 +611,39 @@ function os2web_subscription_cron() {
       os2web_subscription_delete_from_queue($nid, $category_type);
     }
   }
+  // Go trough all meetings and send out an email per subscription.
+  foreach ($meetings_nodes as $committee => $meetings) {
+
+    // Get all subscriptions to this content type.
+    $users = os2web_subscription_get_subscriptions_by_category($committee);
+    foreach ($meetings as $meeting) {
+      foreach ($users as $user) {
+        if (drupal_mail(
+              'os2web_subscription',
+              'os2web_meetings_subscription',
+              $user['email'],
+
+              language_default('language'),
+              array(
+                'meeting' => $meeting,
+                'email' => $user['email'],
+                'code' => $user['code'],
+                'category' => $committee,
+              )
+            )) {
+        watchdog('os2web_subscription', '%mail notified successfully.', array('%mail' => $user['email']), WATCHDOG_INFO);
+        }
+        else {
+          watchdog('os2web_subscription', '%mail could not be notified. Mail error.', array('%mail' => $user['email']), WATCHDOG_ERROR);
+        }
+      }
+    }
+  }
+
+    // Delete all nodes from this category's queue.
+    foreach ($meetings as $nid => $node) {
+     os2web_subscription_delete_from_queue($nid, $committee);
+    }
 
   variable_set('os2web_subscription_cron_last_run', REQUEST_TIME);
 }
@@ -609,6 +656,65 @@ function os2web_subscription_mail($key, &$message, $params) {
   $sitename = variable_get('site_name', 'Drupal');
 
   switch ($key) {
+    case 'os2web_meetings_subscription':
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
+      $message['headers']['From'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Sender'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+      $message['headers']['Return-Path'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
+
+      // Getting subject and body.
+      $subject_template = variable_get('os2web_meetings_subscription_email_subjectt', 'Ny !committee besked til !email fra !sitename');
+      $defaults = array(
+        'value' => '<p>Hej !email, der er oprettet nyt indhold på !sitename.</p>
+              <p>Se det nye indhold ved at følge linksne herunder.</p>
+              <p> !meeting_type: !meeting_name(!meeting_link)</p>
+              <p>-- </p>
+              <p>Dette er en automatisk e-mail !sitename.</p>
+              <p>To stop receiving notifications for "!committee", click the opt-out link: !commitee_unsubscribe_link <br/>
+              Stop all emails from the subscription service by clicking: !unsubscribe_link)',
+              'format' => filter_default_format(),
+      );
+      $body_template = variable_get('os2web_meetings_subscription_email_body', $defaults);
+
+      $search = array(
+        '!committee',
+        '!meeting_name',
+        '!meeting_date',
+        '!meeting_type',
+        '!meeting_link',
+        '!email',
+        '!commitee_unsubscribe_link',
+        '!unsubscribe_link',
+        '!sitename'
+      );
+
+      $meeting = $params['meeting'];
+      $committee = variable_get('os2web_subscription_title_' . $params['category'], $params['category']);
+      $commitee_unsubscribe_link_url  = url('os2web-subscription/opt-out/' . $params['code'], array('absolute' => TRUE));
+      $unsubscribe_link_url  = url('os2web-subscription/opt-out/' . $params['code'] . '/all', array('absolute' => TRUE));
+
+      $replace = array (
+        $committee,
+        $meeting['meeting_title'],
+        $meeting['meeting_date'],
+        $meeting['meeting_type'],
+        $meeting['meeting_link'],
+        $email,
+        '<a href="' . $commitee_unsubscribe_link_url . '">' . $commitee_unsubscribe_link_url .'</a>',
+         '<a href="' . $unsubscribe_link_url . '">' . $unsubscribe_link_url .'</a>',
+        $sitename
+      );
+      // Making replacements.
+      $subject = str_replace($search, $replace, $subject_template);
+      $subject = ucfirst($subject);
+
+      $body = str_replace($search, $replace, $body_template['value']);
+      //$body = ucfirst($body);
+
+      $message['subject'] = $subject;
+      $message['body'][] = $body;
+      break;
+
     case 'subscription':
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
       $message['headers']['From'] = variable_get('os2web_meetings_subscription_sender_email', 'noreply@svendborg.dk');
@@ -644,6 +750,7 @@ function os2web_subscription_mail($key, &$message, $params) {
         '!notify-url' => url('os2web-subscription/opt-out/' . $params['code'], array('absolute' => TRUE)),
       ));
       break;
+
 
     case 'confirm':
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
