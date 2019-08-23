@@ -80,12 +80,6 @@ function os2web_subscription_menu() {
     'page arguments' => array('os2web_subscription_manage_subscription_form', 4),
     'access arguments' => array('administer site configuration'),
   );
-  $items['admin/config/os2web_subscription/testcron'] = array(
-    'page callback' => 'os2web_subscription_cron',
-    'type' => MENU_LOCAL_TASK,
-    'access arguments' => array('administer site configuration'),
-
-  );
 
   return $items;
 }
