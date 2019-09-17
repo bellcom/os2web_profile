@@ -11,7 +11,7 @@
  * @TODO This object need should be refactored to interface and
  * implementation structure.
  */
-class ArpService {
+class ArpServiceFileTransfer {
   /**
    * Dumps the wsdl for the serivce.
    */

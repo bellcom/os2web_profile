@@ -39,13 +39,22 @@ function os2web_acadre_esdh_cp_handle_request($ws_type = 'metadata') {
 #  }
 
   // Load ARP Service Class based on $ws_type argument.
-  module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/' . $ws_type . '/ArpService.class');
+  switch ($ws_type) {
+    case 'metadata':
+      $class_name = 'ArpService';
+      break;
+
+    case 'file_transfer':
+      $class_name = 'ArpServiceFileTransfer';
+      break;
+  }
+  module_load_include('inc', 'os2web_acadre_esdh', 'plugins/cp/' . $ws_type . '/' . $class_name . '.class');
 
   if (isset($_GET['wsdl'])) {
-    ArpService::getWSDL($_GET['wsdl']);
+    $class_name::getWSDL($_GET['wsdl']);
   }
   if (isset($_GET['xsd'])) {
-    ArpService::getXSD($_GET['xsd']);
+    $class_name::getXSD($_GET['xsd']);
   }
   if (!lock_acquire(__FUNCTION__, 5)) {
     lock_wait(__FUNCTION__);
@@ -62,7 +71,7 @@ function os2web_acadre_esdh_cp_handle_request($ws_type = 'metadata') {
 
   ini_set("soap.wsdl_cache_enabled", "1");
   $server = new SoapServer('http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? '' : '') . '://' . $_SERVER['SERVER_NAME'] . '/' . request_path() . '/?wsdl', array());
-  $server->setObject(new ArpService());
+  $server->setObject(new $class_name());
   $server->handle($data);
   lock_release(__FUNCTION__);
 }
