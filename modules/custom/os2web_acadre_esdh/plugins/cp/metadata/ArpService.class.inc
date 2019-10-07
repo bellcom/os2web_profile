@@ -55,14 +55,15 @@ class ArpService {
     $contents = fread($handle, filesize($filename));
     fclose($handle);
 
+    $contents = format_string($contents, array(
+      '!endpointurl' => 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 's' : '') . '://' . $_SERVER['SERVER_NAME'] . '/' . request_path(),
+    ));
     drupal_add_http_header('Connection', 'close', FALSE);
     drupal_add_http_header('Content-Length', drupal_strlen($contents), TRUE);
     drupal_add_http_header('Content-Type', 'text/plain; charset=utf-8', TRUE);
     drupal_add_http_header('Date', date('r'), TRUE);
 
-    echo format_string($contents, array(
-      '!endpointurl' => 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 's' : '') . '://' . $_SERVER['SERVER_NAME'] . '/' . request_path(),
-    ));
+    echo $contents;
     exit;
   }
 
