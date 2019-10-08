@@ -6,12 +6,16 @@
  */
 
 /**
- * Base PHPMailer for Drupal implementation with support for SMTP keep-alive
- * and setting a custom Return-Path.
+ * Class for implementing the PHPMailer library in Drupal.
+ *
+ * Includes support for SMTP keep-alive and setting a custom Return-Path.
  */
 class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
+
   /**
    * Stores the Return-Path, which may be different from Sender.
+   *
+   * @var string
    */
   public $ReturnPath = '';
 
@@ -25,17 +29,19 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    * DrupalPHPMailer::SmtpSend() overrides PHPMailer::SmtpSend() to capture the
    * debug output string and make it available for watchdog() calls.
    *
+   * @var int
+   *
    * @see PHPMailer::SMTPDebug
    * @see SMTP::do_debug
    * @see DrupalPHPMailer::SmtpSend()
    * @see DrupalPHPMailer::drupalDebugOutput
-   *
-   * @var int
    */
   public $drupalDebug = 0;
 
   /**
-   * Overrides PHPMailer::SMTPDebug to capture SMTP communication errors by default.
+   * Overrides PHPMailer::SMTPDebug to capture SMTP communication errors.
+   *
+   * @var int
    */
   public $SMTPDebug = 2;
 
@@ -65,15 +71,23 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->Port = variable_get('smtp_port', '25');
     $this->SMTPSecure = variable_get('smtp_protocol', '');
 
+    $this->SMTPOptions['ssl']['verify_peer'] = variable_get('ssl_verify_peer', 1);
+    $this->SMTPOptions['ssl']['verify_peer_name'] = variable_get('ssl_verify_peer_name', 1);
+    $this->SMTPOptions['ssl']['allow_self_signed'] = variable_get('ssl_allow_self_signed', 0);
+
     // Use SMTP authentication if both username and password are given.
     $this->Username = variable_get('smtp_username', '');
     $this->Password = variable_get('smtp_password', '');
-    $this->SMTPAuth = (bool)($this->Username != '' && $this->Password != '');
+    $this->SMTPAuth = (bool) ($this->Username != '' && $this->Password != '');
+    $auth_type = variable_get('smtp_auth_type', '');
+    if ($this->SMTPAuth && $auth_type) {
+      $this->AuthType = $auth_type;
+    }
 
     $this->SMTPKeepAlive = variable_get('smtp_keepalive', 0);
 
     $this->drupalDebug = variable_get('smtp_debug', 0);
-    if ($this->drupalDebug > $this->SMTPDebug) {
+    if ($this->drupalDebug > $this->SMTPDebug && user_access('administer phpmailer settings')) {
       $this->SMTPDebug = $this->drupalDebug;
     }
 
@@ -101,11 +115,15 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
         $this->SmtpClose();
       }
     }
-    catch (phpmailerException $exception) {}
+    catch (phpmailerException $exception) {
+    }
 
     if ($this->SMTPDebug) {
       if ($this->drupalDebug && ($this->drupalDebugOutput = ob_get_contents())) {
         drupal_set_message($this->drupalDebugOutput);
+        if (variable_get('smtp_debug_log', 0)) {
+          watchdog('phpmailer', 'Output of communication with SMTP server:<br /><pre>!output</pre>', array('!output' => print_r($this->drupalDebugOutput, TRUE)), WATCHDOG_DEBUG);
+        }
       }
       ob_end_clean();
     }
@@ -121,7 +139,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   }
 
   /**
-   * (Re-)initialize properties after sending mail.
+   * Initialize or re-initialize properties after sending mail.
    */
   public function Reset() {
     $this->ClearAllRecipients();
@@ -177,21 +195,21 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       'connect_host'        => t('SMTP error: Could not connect to host.'),
       'data_not_accepted'   => t('SMTP error: Data not accepted.'),
       'smtp_connect_failed' => t('SMTP error: Could not connect to SMTP host.'),
-      'smtp_error'          => t('SMTP server error: '),
+      'smtp_error'          => t('SMTP server error:') . ' ',
 
       // Messages used during email generation.
       'empty_message'       => t('Message body empty'),
-      'encoding'            => t('Unknown encoding: '),
-      'variable_set'        => t('Cannot set or reset variable: '),
+      'encoding'            => t('Unknown encoding:') . ' ',
+      'variable_set'        => t('Cannot set or reset variable:') . ' ',
 
-      'file_access'         => t('File error: Could not access file: '),
-      'file_open'           => t('File error: Could not open file: '),
+      'file_access'         => t('File error: Could not access file:') . ' ',
+      'file_open'           => t('File error: Could not open file:') . ' ',
 
       // Non-administrative messages.
-      'from_failed'         => t('The following From address failed: '),
+      'from_failed'         => t('The following From address failed:') . ' ',
       'invalid_address'     => t('Invalid address'),
       'provide_address'     => t('You must provide at least one recipient e-mail address.'),
-      'recipients_failed'   => t('The following recipients failed: '),
+      'recipients_failed'   => t('The following recipients failed:') . ' ',
     ) + $this->language;
     return TRUE;
   }
@@ -203,10 +221,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     $tz = date('Z');
     $tzs = ($tz < 0) ? '-' : '+';
     $tz = abs($tz);
-    $tz = (int)($tz / 3600) * 100 + ($tz % 3600) / 60;
-    $result = sprintf("%s %s%04d", date('D, j M Y H:i:s'), $tzs, $tz);
-
-    return $result;
+    $tz = (int) ($tz / 3600) * 100 + ($tz % 3600) / 60;
+    return sprintf("%s %s%04d", date('D, j M Y H:i:s'), $tzs, $tz);
   }
 
   /**
@@ -216,13 +232,13 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    * module, plain-text e-mails are sent, which require the same processing as
    * in the DefaultMailSystem implementation.
    *
-   * @see DefaultMailSystem::format()
-   *
-   * @param $message
+   * @param array $message
    *   A message array, as described in hook_mail_alter().
    *
-   * @return
+   * @return array
    *   The formatted $message.
+   *
+   * @see DefaultMailSystem::format()
    */
   public function format(array $message) {
     // Join the body array into one string.
@@ -237,9 +253,10 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   /**
    * Sends an e-mail message composed by drupal_mail().
    *
-   * @param $message
+   * @param array $message
    *   A message array, as described in hook_mail_alter().
-   * @return
+   *
+   * @return bool
    *   TRUE if the mail was successfully accepted, otherwise FALSE.
    *
    * @see PHPMailer::Send()
@@ -286,8 +303,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
         unset($message['headers']['Reply-To']);
       }
       elseif (variable_get('smtp_always_replyto', FALSE)) {
-        // If no Reply-To header has been explicitly set, use the From address to
-        // be able to respond to e-mails sent via Google Mail.
+        // If no Reply-To header has been explicitly set, use the From address
+        // to be able to respond to e-mails sent via Google Mail.
         $this->AddReplyTo($from['mail'], $from['name']);
       }
 
@@ -327,8 +344,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       unset($message['headers']['MIME-Version']);
 
       // Add remaining header lines.
-      // Note: Any header lines MUST already be checked by the caller for unwanted
-      // newline characters to avoid header injection.
+      // Note: Any header lines MUST already be checked by the caller for
+      // unwanted newline characters to avoid header injection.
       // @see PHPMailer::SecureHeader()
       foreach ($message['headers'] as $key => $value) {
         $this->AddCustomHeader("$key:$value");
@@ -343,9 +360,9 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       // Log the error including verbose debug information.
       // Since DBLog module is the most common case, we use HTML to format the
       // message for visual inspection. For sites running with Syslog or other
-      // logging modules, we put the actual values on separate lines (\n), so the
-      // surrounding HTML markup doesn't get too disturbing.
-
+      // logging modules, we put the actual values on separate lines (\n), so
+      // the surrounding HTML markup doesn't get too disturbing.
+      //
       // Message is a safe t() string from DrupalPHPMailer::SetLanguage().
       $output = $e->getMessage();
       // Attempt to delimit summary from full message.
@@ -353,7 +370,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       $arguments = array();
       // Append SMTP communication output.
       if ($this->drupalDebugOutput) {
-        // PHPMailer debug output contains HTML linebreaks. PRE is more readable.
+        // PHPMailer debug output contains HTML linebreaks. PRE is more
+        // readable.
         $this->drupalDebugOutput = str_replace('<br />', '', $this->drupalDebugOutput);
         $output .= '<p><strong>Server response:</strong></p>';
         $output .= "<pre>\n@smtp_output\n</pre>";
@@ -393,5 +411,5 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       return FALSE;
     }
   }
-}
 
+}
