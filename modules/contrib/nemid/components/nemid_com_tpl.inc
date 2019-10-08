@@ -21,11 +21,11 @@ function nemid_webform_defaults_component() {
       'maxlength' => '',
       'disabled' => 0,
       'unique' => 0,
+      'hidden' => FALSE,
       'title_display' => 0,
       'description' => '',
       'placeholder' => '',
       'attributes' => array(),
-      'private' => FALSE,
       'analysis' => FALSE,
       'field_prefix' => '',
       'field_suffix' => '',
@@ -63,6 +63,14 @@ function nemid_webform_edit_component($component) {
     '#weight' => 20,
     '#parents' => array('extra', 'disabled'),
   );
+  $form['display']['element_hidden'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hidden'),
+    '#default_value' => $component['extra']['hidden'],
+    '#description' => t('Make this field hidden.'),
+    '#weight' => 10,
+    '#parents' => array('extra', 'hidden'),
+ );
   return $form;
 }
 
@@ -107,6 +115,11 @@ function nemid_webform_render_component($component, $value = NULL, $filter = TRU
     else {
       $element['#disabled'] = TRUE;
     }
+  }
+
+  if ($component['extra']['hidden'] && !webform_results_access($node)) {
+     $element['#type'] = 'hidden';
+     $element['#title_display'] = 'none';
   }
 
   // Enforce uniqueness.
