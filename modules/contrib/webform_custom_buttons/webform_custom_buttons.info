@@ -5,9 +5,8 @@ package = Webform
 
 dependencies[] = webform
 
-; Information added by Drupal.org packaging script on 2014-04-14
-version = "7.x-1.0-alpha3"
+; Information added by Drupal.org packaging script on 2019-10-05
+version = "7.x-1.0-beta1"
 core = "7.x"
 project = "webform_custom_buttons"
-datestamp = "1397488454"
-
+datestamp = "1570282391"

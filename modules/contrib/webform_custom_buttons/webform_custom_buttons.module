@@ -100,14 +100,9 @@ function webform_custom_buttons_form_form_builder_webform_save_form_alter(&$form
 function webform_custom_buttons_webform_save_form_submit($form, &$form_state) {
   $node =  $form['#node'];
   $values = &$form_state['values'];
-  $changed = FALSE;
   foreach (array('submit_text', 'first_button_text', 'next_button_text') as $name) {
     if (!isset($node->webform[$name]) || $node->webform[$name] != $values[$name]) {
-      $changed = TRUE;
       $node->webform[$name] = $values[$name];
     }
-  }
-  if ($changed) {
-    node_save($node);
   }
 }
