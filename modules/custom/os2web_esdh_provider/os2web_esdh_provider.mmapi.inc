@@ -724,7 +724,7 @@ function _os2web_esdh_provider_node_tab_page($nid, $op = FALSE) {
  *   Sanetized filename with same extension.
  */
 function _os2web_esdh_provider_sanetize_filename($filename) {
-  if (module_exists('transliteration')) {
+  if (module_exists('transliteration') && variable_get('os2web_settings_sanetize_filename', TRUE)) {
     $filename = transliteration_clean_filename($filename);
   }
   else {
