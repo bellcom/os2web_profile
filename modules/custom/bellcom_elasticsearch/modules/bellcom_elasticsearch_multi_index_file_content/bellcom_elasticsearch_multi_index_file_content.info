@@ -1,0 +1,7 @@
+name = Bellcom Elastisearch Multi Index File Entity Content
+description = "Alternative way of indexing content of the file, when file entity is indexed directly (not though the attachment)"
+dependencies[] = search_api_attachments
+core = 7.x
+package = Features
+
+files[] = includes/bellcom_elasticsearch_multi_index_file_content_settings.inc

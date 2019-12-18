@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file
+ * Drupal hooks
+ */
+
+/**
+ * Implements hook_search_api_alter_callback_info().
+ */
+function bellcom_elasticsearch_multi_index_file_content_search_api_alter_callback_info() {
+  $callbacks['bellcom_elasticsearch_multi_index_file_content_alter_settings'] = array(
+    'name' => t('Bellcom elasticsearch file entity content'),
+    'description' => t('Alternative way of indexing content of the file, when file entity is indexed directly (not though the attachment)'),
+    'class' => 'SearchApiAttachmentsMultiIndexFileContentAlterSettings',
+  );
+  return $callbacks;
+}
