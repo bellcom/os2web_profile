@@ -39,3 +39,6 @@
 .field-slideshow-controls .play {
   display: none;
 }
+.field-slideshow {
+  height: auto !important
+}
