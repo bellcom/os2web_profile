@@ -47,12 +47,11 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
         $file_folder_folder_tid = $field_folder['tid'];
       }
 
-      // Excluding the file from index, if the 'include_file_media_folders'
-      // option is not empty, but media folder tid is not within the allowed
-      // list.
-      if (isset($this->options['include_file_media_folders'])) {
-        if (!empty($this->options['include_file_media_folders'])) {
-          if (!in_array($file_folder_folder_tid, $this->options['include_file_media_folders'])) {
+      // Excluding the file from index, if the 'exclude_empty_media_folders'
+      // option is set and media folder tid is empty.
+      if (isset($this->options['exclude_empty_media_folders'])) {
+        if ($this->options['exclude_empty_media_folders']) {
+          if (!$file_folder_folder_tid) {
             $isIndexable = FALSE;
           }
         }
@@ -82,24 +81,13 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
 
     $voc = taxonomy_vocabulary_machine_name_load('media_folders');
     if ($voc) {
-      $terms = taxonomy_get_tree($voc->vid);
-
-      // Build the select options.
-      $media_folder_options = array();
-      foreach ($terms as $term) {
-        $media_folder_options[$term->tid] = $term->name;
-      }
-
-      if ($media_folder_options) {
-        $form['include_file_media_folders'] = array(
-          '#type' => 'select',
-          '#title' => t('Include file media folders'),
-          '#options' => $media_folder_options,
-          '#multiple' => TRUE,
-          '#default_value' => isset($this->options['include_file_media_folders']) ? $this->options['include_file_media_folders'] : array(),
-          '#description' => t('File entity media folder that are included into the indexing. If empty, all the media folder are indexed.'),
-        );
-      }
+      $form['exclude_empty_media_folders'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Exclude empty media folders'),
+        '#multiple' => TRUE,
+        '#default_value' => isset($this->options['exclude_empty_media_folders']) ? $this->options['exclude_empty_media_folders'] : FALSE,
+        '#description' => t('If the file with no media folder shall be excluded.'),
+      );
     }
 
     return $form;
