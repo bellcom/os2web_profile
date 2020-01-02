@@ -29,6 +29,41 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
   /**
    * {@inheritdoc}
    */
+  public function isFileIndexable($file, $item, $field_name = NULL) {
+    $isIndexable = parent::isFileIndexable($file, $item, $field_name);
+
+    // Only doing additional checks if file is indexable up to this point.
+    if ($isIndexable) {
+      // Sometimes file comes as an array.
+      if (is_array($file)) {
+        $file = (object) $file;
+      }
+
+      // Getting media folder tid.
+      $field_folder = field_get_items('file', $file, 'field_folder');
+      $file_folder_folder_tid = NULL;
+      if (!empty($field_folder)) {
+        $field_folder = reset($field_folder);
+        $file_folder_folder_tid = $field_folder['tid'];
+      }
+
+      // Excluding the file from index, if the 'exclude_empty_media_folders'
+      // option is set and media folder tid is empty.
+      if (isset($this->options['exclude_empty_media_folders'])) {
+        if ($this->options['exclude_empty_media_folders']) {
+          if (!$file_folder_folder_tid) {
+            $isIndexable = FALSE;
+          }
+        }
+      }
+    }
+
+    return $isIndexable;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function propertyInfo() {
     $ret = array();
 
@@ -40,4 +75,22 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
 
     return $ret;
   }
+
+  public function configurationForm() {
+    $form = parent::configurationForm();
+
+    $voc = taxonomy_vocabulary_machine_name_load('media_folders');
+    if ($voc) {
+      $form['exclude_empty_media_folders'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Exclude empty media folders'),
+        '#multiple' => TRUE,
+        '#default_value' => isset($this->options['exclude_empty_media_folders']) ? $this->options['exclude_empty_media_folders'] : FALSE,
+        '#description' => t('If the file with no media folder shall be excluded.'),
+      );
+    }
+
+    return $form;
+  }
+
 }
