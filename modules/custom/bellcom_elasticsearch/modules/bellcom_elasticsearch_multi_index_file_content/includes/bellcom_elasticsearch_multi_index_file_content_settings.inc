@@ -65,6 +65,7 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
             $node = node_load($nid);
             if ($node->status === NODE_PUBLISHED) {
               $indexFile = TRUE;
+              break;
             }
           }
         }
@@ -105,9 +106,9 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
       );
     }
     $form['exclude_files_attached_to_unpublished_content'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Exclude file from indexing, if node it is attahced is unpublished.'),
-        '#default_value' => isset($this->options['exclude_files_attached_to_unpublished_content']) ? $this->options['exclude_files_attached_to_unpublished_content'] : 0,
+      '#type' => 'checkbox',
+      '#title' => t('Exclude file from indexing, if attached node is unpublished.'),
+      '#default_value' => isset($this->options['exclude_files_attached_to_unpublished_content']) ? $this->options['exclude_files_attached_to_unpublished_content'] : 0,
     );
 
     return $form;

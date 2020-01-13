@@ -13,25 +13,25 @@ class SearchApiAlterExcludeUnpublishedContentAlterSettings extends SearchApiAbst
   public function alterItems(array &$items) {
     foreach ($items as $id => $item) {
       $exclude = FALSE;
-       switch ($item->item_type) {
+      switch ($item->item_type) {
         case 'node' :
-          if($this->options['exclude_nodes']) {
+          if ($this->options['exclude_nodes']) {
             if ($item->node->status == NODE_NOT_PUBLISHED) {
               $exclude = TRUE;
             }
           }
-        break;
+          break;
         case 'field_collection_item' :
           if ($this->options['exclude_field_collection_item']) {
             $node = $item->field_collection_item->hostEntity();
-            if ($node->status == NODE_NOT_PUBLISHED) {
+            if (!$node || $node->status == NODE_NOT_PUBLISHED) {
               $exclude = TRUE;
             }
           }
-        break;
+          break;
       }
       if ($exclude) {
-       unset($items[$id]);
+        unset($items[$id]);
       }
     }
 
@@ -45,8 +45,6 @@ class SearchApiAlterExcludeUnpublishedContentAlterSettings extends SearchApiAbst
 
     if ($this->supportsIndex($this->index)) {
       if ($this->isMultiEntityIndex()) {
-        $info = entity_get_info();
-        $unsupported_types = array();
         if (in_array('node', $this->index->options['datasource']['types'])) {
           $info = entity_get_info('node');
           foreach ($info['bundles'] as $bundle => $bundle_info) {
@@ -56,15 +54,15 @@ class SearchApiAlterExcludeUnpublishedContentAlterSettings extends SearchApiAbst
       }
     }
     $form['exclude_nodes'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Exclude unpublished node from indexing'),
-        '#default_value' => isset($this->options['exclude_nodes']) ? $this->options['exclude_nodes'] : 0,
+      '#type' => 'checkbox',
+      '#title' => t('Exclude unpublished node from indexing'),
+      '#default_value' => isset($this->options['exclude_nodes']) ? $this->options['exclude_nodes'] : 0,
     );
 
     $form['exclude_field_collection_item'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Exclude paragraph from indexing, if node it is attahced is unpublished.'),
-        '#default_value' => isset($this->options['exclude_field_collection_item']) ? $this->options['exclude_field_collection_item'] : 0,
+      '#type' => 'checkbox',
+      '#title' => t('Exclude paragraph from indexing, if host node is unpublished.'),
+      '#default_value' => isset($this->options['exclude_field_collection_item']) ? $this->options['exclude_field_collection_item'] : 0,
     );
 
     return $form;
