@@ -11,19 +11,31 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
    */
   public function alterItems(array &$items) {
     parent::alterItems($items);
-    foreach ($items as &$item) {
-      if (isset($item->attachments_content)) {
-        if (!$item->attachments_content) {
-          $item->bellcom_elasticsearch_multi_index_file_entity_content = '';
+    foreach ($items as $id => &$item) {
+      if ($item->item_type == 'file') {
+        $file = (array) $item->file;
+        if ($this->isFileIndexable($file, $item)) {
+          if (isset($item->attachments_content)) {
+            if (!$item->attachments_content) {
+              $item->bellcom_elasticsearch_multi_index_file_entity_content = '';
+            }
+            else {
+              $item->bellcom_elasticsearch_multi_index_file_entity_content = $item->attachments_content;
+            }
+          }
+          else {
+            $item->bellcom_elasticsearch_multi_index_file_entity_content = '';
+          }
         }
         else {
-          $item->bellcom_elasticsearch_multi_index_file_entity_content = $item->attachments_content;
+          unset($items[$id]);
         }
       }
       else {
         $item->bellcom_elasticsearch_multi_index_file_entity_content = '';
       }
-    }
+
+   }
   }
 
   /**
@@ -31,7 +43,6 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
    */
   public function isFileIndexable($file, $item, $field_name = NULL) {
     $isIndexable = parent::isFileIndexable($file, $item, $field_name);
-
     // Only doing additional checks if file is indexable up to this point.
     if ($isIndexable) {
       // Sometimes file comes as an array.
@@ -55,6 +66,22 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
             $isIndexable = FALSE;
           }
         }
+      }
+
+      if (isset($this->options['exclude_files_attached_to_unpublished_content']) && $isIndexable) {
+        $usages = file_usage_list($file);
+        if (isset($usages['file']['node'])) {
+          $indexFile = FALSE;
+          foreach ($usages['file']['node'] as $nid => $count) {
+            $node = node_load($nid);
+            if ($node->status == NODE_PUBLISHED) {
+              $indexFile = TRUE;
+              break;
+            }
+          }
+        }
+        $isIndexable = $indexFile;
+
       }
     }
 
@@ -89,6 +116,11 @@ class SearchApiAttachmentsMultiIndexFileContentAlterSettings extends SearchApiAt
         '#description' => t('If the file with no media folder shall be excluded.'),
       );
     }
+    $form['exclude_files_attached_to_unpublished_content'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Exclude file from indexing, if attached node is unpublished.'),
+      '#default_value' => isset($this->options['exclude_files_attached_to_unpublished_content']) ? $this->options['exclude_files_attached_to_unpublished_content'] : 0,
+    );
 
     return $form;
   }
