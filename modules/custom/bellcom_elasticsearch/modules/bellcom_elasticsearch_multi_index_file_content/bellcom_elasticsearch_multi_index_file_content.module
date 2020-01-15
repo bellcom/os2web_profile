@@ -15,3 +15,55 @@ function bellcom_elasticsearch_multi_index_file_content_search_api_alter_callbac
   );
   return $callbacks;
 }
+
+/**
+ * Implements hook_node_insert().
+ */
+function bellcom_elasticsearch_multi_index_file_content_node_insert($node) {
+    $fields_info = field_info_instances('node', $node->type);
+    $file_fields = array();
+    foreach ($fields_info as $field_name => $value) {
+       $field_info = field_info_field($field_name);
+       if ($field_info['type'] === 'file') {
+         $file_fields[] = $field_name;
+       }
+    }
+    foreach($file_fields as $field) {
+      foreach(field_get_items('node', $node, $field) as $file) {
+        $combined_id = 'file/' . $file['fid'];
+        if ($node->status == NODE_PUBLISHED) {
+          search_api_track_item_change('multiple', array($combined_id));
+        }
+        else {
+          search_api_track_item_delete('multiple', array($combined_id));
+        }
+      }
+    }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function bellcom_elasticsearch_multi_index_file_content_node_update($node) {
+  if($node->status != $node->original->status){
+    $fields_info = field_info_instances('node', $node->type);
+    $file_fields = array();
+    foreach ($fields_info as $field_name => $value) {
+       $field_info = field_info_field($field_name);
+       if ($field_info['type'] === 'file') {
+         $file_fields[] = $field_name;
+       }
+    }
+    foreach($file_fields as $field) {
+      foreach(field_get_items('node', $node, $field) as $file) {
+        $combined_id = 'file/' . $file['fid'];
+        if ($node->status == NODE_PUBLISHED) {
+          search_api_track_item_insert('multiple', array($combined_id));
+        }
+        else {
+          search_api_track_item_delete('multiple', array($combined_id));
+        }
+      }
+    }
+  }  
+}

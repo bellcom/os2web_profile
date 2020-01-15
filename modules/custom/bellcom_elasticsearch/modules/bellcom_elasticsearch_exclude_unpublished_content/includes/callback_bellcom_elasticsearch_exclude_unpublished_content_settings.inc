@@ -13,6 +13,8 @@ class SearchApiAlterExcludeUnpublishedContentAlterSettings extends SearchApiAbst
   public function alterItems(array &$items) {
     foreach ($items as $id => $item) {
       $exclude = FALSE;
+
+
       switch ($item->item_type) {
         case 'node' :
           if ($this->options['exclude_nodes']) {
@@ -41,18 +43,6 @@ class SearchApiAlterExcludeUnpublishedContentAlterSettings extends SearchApiAbst
    * {@inheritdoc}
    */
   public function configurationForm() {
-    $options = array();
-
-    if ($this->supportsIndex($this->index)) {
-      if ($this->isMultiEntityIndex()) {
-        if (in_array('node', $this->index->options['datasource']['types'])) {
-          $info = entity_get_info('node');
-          foreach ($info['bundles'] as $bundle => $bundle_info) {
-            $options[$bundle] = isset($bundle_info['label']) ? $bundle_info['label'] : $bundle;
-          }
-        }
-      }
-    }
     $form['exclude_nodes'] = array(
       '#type' => 'checkbox',
       '#title' => t('Exclude unpublished node from indexing'),
