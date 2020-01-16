@@ -408,6 +408,10 @@ function _os2web_esdh_provider_import_items($items) {
       if (module_exists('os2dagsorden_esdh_provider')){
         $node = os2dagsorden_esdh_provider_process_closed_bullet($node, $item);
       }
+      if (variable_get('os2web_meeting_import_agendas_in_closed_bullet', FALSE)) {
+        // Gather the bullets for the item.
+        $node = os2web_esdh_provider_process_closed_bullet($node, $item);
+      }
       node_submit($node);
       node_save($node);
       $nids[] = $node->nid;
@@ -466,7 +470,7 @@ function _os2web_esdh_provider_import_items($items) {
  * @return array
  *   List of imported node ids
  */
-function _os2web_esdh_provider_import_bullets($bullets) {
+function _os2web_esdh_provider_import_bullets($bullets, $allowed_bpa_titles = array()) {
 
   global $PROCESSING_MEETING_ID, $PROCESSING_BP;
 
@@ -476,6 +480,17 @@ function _os2web_esdh_provider_import_bullets($bullets) {
   $nids = array();
 
   foreach ($bullets as $idx => $bullet) {
+    if (!empty($allowed_bpa_titles)) {
+      $isImportble = FALSE;
+      foreach ($allowed_bpa_titles as $title) {
+        if (strpos(strtolower($bullet['title']), strtolower($title)) === 0){
+          $isImportble = TRUE;
+          break;
+        }
+      }
+      if($isImportble === FALSE)      continue;
+    }
+
     os2web_esdh_provider_log('Start import bullet ' . $idx . ' ');
     $node = new stdClass();
     $node->type = "os2web_meetings_bullet_attach";
@@ -761,7 +776,7 @@ function _os2web_esdh_provider_similar_file_exists($filename) {
     return $filename;
   }
   $dir = dirname($filename);
-  
+
   if ($file = _os2web_esdh_provider_glob($dir, $filename)) {
     return $file;
   }
@@ -958,7 +973,7 @@ function _os2web_esdh_provider_remove_img_tags($data){
       if($file_headers=== FALSE or $file_headers[0] == 'HTTP/1.0 404 Not Found')       {
         $data = str_replace($imgTags[0][$i], "",  $data);
       }
-    }   
+    }
    }
 
   return $data;
@@ -979,4 +994,37 @@ function _os2web_esdh_provider_strip_only($str, $tags, $stripContent = false) {
         $str = preg_replace('#</?'.$tag.'[^>]*>'.$content.'#is', '', $str);
     }
     return $str;
+}
+
+function os2web_esdh_provider_process_closed_bullet($node, $item){
+  $publish_level = $item['publishlevel'];
+   if ($publish_level) {
+    $bullet_nids = array();
+    if (isset($item['bullets']) && is_array($item['bullets'])) {
+      switch ($publish_level) {
+        case 1:
+        case 5:
+          break;
+        case 2:
+          $bullet_nids = _os2web_esdh_provider_import_bullets($item['bullets']);
+          break;
+        case 3:
+          $bullet_nids = _os2web_esdh_provider_import_bullets($item['bullets'], array('beslutning'));
+           break;
+        case 4:
+          $bullet_nids = _os2web_esdh_provider_import_bullets($item['bullets'], array('beslutning', 'indstilling'));
+           break;
+      }
+    }
+    if (!empty($bullet_nids)) {
+      foreach ($bullet_nids as $nid) {
+        $node->field_os2web_meetings_attach[LANGUAGE_NONE][]['target_id'] = $nid;
+      }
+    }
+    else {
+      $node->field_os2web_meetings_attach[LANGUAGE_NONE] = array();
+    }
+
+  }
+  return $node;
 }

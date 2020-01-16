@@ -108,7 +108,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
           'docfilename' => (string) array_shift($xml_item->xpath('field/@docfilename')),
           'type' => (int) array_shift($xml_item->xpath('field/@type')),
         );
-       
+
         if ($agendainfo['publish'] === 1 &&
             $agendainfo['access'] !== 'Lukket' &&
             $agendainfo['filesfolder'] != '') {
@@ -118,14 +118,14 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
             $agendainfo['xmlfilename']));
           $agendainfo['agenda_uri'] = $agenda_uri;
           $imported = _os2web_acadre_esdh_import_meeting($agendainfo);
-         
+
           if (is_array($imported)) {
             $imported['publish'] = TRUE;
             $imported['meeting_sub_id'] = (int) array_shift($xml_item->xpath('field/@sysid'));
             $imported['agenda_xmlid'] = (int) array_shift($xml_item->xpath('field/@xmlFusionID'));
             $meetings[] = $imported;
           }
-           
+
         }
         else {
           $message = 'Meeting !id, agenda !sub_id, wasnt allowed to be published from xml !file. [publish]=!publish, [access]=!access, [filesfolder]=!filesfolder';
@@ -172,7 +172,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
   // Debug bit set in os2web_esdh_provider settings.
   $debug = variable_get('os2web_esdh_provider_debug_info');
   $debug && error_log('MM Import - import meeting from XML - sysid=' . $info['sysid'] . ' - ' . timer_read('mm_import') . 'ms');
-  
+
   if (($real_path = _os2web_acadre_esdh_similar_file_exists(drupal_realpath($info['agenda_uri']))) !== FALSE) {
     $xml = simplexml_load_file($real_path);
     $meeting = array(
@@ -195,7 +195,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
       watchdog('acadre MM', 'Ignored agenda from %committee .', array('%committee' => $meeting['committee']));
       return FALSE;
     }
-  
+
     // Participants.
     $participants = $xml->xpath("//table[@name='meeting']/table[@name='meetmember']/table[@name='member']");
     foreach ($participants as $participant) {
@@ -276,23 +276,25 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
   $xml_id = $xml->xpath("../fields/field[@name='sort']");
   $xml_name = $xml->xpath("fields/field[@name='name']");
   $xml_access = $xml->xpath("fields/field[@name='accessname']");
+  $xml_publishlevel =  $xml->xpath("fields/field[@name='publishlevel']");
 
   $id = (int) array_shift($xml_id);
-  $name = (string) array_shift($xml_name);
+  $publish_level = (int) array_shift($xml_publishlevel);
+  $name = ($publish_level == 5) ? variable_get('os2web_meeting_import_anonymous_agenda_title', "Anonymiseret") :(string) array_shift($xml_name);
   $access = (string) array_shift($xml_access);
 
   $item = array(
     'id' => $id,
     'title' => 'Punkt ' . $id . ' ' . $name,
     'access' => $access,
+    'publishlevel' => $publish_level,
     'bullets' => array(),
     'enclosures' => array(),
   );
 
   $debug && error_log('MM Import - Import item from XML - id=' . $id . ' - ' . timer_read('mm_import') . 'ms');
-
   // Deny closed content.
-  if ($item['access'] !== 'Lukket') {
+  if (variable_get('os2web_meeting_import_agendas_in_closed_bullet', FALSE) || $item['access'] !== 'Lukket') {
     // Process attachments.
     foreach ($xml->xpath("table[@name='bullet']") as $bullet_xml) {
       if (($bullet = _os2web_acadre_esdh_import_bullet($info, $bullet_xml)) !== FALSE) {
