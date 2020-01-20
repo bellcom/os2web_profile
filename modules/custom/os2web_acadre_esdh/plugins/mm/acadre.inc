@@ -317,6 +317,7 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
             $filename_in)),
           'title' => trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
           'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")),
+          'publishlevel' => array_shift($enclosure->xpath("fields/field[@name='publishlevel']")),
         );
       }
     }

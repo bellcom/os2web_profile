@@ -1024,7 +1024,56 @@ function os2web_esdh_provider_process_closed_bullet($node, $item){
     else {
       $node->field_os2web_meetings_attach[LANGUAGE_NONE] = array();
     }
-
+     // Gather enclosures.
+    foreach ($item['enclosures'] as $enclosure) {
+      if ($enclosure['access']) {
+        if ($enclosure['publishlevel'] =='NA') continue;
+        if ($nid = _os2web_esdh_provider_process_enclosure($enclosure)){
+          $node->field_os2web_meetings_attach[LANGUAGE_NONE][]['target_id'] = $nid;
+        }
+      }
+    }
   }
   return $node;
+}
+
+function  _os2web_esdh_provider_process_enclosure($item) {
+  global $PROCESSING_MEETING_ID, $PROCESSING_BP;
+  // Creating attachment content.
+  $node = new stdClass();
+  $node->type = "os2web_meetings_bullet_attach";
+  $node->language = LANGUAGE_NONE;
+
+  node_object_prepare($node);
+  $node->field_os2web_meetings_bpa_bilag[LANGUAGE_NONE][]['value'] = 1;
+  $publish_level = $item['publishlevel'];
+   if ($publish_level) {
+      switch ($publish_level) {
+        case 1:
+          $node->title =  $item['title'];
+          break;
+        case 2:
+          $node->title =  $item['title'];
+          if ($file = _os2web_esdh_provider_import_file($item)) {
+            if (module_exists('os2web_sbsys_bilag_files_mapping')) {
+               os2web_sbsys_bilag_files_mapping_create_mapping($item['uri'], $file->fid);
+            }
+            $node->field_os2web_meetings_bpa_file[LANGUAGE_NONE][] = (array) $file;
+            if (module_exists('os2dagsorden_esdh_provider'))
+              $node->field_os2web_meetings_bpa_file[LANGUAGE_NONE][]['target_id'] = os2dagsorden_esdh_provider_process_enclosure($item, $file);
+          }
+          else {
+           // watchdog('acadre MM', 'There was an error importing file %uri ', array('%uri' => $enclosure['uri']), WATCHDOG_ERROR);
+           watchdog('acadre MM', '[XML_ID: !id] [BP: !sysid] There was an error importing file !uri ',
+              array('!id' => $PROCESSING_MEETING_ID, '!sysid' => $PROCESSING_BP, '!uri' => $eitem['uri']), WATCHDOG_ERROR);
+          }
+          break;
+        case 3:
+         $node->title = variable_get('os2web_meeting_import_anonymous_agenda_title', "Anonymiseret");
+          break;
+      }
+    }
+  node_submit($node);
+  node_save($node);
+  return $node->nid;
 }
