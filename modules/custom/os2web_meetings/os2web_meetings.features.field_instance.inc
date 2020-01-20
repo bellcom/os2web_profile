@@ -274,6 +274,55 @@ function os2web_meetings_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_bilag'.
+  $field_instances['node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_bilag'] = array(
+    'bundle' => 'os2web_meetings_bullet_attach',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 3,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_meetings_bpa_bilag',
+    'label' => 'Is enclosure',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 41,
+    ),
+  );
+
+  // Exported field_instance:
   // 'node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_body'.
   $field_instances['node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_body'] = array(
     'bundle' => 'os2web_meetings_bullet_attach',
@@ -594,7 +643,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 4,
+        'weight' => 7,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1894,6 +1943,7 @@ function os2web_meetings_field_default_field_instances() {
   t('File');
   t('Full doc');
   t('ID');
+  t('Is enclosure');
   t('Lokation');
   t('Meeting ID');
   t('Meeting sub ID');
