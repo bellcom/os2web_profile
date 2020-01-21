@@ -280,7 +280,7 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
 
   $id = (int) array_shift($xml_id);
   $publish_level = (int) array_shift($xml_publishlevel);
-  $name = ($publish_level == 5) ? variable_get('os2web_meeting_import_anonymous_agenda_title', "Anonymiseret") :(string) array_shift($xml_name);
+  $name = ($publish_level == 5 && variable_get('os2web_meeting_import_agendas_in_closed_bullet', FALSE)) ? variable_get('os2web_meeting_import_anonymous_agenda_title', "Anonymiseret") :(string) array_shift($xml_name);
   $access = (string) array_shift($xml_access);
 
   $item = array(
