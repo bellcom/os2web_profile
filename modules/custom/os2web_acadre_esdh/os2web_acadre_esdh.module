@@ -47,6 +47,18 @@ function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$f
     '#description' => 'Komma sepereret liste over udvalgs-id der er godkendt til publisering.',
     '#default_value' => variable_get('os2web_meetings_approved_committee', ACADRE_MM_DEFAULT_APPROVED),
   );
+  $form['meetings']['os2web_meeting_import_agendas_in_closed_bullet'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Import bullet point attachments in closed bullet points depending of publishlevel.'),
+    '#default_value' => variable_get('os2web_meeting_import_agendas_in_closed_bullet', FALSE),
+  );
+   $form['meetings']['os2web_meeting_import_anonymous_agenda_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Anonymous agenda title'),
+    '#description' => t('Title fot closerd agenda with publishlevel 5'),
+    '#default_value' => variable_get('os2web_meeting_import_anonymous_agenda_title', "Anonymiseret"),
+
+  );
    $form['os2web_settings_not_attach_addtional_agenda'] = array(
     '#type' => 'checkbox',
     '#default_value' => variable_get('os2web_settings_not_attach_addtional_agenda', FALSE),

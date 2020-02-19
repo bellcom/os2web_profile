@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_meetings.features.field_instance.inc
@@ -227,6 +228,13 @@ function os2web_meetings_field_default_field_instances() {
     'required' => 0,
     'settings' => array(
       'description_field' => 0,
+      'epsacrop' => array(
+        'styles' => array(
+          'os2web_spotbox_image' => 0,
+          'svendborg_content_image' => 0,
+          'svendborg_spotbox' => 0,
+        ),
+      ),
       'file_directory' => '',
       'file_extensions' => 'pdf tif doc docx msg',
       'max_filesize' => '',
@@ -239,23 +247,78 @@ function os2web_meetings_field_default_field_instances() {
         'filefield_sources' => array(
           'filefield_sources' => array(
             'attach' => 0,
+            'clipboard' => 0,
             'plupload' => 0,
             'reference' => 0,
             'remote' => 0,
+            'upload' => 'upload',
           ),
           'source_attach' => array(
             'absolute' => 0,
             'attach_mode' => 'copy',
             'path' => 'file_attach',
           ),
+          'source_imce' => array(
+            'imce_mode' => 0,
+          ),
           'source_reference' => array(
             'autocomplete' => 0,
+            'search_all_fields' => 0,
           ),
         ),
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
       'weight' => 4,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_bilag'.
+  $field_instances['node-os2web_meetings_bullet_attach-field_os2web_meetings_bpa_bilag'] = array(
+    'bundle' => 'os2web_meetings_bullet_attach',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 3,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_meetings_bpa_bilag',
+    'label' => 'Is enclosure',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 41,
     ),
   );
 
@@ -498,7 +561,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 10,
+        'weight' => 11,
       ),
       'ical' => array(
         'label' => 'above',
@@ -578,10 +641,9 @@ function os2web_meetings_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'inline',
-        'module' => 'node_reference',
         'settings' => array(),
-        'type' => 'node_reference_default',
-        'weight' => 3,
+        'type' => 'hidden',
+        'weight' => 7,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -648,7 +710,7 @@ function os2web_meetings_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'node_reference_autocomplete',
-      'weight' => 16,
+      'weight' => 13,
     ),
   );
 
@@ -669,7 +731,7 @@ function os2web_meetings_field_default_field_instances() {
           'view_mode' => 'default',
         ),
         'type' => 'entityreference_entity_view',
-        'weight' => 5,
+        'weight' => 6,
       ),
       'ical' => array(
         'label' => 'above',
@@ -750,7 +812,7 @@ function os2web_meetings_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 14,
+      'weight' => 12,
     ),
   );
 
@@ -766,8 +828,8 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'taxonomy',
         'settings' => array(),
-        'type' => 'taxonomy_term_reference_plain',
-        'weight' => 1,
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 2,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -798,7 +860,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'taxonomy',
         'settings' => array(),
-        'type' => 'taxonomy_term_reference_plain',
+        'type' => 'taxonomy_term_reference_link',
         'weight' => 1,
       ),
       'spotbox' => array(
@@ -829,7 +891,7 @@ function os2web_meetings_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 12,
+      'weight' => 10,
     ),
   );
 
@@ -845,13 +907,12 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'date',
         'settings' => array(
-          'format_type' => 'ec_date_view',
+          'format_type' => 'meeting_date',
           'fromto' => 'value',
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
-          'show_remaining_days' => FALSE,
-          'show_repeat_rule' => 'show',
+          'show_remaining_days' => 0,
         ),
         'type' => 'date_default',
         'weight' => 0,
@@ -957,7 +1018,7 @@ function os2web_meetings_field_default_field_instances() {
         'module' => 'file',
         'settings' => array(),
         'type' => 'file_default',
-        'weight' => 4,
+        'weight' => 5,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1025,7 +1086,7 @@ function os2web_meetings_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
-      'weight' => 10,
+      'weight' => 8,
     ),
   );
 
@@ -1041,7 +1102,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 7,
+        'weight' => 8,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1122,7 +1183,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 11,
+        'weight' => 12,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1197,8 +1258,8 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'taxonomy',
         'settings' => array(),
-        'type' => 'taxonomy_term_reference_plain',
-        'weight' => 2,
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 3,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1229,7 +1290,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'taxonomy',
         'settings' => array(),
-        'type' => 'taxonomy_term_reference_plain',
+        'type' => 'taxonomy_term_reference_link',
         'weight' => 2,
       ),
       'spotbox' => array(
@@ -1260,7 +1321,103 @@ function os2web_meetings_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 13,
+      'weight' => 11,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'node-os2web_meetings_meeting-field_os2web_meetings_particcanl'.
+  $field_instances['node-os2web_meetings_meeting-field_os2web_meetings_particcanl'] = array(
+    'bundle' => 'os2web_meetings_meeting',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 15,
+      ),
+      'search_index' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'spotbox' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_os2web_meetings_particcanl',
+    'label' => 'Canceled attendees',
+    'required' => 0,
+    'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'blokindhold' => 'blokindhold',
+          'emails' => 'emails',
+          'filtered_html' => 'filtered_html',
+          'full_html' => 'full_html',
+          'php_code' => 'php_code',
+          'plain_text' => 'plain_text',
+          'raw' => 'raw',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'blokindhold' => array(
+              'weight' => -7,
+            ),
+            'emails' => array(
+              'weight' => -4,
+            ),
+            'filtered_html' => array(
+              'weight' => -10,
+            ),
+            'full_html' => array(
+              'weight' => -9,
+            ),
+            'php_code' => array(
+              'weight' => -6,
+            ),
+            'plain_text' => array(
+              'weight' => -8,
+            ),
+            'raw' => array(
+              'weight' => -5,
+            ),
+          ),
+        ),
+      ),
+      'linkit' => array(
+        'button_text' => 'Søg',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 42,
     ),
   );
 
@@ -1273,28 +1430,16 @@ function os2web_meetings_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'hidden',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 13,
-      ),
-      'includeable' => array(
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 0,
-      ),
-      'list' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'weight' => 14,
       ),
       'search_index' => array(
-        'label' => 'hidden',
+        'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 13,
+        'weight' => 0,
       ),
       'spotbox' => array(
         'label' => 'above',
@@ -1318,13 +1463,13 @@ function os2web_meetings_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 1,
+      'active' => 0,
       'module' => 'text',
       'settings' => array(
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 31,
+      'weight' => 14,
     ),
   );
 
@@ -1340,7 +1485,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 9,
+        'weight' => 10,
       ),
       'ical' => array(
         'label' => 'above',
@@ -1419,7 +1564,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 12,
+        'weight' => 13,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1484,7 +1629,7 @@ function os2web_meetings_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 8,
+        'weight' => 9,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1559,10 +1704,11 @@ function os2web_meetings_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
+        'module' => 'list',
         'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 6,
+        'type' => 'list_default',
+        'weight' => 1,
       ),
       'includeable' => array(
         'label' => 'above',
@@ -1611,9 +1757,7 @@ function os2web_meetings_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
-      ),
+      'settings' => array(),
       'type' => 'options_buttons',
       'weight' => 3,
     ),
@@ -1788,16 +1932,18 @@ function os2web_meetings_field_default_field_instances() {
   t('Abbreviation');
   t('Acadre name');
   t('Addendum to');
+  t('Bilag');
   t('Body');
+  t('Canceled attendees');
   t('Check if this bullet should be closed.');
   t('Closed');
   t('Committee');
   t('Date');
   t('Date valid');
-  t('Enclosures');
   t('File');
   t('Full doc');
   t('ID');
+  t('Is enclosure');
   t('Lokation');
   t('Meeting ID');
   t('Meeting sub ID');

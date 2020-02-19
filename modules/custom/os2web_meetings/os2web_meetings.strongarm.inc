@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2web_meetings.strongarm.inc
@@ -302,9 +303,28 @@ function os2web_meetings_strongarm() {
       'token' => array(
         'custom_settings' => FALSE,
       ),
+      'spotbox' => array(
+        'custom_settings' => TRUE,
+      ),
+      'print' => array(
+        'custom_settings' => FALSE,
+      ),
     ),
     'extra_fields' => array(
-      'form' => array(),
+      'form' => array(
+        'metatags' => array(
+          'weight' => '40',
+        ),
+        'title' => array(
+          'weight' => '-5',
+        ),
+        'path' => array(
+          'weight' => '30',
+        ),
+        'redirect' => array(
+          'weight' => '30',
+        ),
+      ),
       'display' => array(
         'domain' => array(
           'default' => array(
