@@ -674,6 +674,8 @@ function scheduler_node_type_delete($info) {
  * Implements hook_cron().
  */
 function scheduler_cron() {
+  print_r('scheduler_cron START ');
+
   // Load the cron functions file.
   module_load_include('inc', 'scheduler', 'scheduler.cron');
 
@@ -711,6 +713,8 @@ function scheduler_cron() {
 
   // Restore the i18n_sync state.
   module_exists('i18n_sync') ? i18n_sync($i18n_sync_saved_state) : NULL;
+
+  print_r('scheduler_cron DONE ');
 }
 
 /**
