@@ -57,13 +57,11 @@ function bellcom_elasticsearch_multi_index_file_content_node_update($node) {
     foreach($file_fields as $field) {
       foreach(field_get_items('node', $node, $field) as $file) {
         $combined_id = 'file/' . $file['fid'];
+        search_api_track_item_delete('multiple', array($combined_id));
         if ($node->status == NODE_PUBLISHED) {
           search_api_track_item_insert('multiple', array($combined_id));
         }
-        else {
-          search_api_track_item_delete('multiple', array($combined_id));
-        }
       }
     }
-  }  
+  }
 }
