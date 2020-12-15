@@ -81,13 +81,22 @@ function os2web_eu_cookie_compliance_form_eu_cookie_compliance_admin_form_alter(
   $form['appearance']['eu_cookie_compliance']['popup_theme'] = array(
     '#type' => 'select',
     '#title' => t('Theme'),
-    '#options' => array(
-      'design1' => t('Design 1'),
-      'design2' => t('Design 2'),
-    ),
+    '#options' => _os2web_eu_cookie_compliance_design_theme_list(),
     '#default_value' => isset($popup_settings['popup_theme']) ? $popup_settings['popup_theme'] : EUCC_POPUP_THEME,
   );
 
+}
+
+/**
+ * Defines design theme list.
+ *
+ * @return array
+ */
+function _os2web_eu_cookie_compliance_design_theme_list() {
+  return array(
+    'design1' => t('Design 1'),
+    'design2' => t('Design 2'),
+  );
 }
 
 /**
@@ -198,23 +207,23 @@ function os2web_eu_cookie_compliance_preprocess_eu_cookie_compliance_popup_info(
 }
 
 /**
- * Implements hook_theme_registry_alter().
+ * Implements hook_theme().
+ *
+ * Adding theme for custom design.
  */
-function os2web_eu_cookie_compliance_theme_registry_alter(&$theme_registry) {
-  // Get module path
-  $eucc_path = drupal_get_path('module', 'eu_cookie_compliance');
+function os2web_eu_cookie_compliance_theme() {
   $path = drupal_get_path('module', 'os2web_eu_cookie_compliance');
-
-  // Find all .tpl.php files in this module's folder recursively.
-  $template_files = drupal_find_theme_templates($theme_registry, '.tpl.php', $eucc_path);
-
-  // Itterate through all found template file objects.
-  foreach ($template_files as $key => $template_file) {
-    // If the template has not already been overridden by a theme.
-    if (!preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
-      // Alter the theme path and template elements.
-      $theme_registry[$key]['theme path'] = $path;
-      $theme_registry[$key] = array_merge($theme_registry[$key], $template_file);
+  $theme = array();
+  foreach (_os2web_eu_cookie_compliance_design_theme_list() as $key => $label) {
+    if ($key == EUCC_POPUP_THEME) {
+      $key = '';
     }
+    $suffix = $key ? ('__' . $key) : '';
+    $theme['eu_cookie_compliance_popup_info__popup' . $suffix] = array(
+      'variables' => array(),
+      'template' => 'eu-cookie-compliance-popup-info--popup' . str_replace('_', '-', $suffix),
+      'path' => $path . '/templates'
+    );
   }
+  return $theme;
 }
