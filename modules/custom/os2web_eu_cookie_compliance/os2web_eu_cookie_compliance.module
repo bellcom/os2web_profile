@@ -64,7 +64,6 @@ function os2web_eu_cookie_compliance_form_eu_cookie_compliance_admin_form_alter(
     '#title' => t('Branding header'),
     '#default_value' => isset($popup_settings['branding_header']) ? $popup_settings['branding_header'] : '',
     '#maxlength' => 255,
-    '#required' => TRUE,
     '#description' => t('Branding text show in top right side of popup'),
   );
   $form['appearance']['eu_cookie_compliance']['popup_position']['#options']['popup'] = t('Popup');
