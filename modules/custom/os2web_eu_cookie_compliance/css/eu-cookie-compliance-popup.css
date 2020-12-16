@@ -230,7 +230,6 @@ body.eu-cookie-compliance-popup-open {
     border-radius: 3px;
     max-width: 50%;
     margin: 10px 0;
-    min-width: 200px;
     border:0;
     background:none;
     transition:all 300ms ease;
@@ -269,7 +268,7 @@ body.eu-cookie-compliance-popup-open {
     border: 1px solid #eee;
     border-radius: 5px;
     font-size: 14px;
-    margin-right: 200px;
+    margin-right: 150px;
 }
 .popup-banner-consent-field, .popup-banner-consent-field *{
     display:inline-block;
