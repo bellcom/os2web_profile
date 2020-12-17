@@ -159,10 +159,10 @@ function os2web_eu_cookie_compliance_form_eu_cookie_compliance_admin_form_alter(
   }
 
   // Advanced.
-  $form['advanced']['eu_cookie_compliance']['os2web_eu_cookie_compliance_notification_email'] = array(
+  $form['advanced']['eu_cookie_compliance']['notification_email'] = array(
     '#type' => 'textfield',
     '#title' => t('Email for notifications'),
-    '#default_value' => isset($popup_settings['os2web_eu_cookie_compliance_notification_email']) ? $popup_settings['os2web_eu_cookie_compliance_notification_email'] : '',
+    '#default_value' => isset($popup_settings['notification_email']) ? $popup_settings['notification_email'] : '',
     '#maxlength' => 255,
     '#description' => t('Email for notification on new unhandled JS files or cookies'),
   );
@@ -382,7 +382,9 @@ function os2web_eu_cookie_compliance_cookie_list_update() {
  * Implements hook_cron().
  */
 function os2web_eu_cookie_compliance_cron() {
-  $to = variable_get('os2web_eu_cookie_compliance_notification_email');
+  $popup_settings = eu_cookie_compliance_get_settings();
+
+  $to = empty($popup_settings['notification_email']) ? NULL : $popup_settings['notification_email'];
   if (empty($to)) {
     return;
   }
@@ -406,6 +408,8 @@ function os2web_eu_cookie_compliance_cron() {
   $from = variable_get('site_mail');
   $language = language_default();
   drupal_mail('os2web_eu_cookie_compliance', 'notification_unhandled', $to, $language, $params, $from);
+  variable_set('os2web_eu_cookie_compliance_notification_unhandled_js', array());
+  variable_set('os2web_eu_cookie_compliance_notification_unhandled_cookie', array());
 }
 
 /**
