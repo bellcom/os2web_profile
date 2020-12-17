@@ -53,6 +53,24 @@ function os2web_eu_cookie_compliance_init() {
       'weight' => 1000,
     ));
   }
+  $data['variables'] = array(
+    'unhandled_cookies' => variable_get('unhandled_cookies', array()),
+  );
+  $script_scope = isset($popup_settings['script_scope']) ? $popup_settings['script_scope'] : 'footer';
+  drupal_add_js(array('os2web_eu_cookie_compliance' => $data['variables']), array('type' => 'setting', 'scope' => $script_scope));
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function os2web_eu_cookie_compliance_menu() {
+  $items['os2web-eu-cookie-compliance/cookie-list-update'] = array(
+    'page callback' => 'os2web_eu_cookie_compliance_cookie_list_update',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('display EU Cookie Compliance popup'),
+  );
+  return $items;
 }
 
 /**
@@ -113,17 +131,33 @@ function os2web_eu_cookie_compliance_form_eu_cookie_compliance_admin_form_alter(
     '#default_value' => isset($popup_settings['popup_theme']) ? $popup_settings['popup_theme'] : EUCC_POPUP_THEME,
   );
 
+  // Rendering list with unhandled js-files.
   $unhandled_js = variable_get('unhandled_js', array());
-  $form['javascripts']['unhandled_js'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Unhandled JS files') . ' (' . count($unhandled_js) . ')',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    'markup' =>     array(
-      '#markup' => theme('item_list', array('items' => $unhandled_js))
-    )
-  );
+  if ($unhandled_js) {
+    $form['javascripts']['unhandled_js'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Unhandled JS files') . ' (' . count($unhandled_js) . ')',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      'markup' =>     array(
+        '#markup' => theme('item_list', array('items' => $unhandled_js))
+      )
+    );
+  }
 
+  // Rendering list with unhandled cookies.
+  $unhandled_cookies = variable_get('unhandled_cookies', array());
+  if ($unhandled_cookies) {
+    $form['cookies']['unhandled_cookies'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Unhandled Cookies') . ' (' . count($unhandled_cookies) . ')',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      'markup' =>     array(
+        '#markup' => theme('item_list', array('items' => $unhandled_cookies))
+      )
+    );
+  }
 }
 
 /**
@@ -295,8 +329,45 @@ function os2web_eu_cookie_compliance_js_alter(&$javascript) {
   }
 }
 
+function os2web_eu_cookie_compliance_cookie_list_update() {
+  $cookies = $_POST['cookies'];
+  if (!is_array($cookies) || path_is_admin(current_path())) {
+    return;
+  }
+
+  foreach ($cookies as $key => $cookie) {
+    if ($key != check_plain($key) || is_array($cookie) || $cookie != check_plain($cookie)) {
+      unset($cookies[$key]);
+      continue;
+    }
+  }
+
+  if (empty($cookies)) {
+    return;
+  }
+
+  $popup_settings = eu_cookie_compliance_get_settings();
+  $unhandled_cookies_saved = variable_get('unhandled_cookies', array());
+  if (!empty($popup_settings['allowed_cookies'])) {
+    $allowed_cookies = $popup_settings['allowed_cookies'];
+    $allowed_cookies = _eu_cookie_compliance_explode_multiple_lines($allowed_cookies, FALSE);
+
+    foreach ($allowed_cookies as $cookie) {
+      _os2web_eu_cookie_compliance_remove_category($cookie);
+      if (in_array($cookie, $cookies)) {
+        unset($cookies[array_search($cookie, $cookies)]);
+      }
+    }
+  }
+
+  if ($diff = array_diff($cookies, $unhandled_cookies_saved)) {
+    // @TODO send email with notification about new cookies.
+    variable_set('unhandled_cookies', array_merge($diff, $unhandled_cookies_saved));
+  }
+}
+
 /**
- * Helper function to remove category from disabled script line.
+ * Helper function to remove category from disabled script or cookie line.
  *
  * @param $script
  */
