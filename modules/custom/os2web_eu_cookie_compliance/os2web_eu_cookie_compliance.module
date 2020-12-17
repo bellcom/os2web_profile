@@ -113,6 +113,17 @@ function os2web_eu_cookie_compliance_form_eu_cookie_compliance_admin_form_alter(
     '#default_value' => isset($popup_settings['popup_theme']) ? $popup_settings['popup_theme'] : EUCC_POPUP_THEME,
   );
 
+  $unhandled_js = variable_get('unhandled_js', array());
+  $form['javascripts']['unhandled_js'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Unhandled JS files') . ' (' . count($unhandled_js) . ')',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    'markup' =>     array(
+      '#markup' => theme('item_list', array('items' => $unhandled_js))
+    )
+  );
+
 }
 
 /**
@@ -170,6 +181,21 @@ function os2web_eu_cookie_compliance_form_submit($form, &$form_state) {
     $allowed_cookies[] = implode('|', $line_arr);
   }
   $values['eu_cookie_compliance']['allowed_cookies'] = implode(PHP_EOL, $allowed_cookies);
+
+  $unhandled_js_saved = variable_get('unhandled_js', array());
+  $disabled_javascripts = $values['eu_cookie_compliance']['disabled_javascripts'];
+  $disabled_javascripts = _eu_cookie_compliance_explode_multiple_lines($disabled_javascripts, FALSE);
+  foreach ($disabled_javascripts as $script) {
+    _os2web_eu_cookie_compliance_remove_category($script);
+    if ($key = array_search($script, $unhandled_js_saved)) {
+      unset($unhandled_js_saved[$key]);
+    }
+  }
+
+  // Update unhandled files list there were removed lines.
+  if (array_diff(variable_get('unhandled_js', array()), $unhandled_js_saved)) {
+    variable_set('unhandled_js', $unhandled_js_saved);
+  }
 }
 
 /**
@@ -226,4 +252,68 @@ function os2web_eu_cookie_compliance_theme() {
     );
   }
   return $theme;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function os2web_eu_cookie_compliance_module_implements_alter(&$module_list, $context){
+  if (strpos($context, "js_alter") === 0) {
+    $temp = $module_list['os2web_eu_cookie_compliance'];
+    unset($module_list['os2web_eu_cookie_compliance']);
+    $module_list['os2web_eu_cookie_compliance'] = $temp;
+  }
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function os2web_eu_cookie_compliance_js_alter(&$javascript) {
+  if (path_is_admin(current_path())) {
+    return;
+  }
+
+  $popup_settings = eu_cookie_compliance_get_settings();
+  $unhandled_js_detailed = array_filter($javascript, function($script) {
+    return $script['type'] == 'file';
+  });
+  $unhandled_js_saved = variable_get('unhandled_js', array());
+  if (!empty($popup_settings['disabled_javascripts'])) {
+    $disabled_javascripts = $popup_settings['disabled_javascripts'];
+    $disabled_javascripts = _eu_cookie_compliance_explode_multiple_lines($disabled_javascripts, FALSE);
+
+    foreach ($disabled_javascripts as $script) {
+      _os2web_eu_cookie_compliance_remove_category($script);
+      unset($unhandled_js_detailed[$script]);
+    }
+  }
+
+  $unhandled_js = array_keys($unhandled_js_detailed);
+  if ($diff = array_diff($unhandled_js, $unhandled_js_saved)) {
+    // @TODO send email with notification about new js.
+    variable_set('unhandled_js', array_merge($diff, $unhandled_js_saved));
+  }
+}
+
+/**
+ * Helper function to remove category from disabled script line.
+ *
+ * @param $script
+ */
+function _os2web_eu_cookie_compliance_remove_category(&$script) {
+  // Remove 'category:' if present.
+  $parts = explode(':', $script);
+  // Deal with absolute links with category.
+  if (!empty($parts[2]) && strpos($parts[2], '//') === 0) {
+    array_shift($parts);
+    $script = implode(':', $parts);
+  }
+  // Deal with relative links.
+  else if (!empty($parts[1]) && strpos($parts[1], '//') !== 0) {
+    $script = end($parts);
+  }
+  // Parse the string and drop the parameter that is a behavior name.
+  if (strpos($script, '|') !== FALSE) {
+    @list($script, $attach_name) = explode('|', $script);
+  }
 }
