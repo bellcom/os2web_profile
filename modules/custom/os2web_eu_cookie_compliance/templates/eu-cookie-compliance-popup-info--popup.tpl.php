@@ -135,12 +135,12 @@
                         </div>
                       <?php endif; ?>
                       <?php if (isset($cookie['5'])) : ?>
-                          <div class="cookie-details__detail-container cookie-details__detail-container-provider" title="<?php print check_plain($cookie['5']); ?>">
+                        <div class="cookie-details__detail-container cookie-details__detail-container-provider" title="<?php print check_plain($cookie['5']); ?>">
                           <span class="cookie-details__detail-title">Udbyder:</span>
                           <span class="cookie-details__detail-content"><?php print check_plain($cookie['5']); ?></span>
                         </div>
-                      </div>
-                    <?php endif; ?>
+                      <?php endif; ?>
+                    </div>
                   <?php } //end for ?>
                 </div>
               </div>
