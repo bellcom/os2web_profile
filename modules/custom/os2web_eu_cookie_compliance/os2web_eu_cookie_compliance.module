@@ -230,7 +230,7 @@ function os2web_eu_cookie_compliance_form_submit($form, &$form_state) {
   $disabled_javascripts = _eu_cookie_compliance_explode_multiple_lines($disabled_javascripts, FALSE);
   foreach ($disabled_javascripts as $script) {
     _os2web_eu_cookie_compliance_remove_category($script);
-    $key = array_search($cookie, $unhandled_cookie_saved);
+    $key = array_search($script, $unhandled_js_saved);
     if ($key !== FALSE) {
       unset($unhandled_js_saved[$key]);
     }
