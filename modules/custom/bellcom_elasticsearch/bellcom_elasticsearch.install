@@ -73,6 +73,12 @@ function bellcom_elasticsearch_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 1
+      ),
+      'is_term' => array(
+        'description' => t('Whether the ID is term ID (tid)'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'default' => 0,
       )
     ),
     'primary key' => array('id'),

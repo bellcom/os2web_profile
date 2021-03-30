@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * bellcom_elasticsearch.features.inc
