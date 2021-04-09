@@ -374,7 +374,7 @@ function os2web_eu_cookie_compliance_js_alter(&$javascript) {
       if (
         strpos($script['data'], 'piwik') !== FALSE
         || strpos($script['data'], 'siteimprove') !== FALSE
-        // Adding keyworks to remove GA from scripts
+        // Adding keywords to remove GA scripts
         || strpos($script['data'], 'googleanalytics') !== FALSE
         || strpos($script['data'], 'nalytics') !== FALSE
       ) {
