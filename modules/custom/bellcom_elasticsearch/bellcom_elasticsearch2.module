@@ -106,23 +106,28 @@ function bellcom_elasticsearch_elasticsearch_connector_search_api_query_alter(&$
 
   if (isset($params['body']['query'])) {
     if (bellcom_elasticsearch_synonyms_active($params['index'])) {
-      $query_str = $query->getOriginalKeys();
-
       if (isset($params['body']['query']['bool'])) {
+        $query_str = $params['body']['query']['bool']['must'][0]['multi_match']['query'];
+        $query_fields = $params['body']['query']['bool']['must'][0]['multi_match']['fields'];
         $params['body']['query'] = array(
           'function_score' => array(
             'functions' => _bellcom_elasticsearch_get_boosting($query_str, $is_multi_type_index),
-            'query' => _bellcom_elasticsearch_get_query($params['body']['query'], $query_str, $is_multi_type_index),
+            'query' => _bellcom_elasticsearch_get_query($query_str, $query_fields, $is_multi_type_index)
           )
         );
+
       }
-      elseif (isset($params['body']['query']['filtered'])) {
-        $params['body']['query']['filtered']['query'] = array(
-          'function_score' => array(
-            'functions' => _bellcom_elasticsearch_get_boosting($query_str, $is_multi_type_index),
-            'query' => _bellcom_elasticsearch_get_query($params['body']['query']['filtered']['query'], $query_str, $is_multi_type_index),
-          )
-        );
+      else {
+        if (isset($params['body']['query']['filtered'])) {
+          $query_str = $params['body']['query']['filtered']['query']['bool']['must'][0]['multi_match']['query'];
+          $query_fields = $params['body']['query']['filtered']['query']['bool']['must'][0]['multi_match']['fields'];
+          $params['body']['query']['filtered']['query'] = array(
+            'function_score' => array(
+              'functions' => _bellcom_elasticsearch_get_boosting($query_str, $is_multi_type_index),
+              'query' => _bellcom_elasticsearch_get_query($query_str, $query_fields, $is_multi_type_index)
+            )
+          );
+        }
       }
 
       $size = _bellcom_elasticsearch_get_size($query_str);
@@ -244,29 +249,25 @@ function _bellcom_elasticsearch_get_boosting($query_string = NULL, $is_multi_typ
 /**
  * Composes a custom query with synonyms and/or phrase catcher implementation.
  *
- * @param $query
+ * @param $query_fields
  * @param $query_string
  * @param bool $is_multi_type_index
  * @return array
  */
-function _bellcom_elasticsearch_get_query($query, $query_string, $is_multi_type_index) {
-  if (isset($query['bool'])) {
-    // This is done in order to have phras catcher nodes to be added at ALL times.
-    unset($query['bool']['must']);
-
-    foreach ($query['bool'] as $bool_key => $bool) {
-      $elastic_query_params = $query['bool'][$bool_key];
-
-      foreach ($elastic_query_params as $elastic_query_param_key => $elastic_query_param) {
-        if (isset($elastic_query_param['multi_match'])) {
-          $query['bool'][$bool_key][$elastic_query_param_key]['multi_match']['analyzer'] = 'bellcom_elasticsearch_analyser';
-        }
-        if (isset($elastic_query_param['query_string'])) {
-          $query['bool'][$bool_key][$elastic_query_param_key]['query_string']['analyzer'] = 'bellcom_elasticsearch_analyser';
-        }
-      }
-    }
-  }
+function _bellcom_elasticsearch_get_query($query_string, $query_fields, $is_multi_type_index = TRUE) {
+  $query = array(
+    'bool' => array(
+      'should' => array(
+        array(
+          'query_string' => array(
+            'query' => $query_string,
+            'fields' => $query_fields,
+            'analyzer' => 'bellcom_elasticsearch_analyser'
+          )
+        ),
+      ),
+    )
+  );
 
   // making sure the all found phrase NID are included into the search result
   $results = db_query('SELECT * FROM {bellcom_elasticsearch_phrase_catcher} i WHERE :phrase LIKE i.phrase
