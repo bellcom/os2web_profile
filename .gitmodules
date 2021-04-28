@@ -5,3 +5,6 @@
 	path = modules/custom/os2forms
 	url = https://github.com/OS2Forms/os2forms_frontend
 	
+[submodule "modules/custom/os2web_eu_cookie_compliance"]
+	path = modules/custom/os2web_eu_cookie_compliance
+	url = git@github.com:bellcom/os2web_eu_cookie_compliance.git
