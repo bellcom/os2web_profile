@@ -188,6 +188,9 @@ function os2web_ofir_job_import_job($job_text) {
     $node->type = 'os2web_ofir_job';
     $node->title = (!empty($job_text['title'])) ? $job_text['title'] : '';
 
+    // Replace uncompatible symbols from description
+    $job_text['description'] = str_replace('😊', ':)', $job_text['description']);
+
     if (!empty($job_text['description'])) {
       $node->field_os2web_ofir_job_text['und'][0]['value'] = $job_text['description'];
       $node->field_os2web_ofir_job_text['und'][0]['safe_value'] = $job_text['description'];
