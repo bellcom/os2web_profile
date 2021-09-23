@@ -101,3 +101,11 @@ function search_api_attachments_update_7102() {
     }
   }
 }
+
+/**
+ * Clear the menu cache so the updated permissions will be recognized.
+ */
+function search_api_attachments_update_7103() {
+  variable_set('menu_rebuild_needed', TRUE);
+  drupal_set_message(t('A new permission was added for configuring the Search API Attachments module, please add it to the appropriate administrative roles.'));
+}

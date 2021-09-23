@@ -20,6 +20,20 @@ class SearchApiAttachmentsEntityreferenceAlterSettings extends SearchApiAttachme
     // Get the file fields.
     $file_fields = $this->getFileFields();
 
+    // Extension restriction.
+    $exclude = array();
+    foreach (explode(' ', $this->options['excluded_extensions']) as $ext) {
+      $exclude[$ext] = file_get_mimetype('dummy.' . $ext);
+    }
+
+    // File size restriction.
+    if (isset($this->options['max_file_size'])) {
+      $max_file_size = parse_size($this->options['max_file_size']);
+    }
+    else {
+      $max_file_size = '0';
+    }
+
     foreach ($items as &$item) {
       // Support the search_api_et module. It adds its prefix to entity types.
       $entity_type = (strpos($this->index->item_type, 'search_api_et_') === 0) ?

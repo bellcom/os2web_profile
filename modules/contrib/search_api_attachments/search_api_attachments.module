@@ -53,11 +53,24 @@ function search_api_attachments_menu() {
     'description' => 'Search through file content',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('search_api_attachments_settings_form'),
-    'access arguments' => array('administer search_api'),
+    'access arguments' => array('administer search_api_attachments'),
     'file' => 'search_api_attachments.admin.inc',
     'type' => MENU_LOCAL_TASK,
   );
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function search_api_attachments_permission() {
+  return array(
+    'administer search_api_attachments' => array(
+      'title' => t('Administer Search API Attachments'),
+      'description' => t('Configure the commands used by Search API Attachments to exectract data.'),
+      'restrict access' => TRUE,
+    ),
+  );
 }
 
 /**
