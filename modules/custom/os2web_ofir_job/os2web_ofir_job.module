@@ -150,7 +150,15 @@ function _os2web_ofir_job_cronbatch() {
       continue;
     }
     $job_text = _os2web_ofir_job_parse_job_text($job);
-    os2web_ofir_job_import_job($job_text);
+    try {
+      os2web_ofir_job_import_job($job_text);
+      $count++;
+    }
+    catch (Exception $e) {
+      $msg = 'Single ofir job import failed, job id: %id';
+      $ad_id = _os2web_ofir_job_xml_attribute($job->ad, 'id');
+      watchdog('OS2web Ofir job', $msg, $variables = array('%id' => $ad_id), WATCHDOG_WARNING);
+    }
     $count++;
   }
 
