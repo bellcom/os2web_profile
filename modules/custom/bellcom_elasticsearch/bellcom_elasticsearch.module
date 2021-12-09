@@ -251,6 +251,9 @@ function _bellcom_elasticsearch_get_boosting($query_string = NULL, $is_multi_typ
  */
 function _bellcom_elasticsearch_get_query($query, $query_string, $is_multi_type_index) {
   if (isset($query['bool'])) {
+    // This is done in order to have phras catcher nodes to be added at ALL times.
+    unset($query['bool']['must']);
+
     foreach ($query['bool'] as $bool_key => $bool) {
       $elastic_query_params = $query['bool'][$bool_key];
 

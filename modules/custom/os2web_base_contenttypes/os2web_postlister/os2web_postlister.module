@@ -39,3 +39,23 @@ function os2web_postlister_feeds_after_parse(FeedsSource $source, FeedsParserRes
     }
   }
 }
+
+/**
+ * Implements hook_form_alter.
+ */
+function os2web_postlister_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == "postliste_import_node_form") {
+    array_unshift($form['#validate'], 'os2web_postlister_form_replace_empty_source');
+  }
+}
+
+/**
+ * Helped funciton that replaces empty source in FeedsFileFetcher.
+ *
+ * Allows saving the node with empty file.
+ */
+function os2web_postlister_form_replace_empty_source($form, &$form_state) {
+  if (empty($form_state['values']['feeds']['FeedsFileFetcher']['source'])) {
+    $form_state['values']['feeds']['FeedsFileFetcher']['source'] = 'no file';
+  }
+}

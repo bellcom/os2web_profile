@@ -1,0 +1,10 @@
+name = Bellcom Elasticsearch Clear HTML
+description = "Strip JSON and HTML tags from index"
+core = 7.x
+package = Features
+
+files[] = includes/callback_bellcom_elasticsearch_clear_html_settings.inc
+
+version = "7.x-1.1"
+core = "7.x"
+project = "bellcom_elasticsearch"

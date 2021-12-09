@@ -10,6 +10,7 @@
  * FeedsFileFetcher.
  */
 class FeedsFileFetcherResult extends FeedsFetcherResult {
+
   /**
    * Constructor.
    */
@@ -32,6 +33,7 @@ class FeedsFileFetcherResult extends FeedsFetcherResult {
     $this->checkFile();
     return $this->sanitizeFile($this->file_path);
   }
+
 }
 
 /**
@@ -62,19 +64,15 @@ class FeedsFileFetcher extends FeedsFetcher {
       $state->progress($state->total, $state->total - count($state->files));
       return new FeedsFileFetcherResult($file);
     }
-    if (!empty($source_config['source'])) {
-      throw new Exception(t('Resource is not a file or it is an empty directory: %source', array('%source' => $source_config['source'])));
-    }
-    else {
-      throw new Exception(t('No resource is used.'));
-    }
+
+    throw new Exception(t('Resource is not a file or it is an empty directory: %source', array('%source' => $source_config['source'])));
   }
 
   /**
    * Returns an array of files in a directory.
    *
    * @param string $dir
-   *   A stream wreapper URI that is a directory.
+   *   A stream wrapper URI that is a directory.
    *
    * @return array
    *   An array of stream wrapper URIs pointing to files. The array is empty if
@@ -154,7 +152,7 @@ class FeedsFileFetcher extends FeedsFetcher {
         $values['file'] = $file;
       }
       elseif (empty($values['source'])) {
-        // Allow to save nodes with feeds field without file upload. Nothing to validate.
+        form_set_error('feeds][FeedsFileFetcher][source', t('Please upload a file.'));
       }
       else {
         // File present from previous upload. Nothing to validate.

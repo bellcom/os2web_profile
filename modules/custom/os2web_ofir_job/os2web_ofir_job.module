@@ -150,7 +150,15 @@ function _os2web_ofir_job_cronbatch() {
       continue;
     }
     $job_text = _os2web_ofir_job_parse_job_text($job);
-    os2web_ofir_job_import_job($job_text);
+    try {
+      os2web_ofir_job_import_job($job_text);
+      $count++;
+    }
+    catch (Exception $e) {
+      $msg = 'Single ofir job import failed, job id: %id';
+      $ad_id = _os2web_ofir_job_xml_attribute($job->ad, 'id');
+      watchdog('OS2web Ofir job', $msg, $variables = array('%id' => $ad_id), WATCHDOG_WARNING);
+    }
     $count++;
   }
 
@@ -187,6 +195,9 @@ function os2web_ofir_job_import_job($job_text) {
     // Insert default value of a new node.
     $node->type = 'os2web_ofir_job';
     $node->title = (!empty($job_text['title'])) ? $job_text['title'] : '';
+
+    // Replace uncompatible symbols from description
+    $job_text['description'] = str_replace('😊', ':)', $job_text['description']);
 
     if (!empty($job_text['description'])) {
       $node->field_os2web_ofir_job_text['und'][0]['value'] = $job_text['description'];
