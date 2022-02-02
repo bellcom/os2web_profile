@@ -1,0 +1,32 @@
+diff --git a/contrib/search_api_facetapi/search_api_facetapi.module b/contrib/search_api_facetapi/search_api_facetapi.module
+index fd4016a5..37cb177d 100644
+--- a/contrib/search_api_facetapi/search_api_facetapi.module
++++ b/contrib/search_api_facetapi/search_api_facetapi.module
+@@ -290,7 +290,8 @@ function search_api_facetapi_current_search_path(SearchApiQueryInterface $query
+   if ($query && $query->getOption('search_api_base_path')) {
+     $path = $query->getOption('search_api_base_path');
+   }
+-  return $path;
++  // If the path has not been set (yet), return the current path as a fallback.
++  return $path ? $path : current_path();
+ }
+ 
+ /**
+diff --git a/contrib/search_api_views/includes/query.inc b/contrib/search_api_views/includes/query.inc
+index 68a69b84..7062b897 100644
+--- a/contrib/search_api_views/includes/query.inc
++++ b/contrib/search_api_views/includes/query.inc
+@@ -319,8 +319,11 @@ public function build(&$view) {
+       $this->query->setOption('search_api_bypass_access', TRUE);
+     }
+ 
+-    // Store the Views base path.
+-    $this->query->setOption('search_api_base_path', $this->view->get_path());
++    // Store the Views base path, if we have one.
++    $path = $this->view->get_path();
++    if ($path) {
++      $this->query->setOption('search_api_base_path', $path);
++    }
+ 
+     // Save query information for Views UI.
+     $view->build_info['query'] = (string) $this->query;
