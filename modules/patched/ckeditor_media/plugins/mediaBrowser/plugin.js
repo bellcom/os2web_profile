@@ -18,9 +18,9 @@
 
   function mediaBrowser (evt) {
     var dialog = evt.data.dialog;
-    // Media z-index is 10002 so we need to be below that.
+    // Media z-index is 10020 so we need to be below that.
     var dialogElement = dialog.getElement().getFirst();
-    dialogElement.setStyle('z-index', 10001);
+    dialogElement.setStyle('z-index', 10019);
     // Invoke the media popup for file selection.
     var mediaIframe = Drupal.media.popups.mediaBrowser(function(mediaFiles) {
       if (mediaFiles.length > 0) {
@@ -55,7 +55,8 @@
         }
       }
     });
-    $(mediaIframe).parent().css({'z-index':'10002'});
+    var style = $(mediaIframe).parent().attr('style');
+    $(mediaIframe).parent().attr('style', style + 'z-index: 10020 !important');
   }
 
   function attachMediaBrowser (editor, dialogName, definition, elements) {

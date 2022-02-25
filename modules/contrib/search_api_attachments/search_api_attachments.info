@@ -10,8 +10,8 @@ dependencies[] = search_api
 files[] = includes/callback_attachments_settings.inc
 files[] = includes/views/search_api_attachments_views_handler_attachments_filter.inc
 
-; Information added by Drupal.org packaging script on 2018-11-28
-version = "7.x-1.18"
+; Information added by Drupal.org packaging script on 2021-09-21
+version = "7.x-1.19"
 core = "7.x"
 project = "search_api_attachments"
-datestamp = "1543400287"
+datestamp = "1632240545"
