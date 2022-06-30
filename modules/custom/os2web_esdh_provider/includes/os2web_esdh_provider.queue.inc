@@ -136,6 +136,21 @@ function os2web_esdh_provider_index_meeting_get_nid($meeting_xmlid){
     ->execute()
     ->fetchField();
 
+  // Check if the meeting is present in the system, but not registered in import
+  // table.
+  if (!$nid) {
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', 'os2web_meetings_meeting')
+      ->fieldCondition('field_os2web_meetings_system_id', 'value', $meeting_xmlid);
+    $result = $query->execute();
+
+    if (isset($result['node'])) {
+      $node = reset($result['node']);
+      $nid = $node->nid;
+    }
+  }
+
   return $nid;
 }
 
