@@ -24,17 +24,28 @@
         });
       }
       var $imagesWithoutGalleries = $('a.photoswipe', context).filter( function(elem) {
-        return !$(this).parents('.photoswipe-gallery').length;
+        return !$(this).closest('.photoswipe-gallery').length;
       });
+
       if ($imagesWithoutGalleries.length) {
         // We have no galleries just individual images.
         $imagesWithoutGalleries.each(function (index) {
-          $imageLink = $(this);
-          $imageLink.wrap('<div class="photoswipe-gallery"></div>');
-          var $gallery = $imageLink.parent();
-          $gallery.attr('data-pswp-uid', index + 1);
-          $gallery.once('photoswipe').on('click', Drupal.behaviors.photoswipe.onThumbnailsClick);
-          $galleries.push($gallery);
+          var $imageLink = $(this);
+          // Fallback to group by field, as we did in the past, if this is a field.
+          // @see https://www.drupal.org/project/photoswipe/issues/3179987
+          var $imageLinkParentFieldItems = $imageLink.closest('.field-items');
+          if ($imageLinkParentFieldItems.length > 0) {
+            $imageLinkParentFieldItems.addClass('photoswipe-gallery');
+          } else {
+            $imageLink.wrap('<div class="photoswipe-gallery"></div>');
+          }
+
+          var $gallery = $imageLink.closest('.photoswipe-gallery');
+          if(!$gallery.attr('data-pswp-uid')){
+            $gallery.attr('data-pswp-uid', index + 1);
+            $gallery.once('photoswipe').on('click', Drupal.behaviors.photoswipe.onThumbnailsClick);
+            $galleries.push($gallery);
+          }
         });
       }
 

@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * @file
  * Database functions
@@ -170,13 +168,29 @@ function _taxonomy_menu_get_terms($vid) {
  * @todo Needs updating since terms are related via fields now.
  */
 function _taxonomy_menu_term_count($tid) {
+  // Construct a cache ID
+  $cid = 'taxonomy_menu:term_count:' . $tid;
+
+  // Try to get the count from the cache.
+  $cache = cache_get($cid);
+  if ($cache) {
+    return $cache->data;
+  }
+
+  // It is not in the cache, so issue a query.
   $result = db_select('taxonomy_index', 'tn');
   $result->condition('tid', $tid);
   $result->join('node', 'n', 'n.nid = tn.nid AND n.status = 1');
   $result->addExpression('COUNT(n.nid)', 'term_count');
   $temp = $result->execute();
   $temp = $temp->fetchObject();
-  return $temp->term_count;
+  $data = $temp->term_count;
+
+  // Store the count in the cache.
+  cache_set($cid, $data, 'cache', REQUEST_TIME + 1215);
+
+  // Return the result.
+  return $data;
 }
 
 /**
@@ -198,8 +212,8 @@ function _taxonomy_menu_get_tid($mlid) {
  * @param int $mlid
  *   Menu link ID.
  *
- * @return array
- *   array(vid, tid)
+ * @return object|false
+ *  Returns stdClass object or false on failure.
  */
 function _taxonomy_menu_get_item($mlid) {
   $result = db_select('taxonomy_menu', 'tm')

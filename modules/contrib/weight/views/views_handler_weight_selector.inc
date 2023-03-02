@@ -36,9 +36,14 @@ class views_handler_weight_selector extends views_handler_field {
     return '<!--form-item-' . $this->options['id'] . '--' . $this->view->row_index . '-->';
   }
 
+  function access() {
+    return user_access('assign node weight');
+  }
+
   function views_form(&$form, &$form_state) {
     // The view is empty, abort.
     if (empty($this->view->result)) {
+      $form['#access'] = FALSE;
       return;
     }
 
@@ -47,8 +52,20 @@ class views_handler_weight_selector extends views_handler_field {
     );
 
     $options = _weight_get_options($this->options['weight_range']);
-    $entity_type = $this->view->base_table;
-    $entity_key = $this->view->base_field;
+    $entities = entity_get_info();
+
+    foreach ($entities as $type => $entity_info) {
+      if (isset($entity_info['base table']) && $this->view->base_table == $entity_info['base table']) {
+        $entity_type = $type;
+        $entity_key = $entity_info['entity keys']['id'];
+
+        // 2096231: patch for draggable views.
+        $field = $this->view->field[$entity_key];
+        if (!empty($field->field_alias)) {
+          $entity_key = $field->field_alias;
+        }
+      }
+    }
 
     // At this point, the query has already been run, so we can access the results
     foreach ($this->view->result as $row_index => $row) {
@@ -56,10 +73,11 @@ class views_handler_weight_selector extends views_handler_field {
 
       $form[$this->options['id']][$row_index]['weight'] = array(
         '#type' => 'select',
+        '#title' => t('Weight for row @number', array('@number' => $row_index + 1)),
+        '#title_display' => 'invisible',
         '#options' =>  $options,
         '#default_value' => $this->get_value($row),
         '#attributes' => array('class' => array('weight-selector')),
-        '#access' => user_access('assign node weight'),
       );
 
       $form[$this->options['id']][$row_index]['entity'] = array(

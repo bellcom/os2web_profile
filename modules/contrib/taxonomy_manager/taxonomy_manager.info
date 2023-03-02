@@ -6,8 +6,8 @@ files[] = taxonomy_manager.admin.inc
 configure = admin/config/user-interface/taxonomy-manager-settings
 package = Taxonomy
 
-; Information added by Drupal.org packaging script on 2020-09-28
-version = "7.x-1.1"
+; Information added by Drupal.org packaging script on 2023-01-03
+version = "7.x-1.2"
 core = "7.x"
 project = "taxonomy_manager"
-datestamp = "1601284896"
+datestamp = "1672756363"

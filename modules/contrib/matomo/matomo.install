@@ -37,6 +37,7 @@ function matomo_uninstall() {
   variable_del('matomo_page_title_hierarchy_exclude_home');
   variable_del('matomo_pages');
   variable_del('matomo_privacy_donottrack');
+  variable_del('matomo_privacy_disable_cookies');
   variable_del('matomo_roles');
   variable_del('matomo_site_id');
   variable_del('matomo_site_search');
@@ -84,7 +85,7 @@ function matomo_requirements($phase) {
       }
 
       // Raise warning if Matomo user account has not been set yet.
-      if (!preg_match('/^\d{1,}$/', variable_get('matomo_site_id', ''))) {
+      if (empty(variable_get('matomo_site_id', ''))) {
         $requirements['matomo'] = array(
           'title' => $t('Matomo module'),
           'description' => $t('Matomo module has not been configured yet. Please configure its settings from the <a href="@url">Matomo settings page</a>.', array('@url' => url('admin/config/system/matomo'))),

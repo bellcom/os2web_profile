@@ -518,7 +518,10 @@ function _taxonomy_menu_taxonomy_termapi_helper($term, $operation) {
  * @param $node
  *   The node object.
  */
-function _taxonomy_menu_nodeapi_helper($op, $terms = array(), $node) {
+function _taxonomy_menu_nodeapi_helper($op, $terms, $node) {
+  if (empty($terms)) {
+    $terms = array();
+  }
   foreach ($terms as $key => $tid) {
     // If taxonomy $term is false, then go to the next $term.
     // taxonomy_term_load($tid) returns FALSE if the term was not found.
@@ -689,10 +692,10 @@ function _taxonomy_menu_save($item) {
   if (isset($item['mlid']) && !empty($item['mlid']) && $original_link = menu_link_load($item['mlid'])) {
     $link = array_merge($original_link, $link);
   }
-  else {
+  elseif (isset($item['description'])) {
     $link['options'] = array(
       'attributes' => array(
-        'title' => trim($item['description']) ? $item['description'] : $item['name'],
+        'title' => trim($item['description']),
       ),
     );
   }
@@ -715,7 +718,7 @@ function _taxonomy_menu_save($item) {
     $link['mlid'] = $item['mlid'];
     $insert = FALSE;
     $menu_link = menu_link_load($item['mlid']);
-    $is_hidden = $menu_link['hidden'];
+    $is_hidden = !empty($menu_link['hidden']) ? $menu_link['hidden'] : 0;
   }
   else {
     $is_hidden = 0;
@@ -866,7 +869,10 @@ function taxonomy_menu_taxonomy_menu_delete(&$item) {
  * @param $node
  *   The node object.
  */
-function _taxonomy_menu_create_item($args = array(), $node) {
+function _taxonomy_menu_create_item($args, $node) {
+  if (empty($args)) {
+    $args = array();
+  }
   // If tid = 0, then we are creating a vocab item.
   if (isset($args['tid']) && isset($args['vid']) && $args['tid'] == 0 && variable_get(_taxonomy_menu_build_variable('voc_item', $args['vid']), 0)) {
     $vocab = taxonomy_vocabulary_load($args['vid']);
