@@ -2,6 +2,7 @@
 
 /**
  * PHPExcel_Writer_Excel5_Workbook
+ // * WPGear Edition. PHP Version 7.4
  *
  * Copyright (c) 2006 - 2015 PHPExcel
  *
@@ -664,7 +665,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
                     $formulaData = $this->parser->toReversePolish();
 
                     // make sure tRef3d is of type tRef3dR (0x3A)
-                    if (isset($formulaData{0}) and ($formulaData{0} == "\x7A" or $formulaData{0} == "\x5A")) {
+                    if (isset($formulaData[0]) and ($formulaData[0] == "\x7A" or $formulaData[0] == "\x5A")) {
                         $formulaData = "\x3A" . substr($formulaData, 1);
                     }
 
