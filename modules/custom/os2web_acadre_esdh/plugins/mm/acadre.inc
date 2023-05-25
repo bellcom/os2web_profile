@@ -175,6 +175,12 @@ function _os2web_acadre_esdh_import_meeting($info) {
 
   if (($real_path = _os2web_acadre_esdh_similar_file_exists(drupal_realpath($info['agenda_uri']))) !== FALSE) {
     $xml = simplexml_load_file($real_path);
+    if ((string) array_shift($xml->xpath("//table[@name='location']/fields/field[@name='name']"))) {
+      $location = (string) array_shift($xml->xpath("//table[@name='location']/fields/field[@name='name']"));
+    }
+    else {
+      $location = (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='location']"));
+    }
     $meeting = array(
       'title' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='name']")),
       'meeting_id' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='sysid']")),
@@ -187,9 +193,10 @@ function _os2web_acadre_esdh_import_meeting($info) {
       'meeting_date_finish' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='finish']")),
       'committee' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='name']")),
       'committee_id' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='sysid']")),
-      'location' => (string) array_shift($xml->xpath("//table[@name='location']/fields/field[@name='name']")),
+      'location' => $location,
       'items' => array(),
     );
+
     $publish_committee = array_map('trim', explode(',', variable_get('os2web_meetings_approved_committee', ACADRE_MM_DEFAULT_APPROVED)));
     if ($meeting['committee'] == '' || !in_array($meeting['committee_id'], $publish_committee)) {
       watchdog('acadre MM', 'Ignored agenda from %committee .', array('%committee' => $meeting['committee']));
