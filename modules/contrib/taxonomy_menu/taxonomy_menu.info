@@ -7,8 +7,8 @@ dependencies[] = menu
 
 files[] = taxonomy_menu.test
 
-; Information added by Drupal.org packaging script on 2018-12-22
-version = "7.x-1.6"
+; Information added by Drupal.org packaging script on 2023-02-22
+version = "7.x-1.7"
 core = "7.x"
 project = "taxonomy_menu"
-datestamp = "1545492784"
+datestamp = "1677065703"
